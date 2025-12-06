@@ -6,6 +6,8 @@
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/testx1011/mui-tantable?style=flat-square&logo=github)](https://github.com/testx1011/mui-tantable/pulls)
 [![License](https://img.shields.io/github/license/testx1011/mui-tantable?style=flat-square)](https://github.com/testx1011/mui-tantable/blob/main/LICENSE)
 [![Build (GitHub Actions)](https://img.shields.io/github/actions/workflow/status/testx1011/mui-tantable/ci.yml?style=flat-square)](https://github.com/testx1011/mui-tantable/actions)
+[![npm (latest)](https://img.shields.io/npm/v/mui-tantable?style=flat-square)](https://www.npmjs.com/package/mui-tantable)
+[![npm downloads](https://img.shields.io/npm/dw/mui-tantable?style=flat-square)](https://www.npmjs.com/package/mui-tantable)
 
 Un componente de tabla basado en TanStack Table y Material‑UI (MUI) pensado para listas y tablas ricas en funcionalidades, rendimiento y accesibilidad. ✨
 
@@ -18,6 +20,13 @@ Un componente de tabla basado en TanStack Table y Material‑UI (MUI) pensado pa
 git clone https://github.com/testx1011/mui-tantable.git
 cd mui-tantable
 npm install
+```
+
+**Instalación desde npm**
+```bash
+npm install mui-tantable
+# o con yarn
+yarn add mui-tantable
 ```
 
 **🎯 Objetivo**
@@ -68,7 +77,7 @@ Ejemplo mínimo con `TanTable`:
 
 ```tsx
 import React from 'react';
-import { TanTable } from './src/components/TanTable';
+import { TanTable } from 'mui-tantable';
 
 const columns = [
   { accessorKey: 'id', header: 'ID' },
