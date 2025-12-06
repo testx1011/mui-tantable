@@ -1,6 +1,10 @@
 {
   "name": "mui-tantable",
   "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/testx1011/mui-tantable.git"
+  },
   "private": true,
   "type": "module",
   "main": "dist/index.cjs",
