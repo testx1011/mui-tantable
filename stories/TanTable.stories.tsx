@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { TanTable } from '../src/components/TanTable';
 import type { ColumnDef } from '../src/types';
 import EditIcon from '@mui/icons-material/Edit';

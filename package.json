@@ -18,7 +18,7 @@
     "build": "tsup",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "lint": "eslint -c .eslintrc.json . --ext .ts,.tsx,.js,.jsx",
+    "lint": "eslint \"**/*.{ts,tsx,js,jsx}\"",
     "test": "vitest"
   },
   "dependencies": {
@@ -41,43 +41,18 @@
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "@vitest/browser-playwright": "^4.0.15",
-    "@vitest/coverage-v8": "^4.0.15",
-    "eslint": "^8.45.0",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@typescript-eslint/parser": "^6.7.0",
+    "@vitest/browser-playwright": "^4.0.15",
+    "@vitest/coverage-v8": "^4.0.15",
+    "eslint": "^9.39.1",
     "eslint-plugin-storybook": "^10.1.4",
     "playwright": "^1.57.0",
     "prettier": "^3.7.4",
     "storybook": "^10.1.4",
     "tsup": "^8.5.1",
-    "typescript": "^5.9.3",
+    "typescript": "^5.3.3",
     "vite": "^7.2.6",
     "vitest": "^4.0.15"
-  },
-  "eslintConfig": {
-    "extends": ["plugin:storybook/recommended"],
-    "parser": "@typescript-eslint/parser",
-    "plugins": ["@typescript-eslint"],
-    "parserOptions": {
-      "ecmaVersion": 2022,
-      "sourceType": "module",
-      "project": "./tsconfig.eslint.json",
-      "tsconfigRootDir": "./"
-    },
-    "env": {
-      "browser": true,
-      "node": true,
-      "es2022": true
-    },
-    "settings": {
-      "react": {
-        "version": "detect"
-      }
-    }
-    ,
-    "rules": {
-      "storybook/no-renderer-packages": "off"
-    }
   }
 }

@@ -24,23 +24,18 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci || npm ci --legacy-peer-deps
 
       - name: Run linter
         run: |
-          if npm run | grep -q lint; then
-            npm run lint; 
-          else
-            echo "No lint script defined, skipping";
-          fi
+          echo "Running ESLint..."
+          npm run lint
 
       - name: Build
         run: npm run build
 
       - name: Run tests
         run: |
-          if npm run | grep -q test; then
-            npm test -- --runInBand;
-          else
-            echo "No test script defined, skipping";
-          fi
+          echo "Running tests..."
+          npm test -- --runInBand
