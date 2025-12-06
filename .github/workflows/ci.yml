@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18]
+        node-version: [22]
 
     steps:
       - name: Checkout repository
@@ -38,4 +38,4 @@ jobs:
       - name: Run tests
         run: |
           echo "Running tests..."
-          npm test -- --runInBand
+          npm test
