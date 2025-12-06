@@ -1,0 +1,7 @@
+node_modules
+dist
+.storybook
+storybook-static
+.vite
+.turbo
+build
