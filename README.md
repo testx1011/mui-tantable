@@ -1,10 +1,17 @@
-# Mui TanTable
+# 🚀 Mui TanTable
 
-Un componente de tabla basado en TanStack Table y Material‑UI (MUI) pensado para listas y tablas ricas en funcionalidades, rendimiento y accesibilidad.
+[![GitHub stars](https://img.shields.io/github/stars/testx1011/mui-tantable?style=flat-square&logo=github)](https://github.com/testx1011/mui-tantable/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/testx1011/mui-tantable?style=flat-square&logo=github)](https://github.com/testx1011/mui-tantable/network/members)
+[![GitHub issues](https://img.shields.io/github/issues/testx1011/mui-tantable?style=flat-square&logo=github)](https://github.com/testx1011/mui-tantable/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/testx1011/mui-tantable?style=flat-square&logo=github)](https://github.com/testx1011/mui-tantable/pulls)
+[![License](https://img.shields.io/github/license/testx1011/mui-tantable?style=flat-square)](https://github.com/testx1011/mui-tantable/blob/main/LICENSE)
+[![Build (GitHub Actions)](https://img.shields.io/github/actions/workflow/status/testx1011/mui-tantable/ci.yml?style=flat-square)](https://github.com/testx1011/mui-tantable/actions)
 
-**Estado**: desarrollo — funcionalidad principal implementada (virtualización, selección de celdas, atajos de teclado, vista lista, búsqueda expandible).
+Un componente de tabla basado en TanStack Table y Material‑UI (MUI) pensado para listas y tablas ricas en funcionalidades, rendimiento y accesibilidad. ✨
 
-**Repositorio:** https://github.com/testx1011/mui-tantable
+**Estado**: 🛠️ desarrollo — funcionalidad principal implementada (virtualización, selección de celdas, atajos de teclado, vista lista, búsqueda expandible).
+
+**Repositorio:** 🔗 https://github.com/testx1011/mui-tantable
 
 **Instalación rápida (clonar desde GitHub)**
 ```bash
@@ -13,21 +20,21 @@ cd mui-tantable
 npm install
 ```
 
-**Objetivo**
+**🎯 Objetivo**
 - Proveer una tabla altamente personalizable y eficiente para aplicaciones React con estilo MUI.
 - Ofrecer características tipo Data Grid (filtrado, ordenación, paginación, selección, virtualización y vista lista).
 
-**Características principales**
-- **Renderizado flexible**: columnas definidas con `ColumnDef` y renderers personalizados.
-- **Virtualización**: soporta `@tanstack/react-virtual` para miles de filas.
-- **Vista Lista**: `enableListView` + `renderListViewItem` para presentar datos en un solo columna estilo list view (inspirado en MUI X List View).
-- **Selección de celdas y filas**: selección visual de celdas y selección multi-fila.
-- **Atajos del teclado**: `Ctrl+C` copia el contenido de la celda/filas en formato tabular compatible con Excel/Sheets.
-- **Búsqueda expandible**: UI de búsqueda con animación al estilo MUI Data Grid quick filter.
-- **Edición in-cell / in-row**: soporte para modos de edición por celda o por fila (configurable).
-- **Toolbar**: búsqueda, visibilidad de columnas, exportación (CSV/Excel/JSON), opciones de densidad y conmutador de vista (grid/list).
+**✨ Características principales**
+- ⚙️ **Renderizado flexible**: columnas definidas con `ColumnDef` y renderers personalizados.
+- ⚡️ **Virtualización**: soporta `@tanstack/react-virtual` para miles de filas.
+- 📋 **Vista Lista**: `enableListView` + `renderListViewItem` para presentar datos en un solo columna estilo list view (inspirado en MUI X List View).
+- 🔘 **Selección de celdas y filas**: selección visual de celdas y selección multi-fila.
+- ⌨️ **Atajos del teclado**: `Ctrl+C` copia el contenido de la celda/filas en formato tabular compatible con Excel/Sheets.
+- 🔎 **Búsqueda expandible**: UI de búsqueda con animación al estilo MUI Data Grid quick filter.
+- ✍️ **Edición in-cell / in-row**: soporte para modos de edición por celda o por fila (configurable).
+- 🧭 **Toolbar**: búsqueda, visibilidad de columnas, exportación (CSV/Excel/JSON), opciones de densidad y conmutador de vista (grid/list).
 
-**Estructura del proyecto (resumen)**
+**📁 Estructura del proyecto (resumen)**
 - `src/components/TanTable.tsx` — componente principal.
 - `src/components/TableToolbar.tsx` — barra de herramientas (search, export, density, view switcher).
 - `src/components/ExpandableSearch.tsx` — búsqueda expandible.
@@ -40,10 +47,10 @@ npm install
 - Node.js 18+ (recomendado).
 - Dependencias gestionadas en `package.json`.
 
-**Instalación (desarrollo local)**
+**🧰 Instalación (desarrollo local)**
 ```bash
 # clona el repo
-git clone <tu-repo-url> mui-tantable
+git clone https://github.com/testx1011/mui-tantable.git
 cd mui-tantable
 
 # instala dependencias
@@ -56,7 +63,7 @@ npm run storybook
 npm run build
 ```
 
-**Uso básico**
+**⚡ Uso básico**
 Ejemplo mínimo con `TanTable`:
 
 ```tsx
@@ -105,7 +112,7 @@ export default function App() {
 />
 ```
 
-**Comandos útiles**
+**🛠️ Comandos útiles**
 - `npm run build` — compila la librería (usa `tsup`).
 - `npm run dev` — (si está definido) desarrolla localmente.
 - `npm run storybook` — abre Storybook con ejemplos interactivos.
@@ -114,20 +121,11 @@ export default function App() {
 - Mantén `typescript` y `eslint` limpios (si están configurados).
 - Ejecuta `npm run build` después de cambios de tipos o exports.
 
-**Guía rápida de contribuciones**
+**🙌 Guía rápida de contribuciones**
 - Abre un issue para discutir cambios grandes.
 - Crea PRs pequeños y enfocados; incluye el objetivo y demos en Storybook cuando sea posible.
 
-**Siguientes pasos sugeridos**
+**🔮 Siguientes pasos sugeridos**
 - Añadir badges (build, coverage, npm) al `README.md`.
 - Documentar la API de `ColumnDef` y los `cellType` en detalle.
 - Añadir ejemplos de integración (Next.js, CRA, Vite).
-
-Si quieres, puedo:
-- Añadir badges y publicar un `CHANGELOG.md`.
-- Generar la documentación de la API en `/docs` o en Storybook.
-- Preparar un ejemplo de integración en un repo separado.
-
----
-
-¿Quieres que agregue badges, un `CONTRIBUTING.md` o ejemplos listos para deploy?
