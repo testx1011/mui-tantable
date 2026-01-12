@@ -1,58 +1,72 @@
 {
   "name": "mui-tantable",
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "description": "A lightweight MUI-styled TanStack table with list-view, filters and virtualization.",
+  "keywords": ["mui","react","table","tanstack","datatable","tantable"],
+  "license": "MIT",
+  "author": "testx1011",
+  "homepage": "https://github.com/testx1011/mui-tantable#readme",
+  "bugs": {
+    "url": "https://github.com/testx1011/mui-tantable/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/testx1011/mui-tantable.git"
   },
-  "private": true,
+  "private": false,
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "scripts": {
     "dev": "vite",
     "build": "tsup",
+    "prepare": "npm run build",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "lint": "eslint \"**/*.{ts,tsx,js,jsx}\"",
+    "lint": "node --no-warnings ./node_modules/eslint/bin/eslint.js \"src/**/*.{ts,tsx,js,jsx}\" \"stories/**/*.{ts,tsx,js,jsx}\"",
     "test": "vitest"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@mui/icons-material": "^7.3.6",
-    "@mui/material": "^7.3.6",
+    "@mui/icons-material": "^7.3.7",
+    "@mui/material": "^7.3.7",
     "@tanstack/react-table": "^8.21.3",
-    "@tanstack/react-virtual": "^3.13.12",
-    "react": "^19.2.1",
-    "react-dom": "^19.2.1"
+    "@tanstack/react-virtual": "^3.13.18",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^4.1.3",
-    "@storybook/addon-a11y": "^10.1.4",
-    "@storybook/addon-docs": "^10.1.4",
-    "@storybook/addon-onboarding": "^10.1.4",
-    "@storybook/addon-vitest": "^10.1.4",
-    "@storybook/react-vite": "^10.1.4",
-    "@types/node": "^24.10.1",
-    "@types/react": "^19.2.7",
+    "@storybook/addon-a11y": "^10.1.11",
+    "@storybook/addon-docs": "^10.1.11",
+    "@storybook/addon-onboarding": "^10.1.11",
+    "@storybook/addon-vitest": "^10.1.11",
+    "@storybook/react-vite": "^10.1.11",
+    "@types/node": "^25.0.6",
+    "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",
-    "@typescript-eslint/eslint-plugin": "^6.7.0",
-    "@typescript-eslint/parser": "^6.7.0",
-    "@vitest/browser-playwright": "^4.0.15",
-    "@vitest/coverage-v8": "^4.0.15",
-    "eslint": "^9.39.1",
-    "eslint-plugin-storybook": "^10.1.4",
+    "@typescript-eslint/eslint-plugin": "^8.52.0",
+    "@typescript-eslint/parser": "^8.52.0",
+    "@vitest/browser-playwright": "^4.0.17",
+    "@vitest/coverage-v8": "^4.0.17",
+    "eslint": "^9.39.2",
+    "eslint-plugin-storybook": "^10.1.11",
     "playwright": "^1.57.0",
     "prettier": "^3.7.4",
-    "storybook": "^10.1.4",
+    "storybook": "^10.1.11",
     "tsup": "^8.5.1",
-    "typescript": "^5.3.3",
-    "vite": "^7.2.6",
-    "vitest": "^4.0.15"
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vitest": "^4.0.17"
+  }
+  ,
+  "publishConfig": {
+    "access": "public"
   }
 }
