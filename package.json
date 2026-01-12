@@ -1,6 +1,6 @@
 {
   "name": "mui-tantable",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A lightweight MUI-styled TanStack table with list-view, filters and virtualization.",
   "keywords": ["mui","react","table","tanstack","datatable","tantable"],
   "license": "MIT",
