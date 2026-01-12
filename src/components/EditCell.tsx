@@ -3,7 +3,8 @@ import {
   TextField,
   Checkbox,
 } from '@mui/material';
-import type { CellRendererProps, CellType } from '../types';
+import type { CellRendererProps } from '../types/columns';
+import type { CellType } from '../types/cells';
 
 interface EditCellProps<TData> extends CellRendererProps<TData> {
   value: any;

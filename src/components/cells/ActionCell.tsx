@@ -6,23 +6,21 @@ import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import type { CellRendererProps, ActionCellConfig } from '../../types';
 
-export function ActionCell<TData>(props: CellRendererProps<TData> & { config?: ActionCellConfig }) {
-  const { row, column } = props;
+export function ActionCell<TData>(props: CellRendererProps<TData> & { config?: ActionCellConfig, isEditing?: boolean, onSave?: () => void, onCancel?: () => void }) {
+  const { row, column, isEditing, onSave, onCancel } = props;
   const config = (column.columnDef as { cellConfig?: ActionCellConfig })?.cellConfig;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-  const { isEditing, onSave, onCancel } = props as any;
 
   if (isEditing) {
     return (
       <Box sx={{ display: 'flex', gap: 1 }}>
         <Tooltip title="Save">
-          <IconButton size="small" color="primary" onClick={(e) => { e.stopPropagation(); onSave(); }}>
+          <IconButton size="small" color="primary" onClick={(e) => { e.stopPropagation(); onSave?.(); }}>
             <SaveIcon fontSize="small" />
           </IconButton>
         </Tooltip>
         <Tooltip title="Cancel">
-          <IconButton size="small" color="error" onClick={(e) => { e.stopPropagation(); onCancel(); }}>
+          <IconButton size="small" color="error" onClick={(e) => { e.stopPropagation(); onCancel?.(); }}>
             <CancelIcon fontSize="small" />
           </IconButton>
         </Tooltip>

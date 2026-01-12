@@ -14,16 +14,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import type { Table, Column } from '@tanstack/react-table';
 import { TextFilter, NumberFilter, DateFilter, SelectFilter, MultiSelectFilter } from './index';
-import type {
-  ColumnDef,
-  FilterType,
-  FilterConfig,
-  TextFilterConfig,
-  NumberFilterConfig,
-  DateFilterConfig,
-  SelectFilterConfig,
-  MultiSelectFilterConfig,
-} from '../../types';
+import { FilterType, FilterConfig, TextFilterConfig, NumberFilterConfig, DateFilterConfig, SelectFilterConfig, MultiSelectFilterConfig, TanTableColumnDef } from '../../types';
+
 
 interface FilterPanelProps<TData> {
   table: Table<TData>;
@@ -79,7 +71,7 @@ export function FilterPanel<TData>({ table }: FilterPanelProps<TData>) {
   };
 
   const renderFilterInput = (column: Column<TData, unknown>) => {
-    const colDef = column.columnDef as ColumnDef<TData>;
+    const colDef = column.columnDef as TanTableColumnDef<TData>;
     const filterType = colDef.filterType as FilterType | undefined;
     const filterConfig = colDef.filterConfig as FilterConfig | undefined;
 

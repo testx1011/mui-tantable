@@ -16,12 +16,26 @@ module.exports = (async () => {
   return [
     // ignore patterns (flat config uses 'ignores')
     {
-      ignores: ['node_modules/**', 'dist/**', '.storybook/**', 'storybook-static/**'],
+      ignores: ['node_modules/**', 'dist/**', 'storybook-static/**'],
+    },
+
+    // override for Storybook files: don't use type-aware rules (avoid parserOptions.project)
+    {
+      files: ['.storybook/**/*.{ts,tsx,js,jsx}'],
+      languageOptions: {
+        parser: tsParser,
+        parserOptions: {
+          ecmaVersion: 2022,
+          sourceType: 'module',
+          tsconfigRootDir: __dirname,
+        },
+      },
+      rules: {},
     },
 
     // main config for TS/JS files
     {
-      files: ['**/*.{ts,tsx,js,jsx}'],
+      files: ['**/*.{ts,tsx,js,jsx}', '!./.storybook/**'],
       languageOptions: {
         parser: tsParser,
         parserOptions: {

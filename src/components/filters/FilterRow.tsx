@@ -4,12 +4,12 @@ import { TextFilter, NumberFilter, DateFilter, SelectFilter, MultiSelectFilter }
 import type {
   FilterType,
   FilterConfig,
-  ColumnDef,
   TextFilterConfig,
   NumberFilterConfig,
   DateFilterConfig,
   SelectFilterConfig,
-  MultiSelectFilterConfig
+  MultiSelectFilterConfig,
+  TanTableColumnDef
 } from '../../types';
 import type { Table } from '@tanstack/react-table';
 
@@ -24,7 +24,7 @@ export function FilterRow<TData>({ table }: FilterRowProps<TData>) {
       {table.getHeaderGroups()[0].headers.map((header) => {
         const column = header.column;
         // Usar as para acceder a las props extendidas
-        const colDef = column.columnDef as ColumnDef<TData>;
+        const colDef = column.columnDef as TanTableColumnDef<TData>;
         const filterType = colDef.filterType as FilterType | undefined;
         const filterConfig = colDef.filterConfig as FilterConfig | undefined;
         if (!column.getCanFilter()) {

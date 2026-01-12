@@ -1,5 +1,5 @@
 import type { Table } from '@tanstack/react-table';
-import type { ExportOptions } from '../types';
+import type { ExportOptions } from '../types/toolbar';
 
 /**
  * Export table data to CSV

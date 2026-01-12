@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Box,
   Pagination as MuiPagination,
@@ -8,7 +7,7 @@ import {
   FormControl,
 } from '@mui/material';
 import type { Table } from '@tanstack/react-table';
-import type { PaginationConfig } from '../types';
+import type { PaginationConfig } from '../types/toolbar';
 
 interface TablePaginationProps<TData> {
   table: Table<TData>;

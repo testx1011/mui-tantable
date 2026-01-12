@@ -1,12 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { TanTable } from '../src/components/TanTable';
-import type { ColumnDef } from '../src/types';
+import type { TanTableColumnDef } from '../src/types/columns';
+import type { TanTableProps } from '../src/types/core';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddIcon from '@mui/icons-material/Add';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Box, Typography, Avatar, Stack, IconButton } from '@mui/material';
+import { Box, Typography, Avatar, IconButton } from '@mui/material';
+import { Row } from '@tanstack/react-table';
 
 // Sample data type
 interface Employee {
@@ -27,203 +29,203 @@ interface Employee {
 const employees: Employee[] = [
   {
     id: 1,
-    name: "Sarah Chen",
-    email: "sarah.chen@company.com",
-    position: "Senior Software Engineer",
-    department: "Engineering",
-    status: "Active",
-    joinDate: new Date("2021-03-15"),
+    name: 'Sarah Chen',
+    email: 'sarah.chen@company.com',
+    position: 'Senior Software Engineer',
+    department: 'Engineering',
+    status: 'Active',
+    joinDate: new Date('2021-03-15'),
     salary: 145000,
     performance: 92,
-    avatar: "https://i.pravatar.cc/150?u=1",
-    isManager: false
+    avatar: 'https://i.pravatar.cc/150?u=1',
+    isManager: false,
   },
   {
     id: 2,
-    name: "Marcus Johnson",
-    email: "marcus.j@company.com",
-    position: "Product Director",
-    department: "Product",
-    status: "Active",
-    joinDate: new Date("2019-11-01"),
+    name: 'Marcus Johnson',
+    email: 'marcus.j@company.com',
+    position: 'Product Director',
+    department: 'Product',
+    status: 'Active',
+    joinDate: new Date('2019-11-01'),
     salary: 185000,
     performance: 98,
-    avatar: "https://i.pravatar.cc/150?u=2",
-    isManager: true
+    avatar: 'https://i.pravatar.cc/150?u=2',
+    isManager: true,
   },
   {
     id: 3,
-    name: "Emma Wilson",
-    email: "emma.w@company.com",
-    position: "UX Designer",
-    department: "Design",
-    status: "On Leave",
-    joinDate: new Date("2022-01-10"),
+    name: 'Emma Wilson',
+    email: 'emma.w@company.com',
+    position: 'UX Designer',
+    department: 'Design',
+    status: 'On Leave',
+    joinDate: new Date('2022-01-10'),
     salary: 95000,
     performance: 88,
-    avatar: "https://i.pravatar.cc/150?u=3",
-    isManager: false
+    avatar: 'https://i.pravatar.cc/150?u=3',
+    isManager: false,
   },
   {
     id: 4,
-    name: "James Rodriguez",
-    email: "james.r@company.com",
-    position: "DevOps Engineer",
-    department: "Engineering",
-    status: "Active",
-    joinDate: new Date("2020-07-22"),
+    name: 'James Rodriguez',
+    email: 'james.r@company.com',
+    position: 'DevOps Engineer',
+    department: 'Engineering',
+    status: 'Active',
+    joinDate: new Date('2020-07-22'),
     salary: 130000,
     performance: 85,
-    avatar: "https://i.pravatar.cc/150?u=4",
-    isManager: false
+    avatar: 'https://i.pravatar.cc/150?u=4',
+    isManager: false,
   },
   {
     id: 5,
-    name: "Lisa Wong",
-    email: "lisa.wong@company.com",
-    position: "Marketing Manager",
-    department: "Marketing",
-    status: "Active",
-    joinDate: new Date("2021-09-05"),
+    name: 'Lisa Wong',
+    email: 'lisa.wong@company.com',
+    position: 'Marketing Manager',
+    department: 'Marketing',
+    status: 'Active',
+    joinDate: new Date('2021-09-05'),
     salary: 110000,
     performance: 94,
-    avatar: "https://i.pravatar.cc/150?u=5",
-    isManager: true
+    avatar: 'https://i.pravatar.cc/150?u=5',
+    isManager: true,
   },
   {
     id: 6,
-    name: "David Kim",
-    email: "david.kim@company.com",
-    position: "Data Scientist",
-    department: "Data",
-    status: "Active",
-    joinDate: new Date("2022-04-18"),
+    name: 'David Kim',
+    email: 'david.kim@company.com',
+    position: 'Data Scientist',
+    department: 'Data',
+    status: 'Active',
+    joinDate: new Date('2022-04-18'),
     salary: 135000,
     performance: 96,
-    avatar: "https://i.pravatar.cc/150?u=6",
-    isManager: false
+    avatar: 'https://i.pravatar.cc/150?u=6',
+    isManager: false,
   },
   {
     id: 7,
-    name: "Robert Taylor",
-    email: "robert.t@company.com",
-    position: "Sales Representative",
-    department: "Sales",
-    status: "Inactive",
-    joinDate: new Date("2023-01-15"),
+    name: 'Robert Taylor',
+    email: 'robert.t@company.com',
+    position: 'Sales Representative',
+    department: 'Sales',
+    status: 'Inactive',
+    joinDate: new Date('2023-01-15'),
     salary: 75000,
     performance: 65,
-    avatar: "https://i.pravatar.cc/150?u=7",
-    isManager: false
+    avatar: 'https://i.pravatar.cc/150?u=7',
+    isManager: false,
   },
   {
     id: 8,
-    name: "Jennifer Garcia",
-    email: "j.garcia@company.com",
-    position: "HR Specialist",
-    department: "HR",
-    status: "Active",
-    joinDate: new Date("2021-11-30"),
+    name: 'Jennifer Garcia',
+    email: 'j.garcia@company.com',
+    position: 'HR Specialist',
+    department: 'HR',
+    status: 'Active',
+    joinDate: new Date('2021-11-30'),
     salary: 85000,
     performance: 90,
-    avatar: "https://i.pravatar.cc/150?u=8",
-    isManager: false
+    avatar: 'https://i.pravatar.cc/150?u=8',
+    isManager: false,
   },
   {
     id: 9,
-    name: "William Thomas",
-    email: "will.thomas@company.com",
-    position: "Frontend Developer",
-    department: "Engineering",
-    status: "Terminated",
-    joinDate: new Date("2020-02-01"),
+    name: 'William Thomas',
+    email: 'will.thomas@company.com',
+    position: 'Frontend Developer',
+    department: 'Engineering',
+    status: 'Terminated',
+    joinDate: new Date('2020-02-01'),
     salary: 115000,
     performance: 45,
-    avatar: "https://i.pravatar.cc/150?u=9",
-    isManager: false
+    avatar: 'https://i.pravatar.cc/150?u=9',
+    isManager: false,
   },
   {
     id: 10,
-    name: "Priya Patel",
-    email: "priya.p@company.com",
-    position: "Finance Director",
-    department: "Finance",
-    status: "Active",
-    joinDate: new Date("2018-06-15"),
+    name: 'Priya Patel',
+    email: 'priya.p@company.com',
+    position: 'Finance Director',
+    department: 'Finance',
+    status: 'Active',
+    joinDate: new Date('2018-06-15'),
     salary: 195000,
     performance: 99,
-    avatar: "https://i.pravatar.cc/150?u=10",
-    isManager: true
+    avatar: 'https://i.pravatar.cc/150?u=10',
+    isManager: true,
   },
   {
     id: 11,
-    name: "Alex Turner",
-    email: "alex.t@company.com",
-    position: "System Administrator",
-    department: "IT",
-    status: "Active",
-    joinDate: new Date("2019-09-20"),
+    name: 'Alex Turner',
+    email: 'alex.t@company.com',
+    position: 'System Administrator',
+    department: 'IT',
+    status: 'Active',
+    joinDate: new Date('2019-09-20'),
     salary: 95000,
     performance: 82,
-    avatar: "https://i.pravatar.cc/150?u=11",
-    isManager: false
+    avatar: 'https://i.pravatar.cc/150?u=11',
+    isManager: false,
   },
   {
     id: 12,
-    name: "Maria Santos",
-    email: "maria.s@company.com",
-    position: "Content Strategist",
-    department: "Marketing",
-    status: "Active",
-    joinDate: new Date("2022-08-10"),
+    name: 'Maria Santos',
+    email: 'maria.s@company.com',
+    position: 'Content Strategist',
+    department: 'Marketing',
+    status: 'Active',
+    joinDate: new Date('2022-08-10'),
     salary: 88000,
     performance: 91,
-    avatar: "https://i.pravatar.cc/150?u=12",
-    isManager: false
+    avatar: 'https://i.pravatar.cc/150?u=12',
+    isManager: false,
   },
   {
     id: 13,
-    name: "Kevin Miller",
-    email: "kevin.m@company.com",
-    position: "Account Executive",
-    department: "Sales",
-    status: "Active",
-    joinDate: new Date("2021-05-01"),
+    name: 'Kevin Miller',
+    email: 'kevin.m@company.com',
+    position: 'Account Executive',
+    department: 'Sales',
+    status: 'Active',
+    joinDate: new Date('2021-05-01'),
     salary: 92000,
     performance: 87,
-    avatar: "https://i.pravatar.cc/150?u=13",
-    isManager: false
+    avatar: 'https://i.pravatar.cc/150?u=13',
+    isManager: false,
   },
   {
     id: 14,
-    name: "Rachel Green",
-    email: "rachel.g@company.com",
-    position: "Product Manager",
-    department: "Product",
-    status: "On Leave",
-    joinDate: new Date("2020-10-15"),
+    name: 'Rachel Green',
+    email: 'rachel.g@company.com',
+    position: 'Product Manager',
+    department: 'Product',
+    status: 'On Leave',
+    joinDate: new Date('2020-10-15'),
     salary: 125000,
     performance: 89,
-    avatar: "https://i.pravatar.cc/150?u=14",
-    isManager: false
+    avatar: 'https://i.pravatar.cc/150?u=14',
+    isManager: false,
   },
   {
     id: 15,
-    name: "Samuel Jackson",
-    email: "sam.j@company.com",
-    position: "Security Analyst",
-    department: "IT",
-    status: "Active",
-    joinDate: new Date("2021-12-05"),
+    name: 'Samuel Jackson',
+    email: 'sam.j@company.com',
+    position: 'Security Analyst',
+    department: 'IT',
+    status: 'Active',
+    joinDate: new Date('2021-12-05'),
     salary: 110000,
     performance: 93,
-    avatar: "https://i.pravatar.cc/150?u=15",
-    isManager: false
-  }
+    avatar: 'https://i.pravatar.cc/150?u=15',
+    isManager: false,
+  },
 ];
 
 // Column definitions
-const columns: ColumnDef<Employee>[] = [
+const columns: TanTableColumnDef<Employee>[] = [
   {
     accessorKey: 'avatar',
     header: '',
@@ -259,7 +261,7 @@ const columns: ColumnDef<Employee>[] = [
         Finance: 'default',
         HR: 'error',
         Data: 'secondary',
-        IT: 'info'
+        IT: 'info',
       },
       variant: 'filled',
     },
@@ -307,7 +309,7 @@ const columns: ColumnDef<Employee>[] = [
     cellType: 'link',
     cellConfig: {
       href: (row: Employee) => `mailto:${row.email}`,
-      target: '_blank',
+      external: true,
     },
     size: 200,
   },
@@ -366,19 +368,19 @@ const columns: ColumnDef<Employee>[] = [
         {
           label: 'View Profile',
           icon: <VisibilityIcon />,
-          onClick: (row) => console.log('View', row),
+          onClick: (row: Employee) => console.log('View', row),
           color: 'primary',
         },
         {
           label: 'Edit',
           icon: <EditIcon />,
-          onClick: (row) => console.log('Edit', row),
+          onClick: (row: Employee) => console.log('Edit', row),
           color: 'primary',
         },
         {
           label: 'Delete',
           icon: <DeleteIcon />,
-          onClick: (row) => console.log('Delete', row),
+          onClick: (row: Employee) => console.log('Delete', row),
           color: 'error',
         },
       ],
@@ -390,7 +392,7 @@ const columns: ColumnDef<Employee>[] = [
   },
 ];
 
-const meta: Meta<typeof TanTable> = {
+const meta: Meta<TanTableProps<Employee>> = {
   title: 'Components/TanTable',
   component: TanTable,
   parameters: {
@@ -400,13 +402,13 @@ const meta: Meta<typeof TanTable> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof TanTable>;
+type Story = StoryObj<TanTableProps<Employee>>;
 
 // Basic table with real data subset
 export const Basic: Story = {
   args: {
     data: employees.slice(0, 5),
-    columns: columns.slice(0, 4) as any, // Show fewer columns for basic
+    columns: columns.slice(0, 4),
     showToolbar: false,
     showPagination: false,
   },
@@ -416,7 +418,7 @@ export const Basic: Story = {
 export const FullFeatured: Story = {
   args: {
     data: employees,
-    columns: columns as any,
+    columns: columns,
     enableRowSelection: true,
     enableSorting: true,
     enableColumnFilters: true,
@@ -438,8 +440,8 @@ export const FullFeatured: Story = {
           icon: <AddIcon />,
           onClick: () => alert('Add new employee'),
           color: 'primary',
-        }
-      ]
+        },
+      ],
     },
   },
 };
@@ -448,7 +450,7 @@ export const FullFeatured: Story = {
 export const Loading: Story = {
   args: {
     data: [],
-    columns: columns as any,
+    columns: columns,
     loading: true,
   },
 };
@@ -457,8 +459,8 @@ export const Loading: Story = {
 export const Empty: Story = {
   args: {
     data: [],
-    columns: columns as any,
-    emptyMessage: "No staff members found matching your criteria.",
+    columns: columns,
+    emptyMessage: 'No staff members found matching your criteria.',
   },
 };
 
@@ -466,7 +468,7 @@ export const Empty: Story = {
 export const InlineEditing: Story = {
   args: {
     data: employees,
-    columns: columns.filter(c => c.cellType !== 'action') as any,
+    columns: columns.filter((c) => c.cellType !== 'action'),
     enableEditing: true,
     editMode: 'cell',
     onEditingRowSave: (row: any) => {
@@ -480,7 +482,7 @@ export const InlineEditing: Story = {
 export const RowEditing: Story = {
   args: {
     data: employees,
-    columns: columns as any,
+    columns: columns,
     enableEditing: true,
     editMode: 'row',
     onEditingRowSave: (row: any) => {
@@ -494,7 +496,7 @@ export const RowEditing: Story = {
 export const CellSelection: Story = {
   args: {
     data: employees,
-    columns: columns as any,
+    columns: columns,
     enableCellSelection: true,
     enableRowSelection: true,
     enableColumnOrdering: true,
@@ -510,7 +512,7 @@ export const Virtualization: Story = {
       id: i,
       name: `${employees[i % employees.length].name} ${i}`,
     })),
-    columns: columns as any,
+    columns: columns,
     enableVirtualization: true,
     enablePagination: false,
     sx: { height: 500 },
@@ -521,22 +523,29 @@ export const ListView: Story = {
   args: {
     ...FullFeatured.args,
     enableListView: true,
-    renderListViewItem: (row) => {
-      const employee = row.original as Employee;
+    renderListViewItem: (row: Row<Employee>) => {
+      const employee = row.original;
       return (
         <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
           <Avatar src={employee.avatar} alt={employee.name} />
           <Box sx={{ flexGrow: 1 }}>
             <Typography variant="subtitle1">{employee.name}</Typography>
-            <Typography variant="body2" color="text.secondary">{employee.position}</Typography>
+            <Typography variant="body2" color="text.secondary">
+              {employee.position}
+            </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-             <Typography variant="body2" color={employee.status === 'Active' ? 'success.main' : 'text.secondary'}>
-               {employee.status}
-             </Typography>
-             <IconButton size="small">
-               <MoreVertIcon />
-             </IconButton>
+            <Typography
+              variant="body2"
+              color={
+                employee.status === 'Active' ? 'success.main' : 'text.secondary'
+              }
+            >
+              {employee.status}
+            </Typography>
+            <IconButton size="small">
+              <MoreVertIcon />
+            </IconButton>
           </Box>
         </Box>
       );

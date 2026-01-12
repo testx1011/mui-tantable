@@ -1,0 +1,157 @@
+import type { ReactNode } from 'react';
+import type {
+  ColumnDef as TanStackColumnDef,
+  Table as TanStackTable,
+  Row,
+  Cell,
+  Column,
+} from '@tanstack/react-table';
+import type { SxProps, Theme } from '@mui/material';
+import type {
+  CellType,
+  CellConfig,
+  TextCellConfig,
+  NumberCellConfig,
+  DateCellConfig,
+  BooleanCellConfig,
+  ActionCellConfig,
+  LinkCellConfig,
+  ChipCellConfig,
+  AvatarCellConfig,
+  ProgressCellConfig,
+} from './cells';
+import { FilterConfig, FilterType } from './filters';
+
+// ============================================================================
+// Column Definition Types
+// ============================================================================
+
+export interface BaseColumnDef<TData> extends Omit<
+  TanStackColumnDef<TData>,
+  'cell'
+> {
+  /** Column unique identifier */
+  id?: string;
+  /** Column header label */
+  header?: TanStackColumnDef<TData>['header'];
+  /** Accessor key for data */
+  accessorKey?: keyof TData & string;
+  /** Accessor function */
+  accessorFn?: (row: TData) => unknown;
+  /** Cell renderer */
+  cell?: CellRenderer<TData>;
+  /** Enable sorting for this column */
+  enableSorting?: boolean;
+  /** Enable filtering for this column */
+  enableColumnFilter?: boolean;
+  /** Filter type */
+  filterType?: FilterType;
+  /** Filter configuration */
+  filterConfig?: FilterConfig;
+  /** Enable resizing */
+  enableResizing?: boolean;
+  /** Enable pinning */
+  enablePinning?: boolean;
+  /** Enable hiding */
+  enableHiding?: boolean;
+  /** Column width */
+  size?: number;
+  /** Min column width */
+  minSize?: number;
+  /** Max column width */
+  maxSize?: number;
+  /** Column alignment */
+  align?: 'left' | 'center' | 'right';
+  /** Column description (for tooltips) */
+  description?: string;
+  /** Is column editable */
+  editable?: boolean | ((row: Row<TData>) => boolean);
+  /** Custom styles */
+  sx?: SxProps<Theme>;
+}
+
+export interface TextColumnDef<TData> extends BaseColumnDef<TData> {
+  cellType: 'text';
+  cellConfig?: TextCellConfig;
+}
+
+export interface NumberColumnDef<TData> extends BaseColumnDef<TData> {
+  cellType: 'number';
+  cellConfig?: NumberCellConfig;
+}
+
+export interface DateColumnDef<TData> extends BaseColumnDef<TData> {
+  cellType: 'date';
+  cellConfig?: DateCellConfig;
+}
+
+export interface BooleanColumnDef<TData> extends BaseColumnDef<TData> {
+  cellType: 'boolean';
+  cellConfig?: BooleanCellConfig<TData>;
+}
+
+export interface ActionColumnDef<TData> extends BaseColumnDef<TData> {
+  cellType: 'action';
+  cellConfig: ActionCellConfig<TData>;
+}
+
+export interface LinkColumnDef<TData> extends BaseColumnDef<TData> {
+  cellType: 'link';
+  cellConfig: LinkCellConfig<TData>;
+}
+
+export interface ChipColumnDef<TData> extends BaseColumnDef<TData> {
+  cellType: 'chip';
+  cellConfig?: ChipCellConfig;
+}
+
+export interface AvatarColumnDef<TData> extends BaseColumnDef<TData> {
+  cellType: 'avatar';
+  cellConfig?: AvatarCellConfig;
+}
+
+export interface ProgressColumnDef<TData> extends BaseColumnDef<TData> {
+  cellType: 'progress';
+  cellConfig?: ProgressCellConfig;
+}
+
+export interface CustomColumnDef<TData> extends BaseColumnDef<TData> {
+  cellType: 'custom';
+  cellConfig?: any;
+}
+
+/**
+ * Generic column definition when `cellType` is not specified or for backward compatibility.
+ * This allows consumers to omit `cellType` and keep using the previous shape.
+ */
+export interface GenericColumnDef<TData> extends BaseColumnDef<TData> {
+  cellType?: CellType;
+  cellConfig?: CellConfig<TData>;
+}
+
+export type TanTableColumnDef<TData> =
+  | TextColumnDef<TData>
+  | NumberColumnDef<TData>
+  | DateColumnDef<TData>
+  | BooleanColumnDef<TData>
+  | ActionColumnDef<TData>
+  | LinkColumnDef<TData>
+  | ChipColumnDef<TData>
+  | AvatarColumnDef<TData>
+  | ProgressColumnDef<TData>
+  | CustomColumnDef<TData>
+  | GenericColumnDef<TData>;
+
+export type CellRenderer<TData> = (
+  props: CellRendererProps<TData>
+) => ReactNode;
+
+export interface CellRendererProps<TData> {
+  cell: Cell<TData, unknown>;
+  row: Row<TData>;
+  table: TanStackTable<TData>;
+  getValue: () => any;
+  column: Column<TData, unknown>;
+}
+
+// Types are exported above via their declarations.

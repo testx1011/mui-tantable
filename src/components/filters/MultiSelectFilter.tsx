@@ -1,6 +1,7 @@
 import { FormControl, InputLabel, Select, MenuItem, Chip, Box } from '@mui/material';
+import type { SelectChangeEvent } from '@mui/material/Select';
 import type { Column } from '@tanstack/react-table';
-import type { MultiSelectFilterConfig } from '../../types';
+import type { MultiSelectFilterConfig } from '../../types/filters';
 
 interface MultiSelectFilterProps<TData> {
   column: Column<TData, unknown>;
@@ -13,10 +14,10 @@ export function MultiSelectFilter<TData>({ column, config }: MultiSelectFilterPr
   }
 
   const { options, placeholder = 'Select...', maxSelections } = config;
-  const columnFilterValue = (column.getFilterValue() as any[]) || [];
+  const columnFilterValue = (column.getFilterValue() as unknown[]) || [];
 
-  const handleChange = (event: { target: { value: unknown } }) => {
-    const value = event.target.value as any[];
+  const handleChange = (event: SelectChangeEvent<unknown[]>) => {
+    const value = event.target.value as unknown[];
     if (maxSelections && value.length > maxSelections) {
       return;
     }
@@ -31,11 +32,11 @@ export function MultiSelectFilter<TData>({ column, config }: MultiSelectFilterPr
         value={columnFilterValue}
         onChange={handleChange}
         label={placeholder}
-        renderValue={(selected) => (
+        renderValue={(selected: unknown[]) => (
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-            {(selected as any[]).map((value) => {
+            {(selected as unknown[]).map((value) => {
               const option = options.find((opt) => opt.value === value);
-              return <Chip key={String(value)} label={option?.label || value} size="small" />;
+              return <Chip key={String(value)} label={(option?.label as React.ReactNode) ?? String(value)} size="small" />;
             })}
           </Box>
         )}

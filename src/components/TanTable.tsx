@@ -1,4 +1,5 @@
 import React, { useMemo, useEffect, useCallback } from 'react';
+import type { Cell } from '@tanstack/react-table';
 import {
   useReactTable,
   getCoreRowModel,
@@ -8,16 +9,14 @@ import {
   getExpandedRowModel,
   flexRender,
   ColumnDef as TanStackColumnDef,
-  Column,
 } from '@tanstack/react-table';
-import { useVirtualizer } from '@tanstack/react-virtual';
+// virtualizer is used via hook
 import {
   Box,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
   Paper,
   Checkbox,
@@ -28,12 +27,12 @@ import {
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-
-import { TanTableProps, ColumnDef } from '../types';
-import { ColumnHeader } from './ColumnHeader';
+// ColumnHeader is used inside TableHeaderComponent
+import type { TanTableProps, Density, TanTableState } from '../types/core';
+import type { TableState } from '@tanstack/react-table';
+import type { TanTableColumnDef } from '../types/columns';
 import { TablePagination } from './TablePagination';
 import { TableToolbar } from './TableToolbar';
-
 import {
   TextCell,
   NumberCell,
@@ -46,28 +45,12 @@ import {
   ProgressCell,
 } from './cells';
 import { smartFilter } from '../utils/filters';
-
 import { EditCell } from './EditCell';
+import { useTableVirtualizer } from './table/useTableVirtualizer';
+import { TableHeaderComponent } from './table/TableHeader';
+import { getCommonPinningStyles } from './table/utils';
 
-const getCommonPinningStyles = (column: Column<any>): any => {
-  const isPinned = column.getIsPinned();
-  const isLastLeftPinnedColumn = isPinned === 'left' && column.getIsLastColumn('left');
-  const isFirstRightPinnedColumn = isPinned === 'right' && column.getIsFirstColumn('right');
-
-  return {
-    boxShadow: isLastLeftPinnedColumn
-      ? '-4px 0 4px -4px gray inset'
-      : isFirstRightPinnedColumn
-        ? '4px 0 4px -4px gray inset'
-        : undefined,
-    left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
-    right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
-    opacity: 1,
-    position: isPinned ? 'sticky' : 'relative',
-    zIndex: isPinned ? 1 : 0,
-    backgroundColor: isPinned ? 'background.paper' : undefined,
-  };
-};
+// using getCommonPinningStyles from './table/utils'
 
 export function TanTable<TData>({
   data,
@@ -81,6 +64,7 @@ export function TanTable<TData>({
   enablePagination = true,
   enableExpanding = false,
   enableVirtualization = false,
+  virtualizationThreshold = 100,
   enableColumnResizing = false,
   enableColumnOrdering = false,
   initialState,
@@ -100,6 +84,7 @@ export function TanTable<TData>({
   serverSide = false,
   serverSideHandlers,
   sx,
+  tableContainerSx,
   className,
   renderSubComponent,
   getRowId,
@@ -117,7 +102,10 @@ export function TanTable<TData>({
   const [view, setView] = React.useState<'grid' | 'list'>('grid');
   const [editingRowId, setEditingRowId] = React.useState<string | null>(null);
   const [editingCellId, setEditingCellId] = React.useState<string | null>(null);
-  const [selectedCell, setSelectedCell] = React.useState<{ rowId: string, colId: string } | null>(null);
+  const [selectedCell, setSelectedCell] = React.useState<{
+    rowId: string;
+    colId: string;
+  } | null>(null);
   const [editingData, setEditingData] = React.useState<Partial<TData>>({});
 
   const tableContainerRef = React.useRef<HTMLDivElement>(null);
@@ -127,7 +115,7 @@ export function TanTable<TData>({
   }, [density]);
 
   // Enhance columns with cell renderers based on cellType
-  const enhancedColumns = useMemo<ColumnDef<TData>[]>(() => {
+  const enhancedColumns = useMemo<TanTableColumnDef<TData>[]>(() => {
     return columns.map((col) => {
       const column = { ...col };
 
@@ -144,15 +132,33 @@ export function TanTable<TData>({
 
       if (!CellComponent && column.cellType) {
         switch (column.cellType) {
-          case 'text': CellComponent = TextCell; break;
-          case 'number': CellComponent = NumberCell; break;
-          case 'date': CellComponent = DateCell; break;
-          case 'boolean': CellComponent = BooleanCell; break;
-          case 'action': CellComponent = ActionCell; break;
-          case 'link': CellComponent = LinkCell; break;
-          case 'chip': CellComponent = ChipCell; break;
-          case 'avatar': CellComponent = AvatarCell; break;
-          case 'progress': CellComponent = ProgressCell; break;
+          case 'text':
+            CellComponent = TextCell;
+            break;
+          case 'number':
+            CellComponent = NumberCell;
+            break;
+          case 'date':
+            CellComponent = DateCell;
+            break;
+          case 'boolean':
+            CellComponent = BooleanCell;
+            break;
+          case 'action':
+            CellComponent = ActionCell;
+            break;
+          case 'link':
+            CellComponent = LinkCell;
+            break;
+          case 'chip':
+            CellComponent = ChipCell;
+            break;
+          case 'avatar':
+            CellComponent = AvatarCell;
+            break;
+          case 'progress':
+            CellComponent = ProgressCell;
+            break;
         }
       }
 
@@ -160,31 +166,46 @@ export function TanTable<TData>({
       column.cell = (props: any) => {
         const { row, column: colInstance, getValue } = props;
         const isRowEditing = editMode === 'row' && editingRowId === row.id;
-        const isCellEditing = editMode === 'cell' && editingCellId === `${row.id}_${colInstance.id}`;
+        const isCellEditing =
+          editMode === 'cell' &&
+          editingCellId === `${row.id}_${colInstance.id}`;
 
-        const isEditable = typeof column.editable === 'function'
-          ? column.editable(row)
-          : column.editable;
+        const isEditable =
+          typeof column.editable === 'function'
+            ? column.editable(row)
+            : column.editable;
 
         // If in edit mode and column is editable
-        if ((isRowEditing || isCellEditing) && isEditable !== false && column.cellType !== 'action') {
+        if (
+          (isRowEditing || isCellEditing) &&
+          isEditable !== false &&
+          column.cellType !== 'action'
+        ) {
           return (
             <EditCell
               {...props}
-              value={editingData[column.accessorKey as keyof TData] ?? getValue()}
+              value={
+                editingData[column.accessorKey as keyof TData] ?? getValue()
+              }
               onChange={(value: any) => {
-                setEditingData(prev => ({
+                setEditingData((prev) => ({
                   ...prev,
-                  [column.accessorKey as keyof TData]: value
+                  [column.accessorKey as keyof TData]: value,
                 }));
               }}
               onSave={() => {
                 if (editMode === 'cell') {
-                  onEditingRowSave?.({ ...row.original, ...editingData } as TData);
+                  onEditingRowSave?.({
+                    ...row.original,
+                    ...editingData,
+                  } as TData);
                   setEditingCellId(null);
                   setEditingData({});
                 } else if (editMode === 'row') {
-                  onEditingRowSave?.({ ...row.original, ...editingData } as TData);
+                  onEditingRowSave?.({
+                    ...row.original,
+                    ...editingData,
+                  } as TData);
                   setEditingRowId(null);
                   setEditingData({});
                 }
@@ -218,7 +239,7 @@ export function TanTable<TData>({
               setEditingRowId(null);
               setEditingData({});
               onEditingRowCancel?.();
-            }
+            },
           };
 
           if (typeof CellComponent === 'function') {
@@ -251,8 +272,13 @@ export function TanTable<TData>({
     columns: enhancedColumns as TanStackColumnDef<TData, any>[],
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: enableSorting ? getSortedRowModel() : undefined,
-    getFilteredRowModel: enableColumnFilters || enableGlobalFilter ? getFilteredRowModel() : undefined,
-    getPaginationRowModel: enablePagination ? getPaginationRowModel() : undefined,
+    getFilteredRowModel:
+      enableColumnFilters || enableGlobalFilter
+        ? getFilteredRowModel()
+        : undefined,
+    getPaginationRowModel: enablePagination
+      ? getPaginationRowModel()
+      : undefined,
     getExpandedRowModel: enableExpanding ? getExpandedRowModel() : undefined,
     enableRowSelection,
     enableMultiRowSelection,
@@ -272,19 +298,56 @@ export function TanTable<TData>({
       ...initialState,
       ...state,
     },
-    onStateChange: onStateChange as any,
+    onStateChange:
+      onStateChange &&
+      ((updater: TableState | ((prev: TableState) => TableState)) => {
+        if (typeof updater === 'function') {
+          try {
+            const newState = (updater as (prev: TableState) => TableState)(
+              table.getState()
+            );
+            const tanState: TanTableState = {
+              ...(newState as unknown as object),
+              // preserve density from previous state or default
+              density:
+                (newState as unknown as { density?: Density }).density ??
+                (table.getState() as unknown as { density?: Density })
+                  .density ??
+                'standard',
+            } as TanTableState;
+            onStateChange(tanState);
+          } catch (e) {
+            // fallback: ignore
+          }
+        } else {
+          const tanState: TanTableState = {
+            ...(updater as unknown as object),
+            density:
+              (updater as unknown as { density?: Density }).density ??
+              (table.getState() as unknown as { density?: Density }).density ??
+              'standard',
+          } as TanTableState;
+          onStateChange(tanState);
+        }
+      }),
     manualPagination: serverSide,
     manualSorting: serverSide,
     manualFiltering: serverSide,
-    pageCount: serverSide && serverSideHandlers?.totalRowCount
-      ? Math.ceil(serverSideHandlers.totalRowCount / (state?.pagination?.pageSize || 10))
-      : undefined,
+    pageCount:
+      serverSide && serverSideHandlers?.totalRowCount
+        ? Math.ceil(
+            serverSideHandlers.totalRowCount /
+              (state?.pagination?.pageSize || 10)
+          )
+        : undefined,
   });
 
   // Handle row selection changes
   useEffect(() => {
     if (onRowSelectionChange) {
-      const selectedRows = table.getSelectedRowModel().rows.map((row) => row.original);
+      const selectedRows = table
+        .getSelectedRowModel()
+        .rows.map((row) => row.original);
       onRowSelectionChange(selectedRows);
     }
   }, [table.getState().rowSelection, onRowSelectionChange]);
@@ -304,31 +367,39 @@ export function TanTable<TData>({
   }, [enableCellSelection]);
 
   // Density styles
-  const densityPadding = {
+  const densityPadding: Record<Density, string> = {
     compact: '4px 8px',
     standard: '8px 16px',
     comfortable: '12px 16px',
   };
 
-  const cellPadding = densityPadding[currentDensity];
+  const cellPadding = densityPadding[currentDensity ?? 'standard'];
 
-  // Virtualization
-  const { rows } = table.getRowModel();
+  // Decide whether to virtualize: explicit prop > auto threshold
+  const effectiveVirtualization =
+    enableVirtualization === true
+      ? true
+      : enableVirtualization === false
+        ? false
+        : (data?.length ?? 0) >= (virtualizationThreshold ?? 100);
 
-  const rowVirtualizer = useVirtualizer({
-    count: rows.length,
-    getScrollElement: () => tableContainerRef.current,
-    estimateSize: () => currentDensity === 'compact' ? 37 : currentDensity === 'comfortable' ? 77 : 53,
-    overscan: 5,
-  });
+  // Virtualization (hook)
+  const { rowVirtualizer, virtualItems, visibleRows } = useTableVirtualizer(
+    effectiveVirtualization,
+    table.getRowModel().rows,
+    tableContainerRef,
+    currentDensity
+  );
 
   // Scroll into view when selection changes
   useEffect(() => {
     if (!selectedCell) return;
 
     // Handle Virtualization Vertical Scroll
-    if (enableVirtualization) {
-      const rowIndex = table.getRowModel().rows.findIndex(r => r.id === selectedCell.rowId);
+    if (effectiveVirtualization) {
+      const rowIndex = table
+        .getRowModel()
+        .rows.findIndex((r) => r.id === selectedCell.rowId);
       if (rowIndex !== -1) {
         rowVirtualizer.scrollToIndex(rowIndex);
       }
@@ -345,111 +416,145 @@ export function TanTable<TData>({
         cellElement.scrollIntoView({ block: 'nearest', inline: 'nearest' });
       }
     }, 0);
-
-  }, [selectedCell, enableVirtualization, rowVirtualizer, table]);
+  }, [selectedCell, effectiveVirtualization, rowVirtualizer, table]);
 
   // Handle Keyboard Shortcuts (Copy & Navigation)
-  const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
-    // Copy Logic
-    if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
-      const selectedRows = table.getSelectedRowModel().rows;
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      // Copy Logic
+      if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
+        const selectedRows = table.getSelectedRowModel().rows;
 
-      // 1. Cell Copy Priority
-      if (selectedCell) {
-        const row = table.getRowModel().rows.find(r => r.id === selectedCell.rowId);
-        if (row) {
-          const cell = row.getVisibleCells().find(c => c.column.id === selectedCell.colId);
-          if (cell) {
-            const value = cell.getValue();
-            let textValue = String(value ?? '');
-            if (value instanceof Date) {
-              textValue = value.toLocaleDateString();
-            } else if (typeof value === 'object' && value !== null) {
-              textValue = JSON.stringify(value);
+        // 1. Cell Copy Priority
+        if (selectedCell) {
+          const row = table
+            .getRowModel()
+            .rows.find((r) => r.id === selectedCell.rowId);
+          if (row) {
+            const cell = row
+              .getVisibleCells()
+              .find((c) => c.column.id === selectedCell.colId);
+            if (cell) {
+              const value = cell.getValue();
+              let textValue = String(value ?? '');
+              if (value instanceof Date) {
+                textValue = value.toLocaleDateString();
+              } else if (typeof value === 'object' && value !== null) {
+                textValue = JSON.stringify(value);
+              }
+              navigator.clipboard.writeText(textValue);
+              event.preventDefault();
+              return;
             }
-            navigator.clipboard.writeText(textValue);
+          }
+        }
+
+        // 2. Row Copy Priority
+        if (selectedRows.length > 0) {
+          const visibleColumns = table.getVisibleLeafColumns();
+
+          const tsv = selectedRows
+            .map((row) => {
+              return visibleColumns
+                .map((col) => {
+                  const cell = row
+                    .getVisibleCells()
+                    .find((c) => c.column.id === col.id);
+                  let val = cell?.getValue();
+                  if (val instanceof Date) return val.toLocaleDateString();
+                  if (typeof val === 'object' && val !== null)
+                    return JSON.stringify(val);
+                  return String(val ?? '');
+                })
+                .join('\t');
+            })
+            .join('\n');
+
+          if (tsv) {
+            navigator.clipboard.writeText(tsv);
             event.preventDefault();
+          }
+        }
+      }
+
+      // Navigation Logic
+      if (enableCellSelection) {
+        const key = event.key;
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
+          event.preventDefault();
+
+          const visibleRows = table.getRowModel().rows;
+          const visibleColumns = table.getVisibleLeafColumns();
+
+          if (!selectedCell) {
+            if (visibleRows.length > 0 && visibleColumns.length > 0) {
+              setSelectedCell({
+                rowId: visibleRows[0].id,
+                colId: visibleColumns[0].id,
+              });
+            }
             return;
           }
-        }
-      }
 
-      // 2. Row Copy Priority
-      if (selectedRows.length > 0) {
-        const visibleColumns = table.getVisibleLeafColumns();
+          const currentRowIndex = visibleRows.findIndex(
+            (r) => r.id === selectedCell.rowId
+          );
+          const currentColIndex = visibleColumns.findIndex(
+            (c) => c.id === selectedCell.colId
+          );
 
-        const tsv = selectedRows.map(row => {
-          return visibleColumns.map(col => {
-            const cell = row.getVisibleCells().find(c => c.column.id === col.id);
-            let val = cell?.getValue();
-            if (val instanceof Date) return val.toLocaleDateString();
-            if (typeof val === 'object' && val !== null) return JSON.stringify(val);
-            return String(val ?? '');
-          }).join('\t');
-        }).join('\n');
+          if (currentRowIndex === -1 || currentColIndex === -1) return;
 
-        if (tsv) {
-          navigator.clipboard.writeText(tsv);
-          event.preventDefault();
-        }
-      }
-    }
+          let nextRowIndex = currentRowIndex;
+          let nextColIndex = currentColIndex;
 
-    // Navigation Logic
-    if (enableCellSelection) {
-      const key = event.key;
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
-        event.preventDefault();
-
-        const visibleRows = table.getRowModel().rows;
-        const visibleColumns = table.getVisibleLeafColumns();
-
-        if (!selectedCell) {
-          if (visibleRows.length > 0 && visibleColumns.length > 0) {
-            setSelectedCell({ rowId: visibleRows[0].id, colId: visibleColumns[0].id });
+          switch (key) {
+            case 'ArrowUp':
+              nextRowIndex = Math.max(0, currentRowIndex - 1);
+              break;
+            case 'ArrowDown':
+              nextRowIndex = Math.min(
+                visibleRows.length - 1,
+                currentRowIndex + 1
+              );
+              break;
+            case 'ArrowLeft':
+              nextColIndex = Math.max(0, currentColIndex - 1);
+              break;
+            case 'ArrowRight':
+              nextColIndex = Math.min(
+                visibleColumns.length - 1,
+                currentColIndex + 1
+              );
+              break;
           }
-          return;
+
+          if (
+            nextRowIndex !== currentRowIndex ||
+            nextColIndex !== currentColIndex
+          ) {
+            setSelectedCell({
+              rowId: visibleRows[nextRowIndex].id,
+              colId: visibleColumns[nextColIndex].id,
+            });
+          }
         }
 
-        const currentRowIndex = visibleRows.findIndex(r => r.id === selectedCell.rowId);
-        const currentColIndex = visibleColumns.findIndex(c => c.id === selectedCell.colId);
-
-        if (currentRowIndex === -1 || currentColIndex === -1) return;
-
-        let nextRowIndex = currentRowIndex;
-        let nextColIndex = currentColIndex;
-
-        switch (key) {
-          case 'ArrowUp':
-            nextRowIndex = Math.max(0, currentRowIndex - 1);
-            break;
-          case 'ArrowDown':
-            nextRowIndex = Math.min(visibleRows.length - 1, currentRowIndex + 1);
-            break;
-          case 'ArrowLeft':
-            nextColIndex = Math.max(0, currentColIndex - 1);
-            break;
-          case 'ArrowRight':
-            nextColIndex = Math.min(visibleColumns.length - 1, currentColIndex + 1);
-            break;
-        }
-
-        if (nextRowIndex !== currentRowIndex || nextColIndex !== currentColIndex) {
-          setSelectedCell({
-            rowId: visibleRows[nextRowIndex].id,
-            colId: visibleColumns[nextColIndex].id
-          });
+        // Enter to Edit
+        if (
+          key === 'Enter' &&
+          enableEditing &&
+          editMode === 'cell' &&
+          selectedCell
+        ) {
+          event.preventDefault();
+          setEditingCellId(`${selectedCell.rowId}_${selectedCell.colId}`);
+          setEditingData({});
         }
       }
-
-      // Enter to Edit
-      if (key === 'Enter' && enableEditing && editMode === 'cell' && selectedCell) {
-        event.preventDefault();
-        setEditingCellId(`${selectedCell.rowId}_${selectedCell.colId}`);
-        setEditingData({});
-      }
-    }
-  }, [table, selectedCell, enableCellSelection, enableEditing, editMode, enableVirtualization, rowVirtualizer]);
+    },
+    [table, selectedCell, enableCellSelection, enableEditing, editMode]
+  );
 
   // Error state
   if (error) {
@@ -481,58 +586,36 @@ export function TanTable<TData>({
         />
       )}
 
-      <TableContainer component={Paper} ref={tableContainerRef} sx={{ maxHeight: enableVirtualization ? 600 : undefined, overflow: 'auto' }}>
-        <Table size={currentDensity === 'compact' ? 'small' : 'medium'} stickyHeader>
-          <TableHead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {enableExpanding && <TableCell sx={{ width: 48, p: cellPadding }} />}
-                {enableRowSelection && (
-                  <TableCell sx={{ width: 48, p: cellPadding }}>
-                    {enableMultiRowSelection && (
-                      <Checkbox
-                        checked={table.getIsAllRowsSelected()}
-                        indeterminate={table.getIsSomeRowsSelected()}
-                        onChange={table.getToggleAllRowsSelectedHandler()}
-                        size={currentDensity === 'compact' ? 'small' : 'medium'}
-                      />
-                    )}
-                  </TableCell>
-                )}
-                {headerGroup.headers.map((header) => {
-                  const columnDef = header.column.columnDef as ColumnDef<TData>;
-                  const align = columnDef.align || 'left';
-
-                  return (
-                    <TableCell
-                      key={header.id}
-                      align={align}
-                      sx={{
-                        p: cellPadding,
-                        width: header.getSize(),
-                        minWidth: columnDef.minSize,
-                        maxWidth: columnDef.maxSize,
-                        ...getCommonPinningStyles(header.column),
-                      }}
-                    >
-                      {header.isPlaceholder ? null : (
-                        <ColumnHeader
-                          header={header}
-                          title={flexRender(header.column.columnDef.header, header.getContext())}
-                          enableResizing={enableColumnResizing}
-                          enableReordering={enableColumnOrdering}
-                        />
-                      )}
-                    </TableCell>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHead>
+      <TableContainer
+        component={Paper}
+        ref={tableContainerRef}
+        sx={{
+          maxHeight: effectiveVirtualization ? 600 : undefined,
+          overflow: 'auto',
+          ...((tableContainerSx as any) || {}),
+        }}
+      >
+        <Table
+          size={currentDensity === 'compact' ? 'small' : 'medium'}
+          stickyHeader
+          sx={{ tableLayout: 'fixed' }}
+        >
+          <TableHeaderComponent
+            table={table}
+            cellPadding={cellPadding}
+            enableExpanding={enableExpanding}
+            enableRowSelection={Boolean(enableRowSelection)}
+            enableMultiRowSelection={enableMultiRowSelection}
+            enableColumnResizing={enableColumnResizing}
+            enableColumnOrdering={enableColumnOrdering}
+            currentDensity={currentDensity}
+          />
 
           <TableBody>
             {loading ? (
-              Array.from({ length: table.getState().pagination.pageSize || 10 }).map((_, rowIndex) => (
+              Array.from({
+                length: table.getState().pagination.pageSize || 10,
+              }).map((_, rowIndex) => (
                 <TableRow key={`skeleton-${rowIndex}`}>
                   {enableExpanding && (
                     <TableCell sx={{ p: cellPadding }}>
@@ -549,12 +632,16 @@ export function TanTable<TData>({
                       key={`skeleton-${rowIndex}-${column.id}`}
                       sx={{
                         p: cellPadding,
-                        ...getCommonPinningStyles(column)
+                        ...getCommonPinningStyles(column),
                       }}
                     >
                       <Skeleton
                         variant="text"
-                        width={['60%', '75%', '40%', '90%', '55%', '85%', '70%'][(rowIndex + column.id.length) % 7]}
+                        width={
+                          ['60%', '75%', '40%', '90%', '55%', '85%', '70%'][
+                            (rowIndex + column.id.length) % 7
+                          ]
+                        }
                       />
                     </TableCell>
                   ))}
@@ -575,18 +662,30 @@ export function TanTable<TData>({
               </TableRow>
             ) : (
               <>
-                {enableVirtualization && rowVirtualizer.getVirtualItems().length > 0 && (
-                  <TableRow style={{ height: rowVirtualizer.getVirtualItems()[0].start }}>
-                    <TableCell colSpan={table.getVisibleLeafColumns().length + (enableRowSelection ? 1 : 0) + (enableExpanding ? 1 : 0)} style={{ padding: 0, border: 0 }} />
+                {effectiveVirtualization && virtualItems.length > 0 && (
+                  <TableRow style={{ height: virtualItems[0].start }}>
+                    <TableCell
+                      colSpan={
+                        table.getVisibleLeafColumns().length +
+                        (enableRowSelection ? 1 : 0) +
+                        (enableExpanding ? 1 : 0)
+                      }
+                      style={{ padding: 0, border: 0 }}
+                    />
                   </TableRow>
                 )}
-                {(enableVirtualization ? rowVirtualizer.getVirtualItems() : table.getRowModel().rows).map((item) => {
-                  const row = enableVirtualization ? rows[(item as any).index] : (item as any);
 
+                {visibleRows.map((row) => {
                   if (view === 'list' && enableListView && renderListViewItem) {
                     return (
                       <TableRow key={row.id}>
-                        <TableCell colSpan={table.getVisibleLeafColumns().length + (enableRowSelection ? 1 : 0) + (enableExpanding ? 1 : 0)}>
+                        <TableCell
+                          colSpan={
+                            table.getVisibleLeafColumns().length +
+                            (enableRowSelection ? 1 : 0) +
+                            (enableExpanding ? 1 : 0)
+                          }
+                        >
                           {renderListViewItem(row)}
                         </TableCell>
                       </TableRow>
@@ -607,7 +706,12 @@ export function TanTable<TData>({
                           onRowDoubleClick?.(row);
                         }}
                         sx={{
-                          cursor: onRowClick || onRowDoubleClick || (enableEditing && editMode === 'row') ? 'pointer' : 'default',
+                          cursor:
+                            onRowClick ||
+                            onRowDoubleClick ||
+                            (enableEditing && editMode === 'row')
+                              ? 'pointer'
+                              : 'default',
                         }}
                       >
                         {enableExpanding && (
@@ -643,73 +747,114 @@ export function TanTable<TData>({
                                   setSelectedCell(null);
                                 }
                               }}
-                              size={density === 'compact' ? 'small' : 'medium'}
+                              size={
+                                currentDensity === 'compact'
+                                  ? 'small'
+                                  : 'medium'
+                              }
                             />
                           </TableCell>
                         )}
-                        {row.getVisibleCells().map((cell: any) => {
-                          const columnDef = cell.column.columnDef as ColumnDef<TData>;
-                          const align = columnDef.align || 'left';
+                        {row
+                          .getVisibleCells()
+                          .map((cell: Cell<TData, unknown>) => {
+                            const columnDef = cell.column
+                              .columnDef as TanTableColumnDef<TData>;
+                            const align = columnDef.align || 'left';
 
-                          return (
-                            <TableCell
-                              key={cell.id}
-                              data-row-id={row.id}
-                              data-col-id={cell.column.id}
-                              align={align}
-                              onClick={(e) => {
-                                if (enableCellSelection) {
-                                  e.stopPropagation();
-                                  setSelectedCell({ rowId: row.id, colId: cell.column.id });
-                                }
-                              }}
-                              sx={{
-                                p: cellPadding,
-                                ...getCommonPinningStyles(cell.column),
-                                ...(enableCellSelection && selectedCell?.rowId === row.id && selectedCell?.colId === cell.column.id && {
-                                  outline: '2px solid',
-                                  outlineColor: 'primary.main',
-                                  outlineOffset: '-2px',
-                                  zIndex: 1,
-                                })
-                              }}
-                              onDoubleClick={(e) => {
-                                if (enableEditing && editMode === 'cell') {
-                                  e.stopPropagation();
-                                  setEditingCellId(`${row.id}_${cell.column.id}`);
-                                  setEditingData({});
-                                }
-                              }}
-                            >
-                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                            </TableCell>
-                          );
-                        })}
+                            return (
+                              <TableCell
+                                key={cell.id}
+                                data-row-id={row.id}
+                                data-col-id={cell.column.id}
+                                align={align}
+                                onClick={(e) => {
+                                  if (enableCellSelection) {
+                                    e.stopPropagation();
+                                    setSelectedCell({
+                                      rowId: row.id,
+                                      colId: cell.column.id,
+                                    });
+                                  }
+                                }}
+                                sx={{
+                                  p: cellPadding,
+                                  ...getCommonPinningStyles(cell.column),
+                                  ...(enableCellSelection &&
+                                    selectedCell?.rowId === row.id &&
+                                    selectedCell?.colId === cell.column.id && {
+                                      outline: '2px solid',
+                                      outlineColor: 'primary.main',
+                                      outlineOffset: '-2px',
+                                      zIndex: 1,
+                                    }),
+                                }}
+                                onDoubleClick={(e) => {
+                                  if (enableEditing && editMode === 'cell') {
+                                    e.stopPropagation();
+                                    setEditingCellId(
+                                      `${row.id}_${cell.column.id}`
+                                    );
+                                    setEditingData({});
+                                  }
+                                }}
+                              >
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext()
+                                )}
+                              </TableCell>
+                            );
+                          })}
                       </TableRow>
-                      {enableExpanding && row.getIsExpanded() && renderSubComponent && (
-                        <TableRow>
-                          <TableCell
-                            colSpan={
-                              table.getAllColumns().length +
-                              (enableRowSelection ? 1 : 0) +
-                              (enableExpanding ? 1 : 0)
-                            }
-                            sx={{ p: 0 }}
-                          >
-                            <Collapse in={row.getIsExpanded()} timeout="auto" unmountOnExit>
-                              <Box sx={{ p: 2 }}>{renderSubComponent({ row })}</Box>
-                            </Collapse>
-                          </TableCell>
-                        </TableRow>
-                      )}
+                      {enableExpanding &&
+                        row.getIsExpanded() &&
+                        renderSubComponent && (
+                          <TableRow>
+                            <TableCell
+                              colSpan={
+                                table.getAllColumns().length +
+                                (enableRowSelection ? 1 : 0) +
+                                (enableExpanding ? 1 : 0)
+                              }
+                              sx={{ p: 0 }}
+                            >
+                              <Collapse
+                                in={row.getIsExpanded()}
+                                timeout="auto"
+                                unmountOnExit
+                              >
+                                <Box sx={{ p: 2 }}>
+                                  {renderSubComponent({ row })}
+                                </Box>
+                              </Collapse>
+                            </TableCell>
+                          </TableRow>
+                        )}
                     </React.Fragment>
-                  )
+                  );
                 })}
-                {enableVirtualization && rowVirtualizer.getVirtualItems().length > 0 && (
-                  <TableRow style={{ height: rowVirtualizer.getTotalSize() - rowVirtualizer.getVirtualItems()[rowVirtualizer.getVirtualItems().length - 1].end }}>
-                    <TableCell colSpan={table.getVisibleLeafColumns().length + (enableRowSelection ? 1 : 0) + (enableExpanding ? 1 : 0)} style={{ padding: 0, border: 0 }} />
-                  </TableRow>
-                )}
+                {effectiveVirtualization &&
+                  rowVirtualizer.getVirtualItems().length > 0 && (
+                    <TableRow
+                      style={{
+                        height:
+                          rowVirtualizer.getTotalSize() -
+                          rowVirtualizer.getVirtualItems()[
+                            rowVirtualizer.getVirtualItems().length - 1
+                          ].end,
+                      }}
+                    >
+                      <TableCell
+                        colSpan={
+                          table.getVisibleLeafColumns().length +
+                          (enableRowSelection ? 1 : 0) +
+                          (enableExpanding ? 1 : 0)
+                        }
+                        style={{ padding: 0, border: 0 }}
+                      />
+                    </TableRow>
+                  )}
               </>
             )}
           </TableBody>
@@ -722,4 +867,3 @@ export function TanTable<TData>({
     </Box>
   );
 }
-

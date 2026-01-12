@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { TextField, Select, MenuItem, FormControl, Box } from '@mui/material';
 import type { Column } from '@tanstack/react-table';
-import type { NumberFilterConfig } from '../../types';
 import { FilterValue, FilterOperator } from '../../utils/filters';
+import { NumberFilterConfig } from '../../types/filters';
 
 interface NumberFilterProps<TData> {
   column: Column<TData, unknown>;

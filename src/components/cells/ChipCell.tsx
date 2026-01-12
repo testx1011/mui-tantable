@@ -1,3 +1,4 @@
+import React from 'react';
 import { Chip } from '@mui/material';
 import type { CellRendererProps, ChipCellConfig } from '../../types';
 
@@ -23,13 +24,15 @@ export function ChipCell<TData>({
   const color = colorMap[stringValue] || 'default';
   const chipIcon = typeof icon === 'function' ? icon(value) : icon;
 
+  const chipElement = typeof chipIcon === 'object' && chipIcon !== null ? (chipIcon as React.ReactElement) : undefined;
+
   return (
     <Chip
       label={stringValue}
       color={color}
       variant={variant}
       size={size}
-      icon={chipIcon as any}
+      icon={chipElement}
     />
   );
 }

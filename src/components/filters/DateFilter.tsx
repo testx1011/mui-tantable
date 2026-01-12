@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { TextField, Select, MenuItem, FormControl, Box } from '@mui/material';
 import type { Column, Table } from '@tanstack/react-table';
-import type { DateFilterConfig } from '../../types';
 import { FilterValue, FilterOperator } from '../../utils/filters';
+import { DateFilterConfig } from '../../types/filters';
 
 interface DateFilterProps<TData> {
   column: Column<TData, unknown>;
