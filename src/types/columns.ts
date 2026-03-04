@@ -117,7 +117,7 @@ export interface ProgressColumnDef<TData> extends BaseColumnDef<TData> {
 
 export interface CustomColumnDef<TData> extends BaseColumnDef<TData> {
   cellType: 'custom';
-  cellConfig?: any;
+  cellConfig?: unknown;
 }
 
 /**
@@ -150,7 +150,7 @@ export interface CellRendererProps<TData> {
   cell: Cell<TData, unknown>;
   row: Row<TData>;
   table: TanStackTable<TData>;
-  getValue: () => any;
+  getValue: () => unknown;
   column: Column<TData, unknown>;
 }
 
