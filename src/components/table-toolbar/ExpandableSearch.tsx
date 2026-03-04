@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, JSX } from 'react';
 import { styled } from '@mui/material/styles';
 import { TextField, IconButton, InputAdornment, Tooltip } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -42,19 +42,18 @@ const StyledTextField = styled(TextField)<{
   transition: theme.transitions.create(['width', 'opacity']),
   '& .MuiInputBase-root': {
     paddingRight: 8, // Adjust padding for the clear button
-  }
+  },
 }));
 
-export function ExpandableSearch({ value, onChange, placeholder = "Search..." }: ExpandableSearchProps) {
+export function ExpandableSearch({
+  value,
+  onChange,
+  placeholder = 'Search...',
+}: ExpandableSearchProps): JSX.Element {
   const [expanded, setExpanded] = useState(!!value);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Keep expanded if there is a value
-  useEffect(() => {
-    if (value) {
-      setExpanded(true);
-    }
-  }, [value]);
+  // el estado `expanded` se actualiza dentro de los manejadores de evento; ya no necesitamos un efecto
 
   const handleExpand = () => {
     setExpanded(true);
@@ -90,7 +89,10 @@ export function ExpandableSearch({ value, onChange, placeholder = "Search..." }:
         ownerState={{ expanded }}
         inputRef={inputRef}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => {
+          onChange(e.target.value);
+          if (e.target.value) setExpanded(true);
+        }}
         onBlur={handleBlur}
         placeholder={placeholder}
         size="small"
