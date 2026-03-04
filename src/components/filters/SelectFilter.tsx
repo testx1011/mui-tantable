@@ -7,7 +7,10 @@ interface SelectFilterProps<TData> {
   config?: SelectFilterConfig;
 }
 
-export function SelectFilter<TData>({ column, config }: SelectFilterProps<TData>) {
+export function SelectFilter<TData>({
+  column,
+  config,
+}: SelectFilterProps<TData>): React.ReactNode {
   if (!config || !config.options) {
     return null;
   }
@@ -27,7 +30,10 @@ export function SelectFilter<TData>({ column, config }: SelectFilterProps<TData>
           <em>All</em>
         </MenuItem>
         {options.map((option) => (
-          <MenuItem key={String(option.value)} value={option.value as string | number}>
+          <MenuItem
+            key={String(option.value)}
+            value={option.value as string | number}
+          >
             {option.label}
           </MenuItem>
         ))}
