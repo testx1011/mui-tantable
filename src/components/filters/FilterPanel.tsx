@@ -13,18 +13,83 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import type { Table, Column } from '@tanstack/react-table';
-import { TextFilter, NumberFilter, DateFilter, SelectFilter, MultiSelectFilter } from './index';
-import { FilterType, FilterConfig, TextFilterConfig, NumberFilterConfig, DateFilterConfig, SelectFilterConfig, MultiSelectFilterConfig, TanTableColumnDef } from '../../types';
-
+import { TextFilter } from './TextFilter';
+import { NumberFilter } from './NumberFilter';
+import { DateFilter } from './DateFilter';
+import { SelectFilter } from './SelectFilter';
+import { MultiSelectFilter } from './MultiSelectFilter';
+import {
+  FilterType,
+  FilterConfig,
+  TextFilterConfig,
+  NumberFilterConfig,
+  DateFilterConfig,
+  SelectFilterConfig,
+  MultiSelectFilterConfig,
+  TanTableColumnDef,
+} from '../../types';
 
 interface FilterPanelProps<TData> {
   table: Table<TData>;
 }
 
-export function FilterPanel<TData>({ table }: FilterPanelProps<TData>) {
+// componente auxiliar para renderizar el input de filtro
+function FilterInput<TData>({
+  column,
+  table,
+}: {
+  column: Column<TData, unknown>;
+  table: Table<TData>;
+}) {
+  const colDef = column.columnDef as TanTableColumnDef<TData>;
+  const filterType = colDef.filterType as FilterType | undefined;
+  const filterConfig = colDef.filterConfig as FilterConfig | undefined;
+
+  switch (filterType) {
+    case 'text':
+      return (
+        <TextFilter column={column} config={filterConfig as TextFilterConfig} />
+      );
+    case 'number':
+      return (
+        <NumberFilter
+          column={column}
+          config={filterConfig as NumberFilterConfig}
+        />
+      );
+    case 'date':
+      return (
+        <DateFilter
+          column={column}
+          config={filterConfig as DateFilterConfig}
+          table={table}
+        />
+      );
+    case 'select':
+      return (
+        <SelectFilter
+          column={column}
+          config={filterConfig as SelectFilterConfig}
+        />
+      );
+    case 'multiSelect':
+      return (
+        <MultiSelectFilter
+          column={column}
+          config={filterConfig as MultiSelectFilterConfig}
+        />
+      );
+    default:
+      return (
+        <TextFilter column={column} config={filterConfig as TextFilterConfig} />
+      );
+  }
+}
+
+export function FilterPanel<TData>({ table }: FilterPanelProps<TData>): React.ReactElement {
   // Initialize with currently active filters
   const [filterRows, setFilterRows] = useState<string[]>(() =>
-    table.getState().columnFilters.map((f) => f.id)
+    table.getState().columnFilters.map((f) => f.id),
   );
 
   const allColumns = table.getAllColumns().filter((col) => col.getCanFilter());
@@ -33,21 +98,20 @@ export function FilterPanel<TData>({ table }: FilterPanelProps<TData>) {
   // For now, we'll trust local state + user actions, but if we wanted to support
   // external clearing, we'd need a useEffect here.
   useEffect(() => {
-      const currentFilters = table.getState().columnFilters.map(f => f.id);
-      // If the table has filters that we don't know about, add them.
-      // If the table lacks filters we have... well, maybe we are just editing them and they are empty.
-      // So we only add missing ones.
-      setFilterRows(prev => {
-          const newRows = [...prev];
-          currentFilters.forEach(id => {
-              if (!newRows.includes(id)) {
-                  newRows.push(id);
-              }
-          });
-          return newRows;
+    const currentFilters = table.getState().columnFilters.map((f) => f.id);
+    // If the table has filters that we don't know about, add them.
+    // If the table lacks filters we have... well, maybe we are just editing them and they are empty.
+    // So we only add missing ones.
+    setFilterRows((prev) => {
+      const newRows = [...prev];
+      currentFilters.forEach((id) => {
+        if (!newRows.includes(id)) {
+          newRows.push(id);
+        }
       });
+      return newRows;
+    });
   }, [table.getState().columnFilters]);
-
 
   const handleAddFilter = () => {
     const usedIds = filterRows;
@@ -70,28 +134,6 @@ export function FilterPanel<TData>({ table }: FilterPanelProps<TData>) {
     setFilterRows(filterRows.map((id) => (id === oldId ? newId : id)));
   };
 
-  const renderFilterInput = (column: Column<TData, unknown>) => {
-    const colDef = column.columnDef as TanTableColumnDef<TData>;
-    const filterType = colDef.filterType as FilterType | undefined;
-    const filterConfig = colDef.filterConfig as FilterConfig | undefined;
-
-    switch (filterType) {
-      case 'text':
-        return <TextFilter column={column} config={filterConfig as TextFilterConfig} />;
-      case 'number':
-        return <NumberFilter column={column} config={filterConfig as NumberFilterConfig} />;
-      case 'date':
-        return <DateFilter column={column} config={filterConfig as DateFilterConfig} table={table} />;
-      case 'select':
-        return <SelectFilter column={column} config={filterConfig as SelectFilterConfig} />;
-      case 'multiSelect':
-        return <MultiSelectFilter column={column} config={filterConfig as MultiSelectFilterConfig} />;
-      default:
-        // Default to text filter if not specified but filtering is enabled
-        return <TextFilter column={column} config={filterConfig as TextFilterConfig} />;
-    }
-  };
-
   return (
     <Box sx={{ p: 2, minWidth: 600, maxWidth: 800 }}>
       <Typography variant="h6" sx={{ mb: 2 }}>
@@ -99,16 +141,19 @@ export function FilterPanel<TData>({ table }: FilterPanelProps<TData>) {
       </Typography>
       <Stack spacing={2}>
         {filterRows.length === 0 && (
-            <Typography variant="body2" color="text.secondary">
-                No hay filtros activos.
-            </Typography>
+          <Typography variant="body2" color="text.secondary">
+            No hay filtros activos.
+          </Typography>
         )}
         {filterRows.map((colId) => {
           const column = table.getColumn(colId);
           if (!column) return null;
 
           return (
-            <Box key={colId} sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
+            <Box
+              key={colId}
+              sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}
+            >
               <FormControl size="small" sx={{ minWidth: 150 }}>
                 <InputLabel>Columna</InputLabel>
                 <Select
@@ -123,16 +168,23 @@ export function FilterPanel<TData>({ table }: FilterPanelProps<TData>) {
                   ))}
                 </Select>
               </FormControl>
-              <Box sx={{ flexGrow: 1 , minWidth: 250 }}>
-                  {renderFilterInput(column)}
+              <Box sx={{ flexGrow: 1, minWidth: 250 }}>
+                <FilterInput column={column} table={table} />
               </Box>
-              <IconButton size="small" onClick={() => handleRemoveFilter(colId)}>
+              <IconButton
+                size="small"
+                onClick={() => handleRemoveFilter(colId)}
+              >
                 <CloseIcon />
               </IconButton>
             </Box>
           );
         })}
-        <Button startIcon={<AddIcon />} onClick={handleAddFilter} disabled={filterRows.length >= allColumns.length}>
+        <Button
+          startIcon={<AddIcon />}
+          onClick={handleAddFilter}
+          disabled={filterRows.length >= allColumns.length}
+        >
           Añadir filtro
         </Button>
       </Stack>
@@ -141,11 +193,11 @@ export function FilterPanel<TData>({ table }: FilterPanelProps<TData>) {
 }
 
 // Helper to get header string
-function flexRenderHeader(column: Column<any, any>) {
-    // This is a simplification. In reality, header could be a function or component.
-    // We try to get a string representation.
-    const header = column.columnDef.header;
-    if (typeof header === 'string') return header;
-    if (typeof header === 'function') return column.id; // Fallback
-    return column.id;
+function flexRenderHeader<TData>(column: Column<TData, unknown>) {
+  // This is a simplification. In reality, header could be a function or component.
+  // We try to get a string representation.
+  const header = column.columnDef.header;
+  if (typeof header === 'string') return header;
+  if (typeof header === 'function') return column.id; // Fallback
+  return column.id;
 }
