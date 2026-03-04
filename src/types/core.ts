@@ -57,6 +57,8 @@ export interface TanTableProps<TData> {
   error?: Error | string;
   /** Table density */
   density?: Density;
+  /** Callback for when density changes via toolbar */
+  onDensityChange?: (density: Density) => void;
   /** Show toolbar */
   showToolbar?: boolean;
   /** Toolbar configuration */
