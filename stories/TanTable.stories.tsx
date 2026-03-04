@@ -1,14 +1,17 @@
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Row } from '@tanstack/react-table';
 import { TanTable } from '../src/components/TanTable';
 import type { TanTableColumnDef } from '../src/types/columns';
 import type { TanTableProps } from '../src/types/core';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import AddIcon from '@mui/icons-material/Add';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Box, Typography, Avatar, IconButton } from '@mui/material';
-import { Row } from '@tanstack/react-table';
 
 // Sample data type
 interface Employee {
