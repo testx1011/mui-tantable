@@ -8,7 +8,7 @@ export function BooleanCell<TData>({
   getValue,
   row,
   column,
-}: CellRendererProps<TData> & { config?: BooleanCellConfig }) {
+}: CellRendererProps<TData> & { config?: BooleanCellConfig }): React.ReactNode {
   const value = getValue();
   const config = (column.columnDef as { cellConfig?: BooleanCellConfig })?.cellConfig;
 
