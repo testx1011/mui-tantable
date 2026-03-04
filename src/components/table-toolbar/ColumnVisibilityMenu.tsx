@@ -1,6 +1,15 @@
-import { Box, Menu, MenuItem, Divider, TextField, FormControlLabel, Checkbox } from '@mui/material';
+import {
+  Box,
+  Menu,
+  MenuItem,
+  Divider,
+  TextField,
+  FormControlLabel,
+  Checkbox,
+} from '@mui/material';
 import type { Table } from '@tanstack/react-table';
 import type { TanTableColumnDef } from '../../types/columns';
+import { JSX } from 'react';
 
 interface Props<TData> {
   table: Table<TData>;
@@ -11,7 +20,14 @@ interface Props<TData> {
   setColumnSearch: (v: string) => void;
 }
 
-export function ColumnVisibilityMenu<TData>({ table, anchorEl, open, onClose, columnSearch, setColumnSearch }: Props<TData>) {
+export function ColumnVisibilityMenu<TData>({
+  table,
+  anchorEl,
+  open,
+  onClose,
+  columnSearch,
+  setColumnSearch,
+}: Props<TData>): JSX.Element {
   return (
     <Menu
       anchorEl={anchorEl}
@@ -39,22 +55,32 @@ export function ColumnVisibilityMenu<TData>({ table, anchorEl, open, onClose, co
           .getAllLeafColumns()
           .filter((column) => {
             const columnDef = column.columnDef as TanTableColumnDef<TData>;
-            const header = typeof columnDef.header === 'string' ? columnDef.header : column.id;
+            const header =
+              typeof columnDef.header === 'string'
+                ? columnDef.header
+                : column.id;
             return header.toLowerCase().includes(columnSearch.toLowerCase());
           })
           .map((column) => {
             const columnDef = column.columnDef as TanTableColumnDef<TData>;
             if (columnDef.enableHiding === false) return null;
 
-            const header = typeof columnDef.header === 'string' ? columnDef.header : column.id;
+            const header =
+              typeof columnDef.header === 'string'
+                ? columnDef.header
+                : column.id;
 
             return (
-              <MenuItem key={column.id} dense onClick={(e) => {
-                const target = e.target as HTMLElement;
-                if (target.tagName !== 'INPUT') {
-                  column.toggleVisibility();
-                }
-              }}>
+              <MenuItem
+                key={column.id}
+                dense
+                onClick={(e) => {
+                  const target = e.target as HTMLElement;
+                  if (target.tagName !== 'INPUT') {
+                    column.toggleVisibility();
+                  }
+                }}
+              >
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -75,12 +101,23 @@ export function ColumnVisibilityMenu<TData>({ table, anchorEl, open, onClose, co
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Checkbox
             checked={table.getIsAllColumnsVisible()}
-            indeterminate={table.getIsSomeColumnsVisible() && !table.getIsAllColumnsVisible()}
+            indeterminate={
+              table.getIsSomeColumnsVisible() && !table.getIsAllColumnsVisible()
+            }
             onChange={table.getToggleAllColumnsVisibilityHandler()}
           />
         </Box>
         <Box>
-          <Box component="button" onClick={() => table.resetColumnVisibility()} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>
+          <Box
+            component="button"
+            onClick={() => table.resetColumnVisibility()}
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              cursor: 'pointer',
+            }}
+          >
             Reset
           </Box>
         </Box>
