@@ -10,33 +10,41 @@ interface DateFilterProps<TData> {
   config?: DateFilterConfig;
 }
 
-export function DateFilter<TData>({ column, config }: DateFilterProps<TData>) {
+export function DateFilter<TData>({
+  column,
+  config,
+}: DateFilterProps<TData>): React.ReactElement {
   const { startPlaceholder = 'Inicio', endPlaceholder = 'Fin' } = config || {};
 
   const columnFilterValue = column.getFilterValue() as FilterValue | undefined;
 
   const [operator, setOperator] = useState<FilterOperator>(
-      columnFilterValue?.operator || 'equals'
+    columnFilterValue?.operator || 'equals',
   );
-  
+
   const [value, setValue] = useState<string>(
-      columnFilterValue?.value ? String(columnFilterValue.value) : ''
+    columnFilterValue?.value ? String(columnFilterValue.value) : '',
   );
-  
+
   const [value2, setValue2] = useState<string>(
-      columnFilterValue?.value2 ? String(columnFilterValue.value2) : ''
+    columnFilterValue?.value2 ? String(columnFilterValue.value2) : '',
   );
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-        if (value === '' && operator !== 'isEmpty' && operator !== 'isNotEmpty' && operator !== 'between') {
-             column.setFilterValue(undefined);
-        } else if (operator === 'between' && (value === '' || value2 === '')) {
-             if (value === '' && value2 === '') column.setFilterValue(undefined);
-             else column.setFilterValue({ operator, value, value2 });
-        } else {
-             column.setFilterValue({ operator, value, value2 });
-        }
+      if (
+        value === '' &&
+        operator !== 'isEmpty' &&
+        operator !== 'isNotEmpty' &&
+        operator !== 'between'
+      ) {
+        column.setFilterValue(undefined);
+      } else if (operator === 'between' && (value === '' || value2 === '')) {
+        if (value === '' && value2 === '') column.setFilterValue(undefined);
+        else column.setFilterValue({ operator, value, value2 });
+      } else {
+        column.setFilterValue({ operator, value, value2 });
+      }
     }, 300);
 
     return () => clearTimeout(timeout);
@@ -44,48 +52,47 @@ export function DateFilter<TData>({ column, config }: DateFilterProps<TData>) {
 
   return (
     <Box sx={{ display: 'flex', gap: 1 }}>
-        <FormControl size="small" sx={{ minWidth: 130 }}>
-            <Select
-                value={operator}
-                onChange={(e) => setOperator(e.target.value as FilterOperator)}
-                displayEmpty
-            >
-                <MenuItem value="equals">Igual a</MenuItem>
-                <MenuItem value="notEquals">Diferente de</MenuItem>
-                <MenuItem value="greaterThan">Posterior a</MenuItem>
-                <MenuItem value="greaterThanOrEqual">Posterior o igual</MenuItem>
-                <MenuItem value="lessThan">Anterior a</MenuItem>
-                <MenuItem value="lessThanOrEqual">Anterior o igual</MenuItem>
-                <MenuItem value="between">Entre</MenuItem>
-                <MenuItem value="isEmpty">Vacío</MenuItem>
-                <MenuItem value="isNotEmpty">No vacío</MenuItem>
-            </Select>
-        </FormControl>
-        
-        {operator !== 'isEmpty' && operator !== 'isNotEmpty' && (
-            <TextField
-                size="small"
-                type="date"
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                fullWidth
-                InputLabelProps={{ shrink: true }}
-                label={operator === 'between' ? startPlaceholder : undefined}
-            />
-        )}
-        
-        {operator === 'between' && (
-            <TextField
-                size="small"
-                type="date"
-                value={value2}
-                onChange={(e) => setValue2(e.target.value)}
-                fullWidth
-                InputLabelProps={{ shrink: true }}
-                label={endPlaceholder}
-            />
-        )}
+      <FormControl size="small" sx={{ minWidth: 130 }}>
+        <Select
+          value={operator}
+          onChange={(e) => setOperator(e.target.value as FilterOperator)}
+          displayEmpty
+        >
+          <MenuItem value="equals">Igual a</MenuItem>
+          <MenuItem value="notEquals">Diferente de</MenuItem>
+          <MenuItem value="greaterThan">Posterior a</MenuItem>
+          <MenuItem value="greaterThanOrEqual">Posterior o igual</MenuItem>
+          <MenuItem value="lessThan">Anterior a</MenuItem>
+          <MenuItem value="lessThanOrEqual">Anterior o igual</MenuItem>
+          <MenuItem value="between">Entre</MenuItem>
+          <MenuItem value="isEmpty">Vacío</MenuItem>
+          <MenuItem value="isNotEmpty">No vacío</MenuItem>
+        </Select>
+      </FormControl>
+
+      {operator !== 'isEmpty' && operator !== 'isNotEmpty' && (
+        <TextField
+          size="small"
+          type="date"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          fullWidth
+          InputLabelProps={{ shrink: true }}
+          label={operator === 'between' ? startPlaceholder : undefined}
+        />
+      )}
+
+      {operator === 'between' && (
+        <TextField
+          size="small"
+          type="date"
+          value={value2}
+          onChange={(e) => setValue2(e.target.value)}
+          fullWidth
+          InputLabelProps={{ shrink: true }}
+          label={endPlaceholder}
+        />
+      )}
     </Box>
   );
 }
-
