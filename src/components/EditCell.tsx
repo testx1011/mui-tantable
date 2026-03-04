@@ -1,34 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import {
-  TextField,
-  Checkbox,
-} from '@mui/material';
+import React from 'react';
+import { TextField, Checkbox } from '@mui/material';
 import type { CellRendererProps } from '../types/columns';
 import type { CellType } from '../types/cells';
 
 interface EditCellProps<TData> extends CellRendererProps<TData> {
-  value: any;
-  onChange: (value: any) => void;
+  value: unknown;
+  onChange: (value: unknown) => void;
   onSave?: () => void;
   onCancel?: () => void;
   cellType?: CellType;
 }
 
 export function EditCell<TData>({
-  value: initialValue,
+  value,
   onChange,
   onSave,
   onCancel,
   cellType = 'text',
-}: EditCellProps<TData>) {
-  const [value, setValue] = useState(initialValue);
-
-  useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
-
-  const handleChange = (newValue: any) => {
-    setValue(newValue);
+}: EditCellProps<TData>): React.ReactElement {
+  // value is controlled directly by the parent; no local state needed
+  const handleChange = (newValue: unknown) => {
     onChange(newValue);
   };
 
@@ -53,17 +44,20 @@ export function EditCell<TData>({
 
     case 'date':
       // Simple date input fallback
-      const dateValue = value instanceof Date 
-        ? value.toISOString().split('T')[0] 
-        : typeof value === 'string' && value 
-            ? new Date(value).toISOString().split('T')[0] 
+      const dateValue =
+        value instanceof Date
+          ? value.toISOString().split('T')[0]
+          : typeof value === 'string' && value
+            ? new Date(value).toISOString().split('T')[0]
             : '';
-            
+
       return (
         <TextField
           type="date"
           value={dateValue}
-          onChange={(e) => handleChange(e.target.value ? new Date(e.target.value) : null)}
+          onChange={(e) =>
+            handleChange(e.target.value ? new Date(e.target.value) : null)
+          }
           size="small"
           variant="standard"
           fullWidth
@@ -82,7 +76,6 @@ export function EditCell<TData>({
           variant="standard"
           fullWidth
           onKeyDown={handleKeyDown}
-          autoFocus
         />
       );
 
@@ -109,7 +102,6 @@ export function EditCell<TData>({
           variant="standard"
           fullWidth
           onKeyDown={handleKeyDown}
-          autoFocus
         />
       );
   }
