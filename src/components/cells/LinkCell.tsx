@@ -6,7 +6,7 @@ export function LinkCell<TData>({
   getValue,
   row,
   column,
-}: CellRendererProps<TData> & { config?: LinkCellConfig }) {
+}: CellRendererProps<TData> & { config?: LinkCellConfig }): React.ReactNode {
   const value = getValue();
   const config = (column.columnDef as { cellConfig?: LinkCellConfig })?.cellConfig;
 
