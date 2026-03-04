@@ -6,7 +6,7 @@ import { truncateText, transformText } from '../../utils/formatters';
 export function TextCell<TData>({
   getValue,
   column,
-}: CellRendererProps<TData> & { config?: TextCellConfig }) {
+}: CellRendererProps<TData> & { config?: TextCellConfig }): React.ReactNode {
   const value = getValue();
   const config = (column.columnDef as { cellConfig?: TextCellConfig })?.cellConfig;
 
