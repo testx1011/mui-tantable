@@ -6,7 +6,6 @@ import type {
   Cell,
   Column,
 } from '@tanstack/react-table';
-import type { SxProps, Theme } from '@mui/material';
 import type {
   CellType,
   CellConfig,
@@ -21,6 +20,7 @@ import type {
   ProgressCellConfig,
 } from './cells';
 import { FilterConfig, FilterType } from './filters';
+import { SxProps, Theme } from '@mui/material/styles';
 
 // ============================================================================
 // Column Definition Types

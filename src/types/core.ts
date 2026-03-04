@@ -1,8 +1,22 @@
 import type { ReactNode } from 'react';
-import type { Row, SortingState, ColumnFiltersState, VisibilityState, ColumnOrderState, ColumnPinningState, ExpandedState, RowSelectionState, PaginationState } from '@tanstack/react-table';
-import type { SxProps, Theme } from '@mui/material';
-import type { ToolbarConfig, PaginationConfig, ServerSideHandlers } from './toolbar';
+import type {
+  Row,
+  SortingState,
+  ColumnFiltersState,
+  VisibilityState,
+  ColumnOrderState,
+  ColumnPinningState,
+  ExpandedState,
+  RowSelectionState,
+  PaginationState,
+} from '@tanstack/react-table';
+import type {
+  ToolbarConfig,
+  PaginationConfig,
+  ServerSideHandlers,
+} from './toolbar';
 import type { TanTableColumnDef } from './columns';
+import { SxProps, Theme } from '@mui/material/styles';
 
 export type Density = 'compact' | 'standard' | 'comfortable';
 
