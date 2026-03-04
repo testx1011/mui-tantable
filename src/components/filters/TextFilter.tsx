@@ -1,5 +1,12 @@
-import { useState, useEffect } from 'react';
-import { TextField, InputAdornment, Select, MenuItem, FormControl, Box } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import {
+  TextField,
+  InputAdornment,
+  Select,
+  MenuItem,
+  FormControl,
+  Box,
+} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import type { Column } from '@tanstack/react-table';
 import type { TextFilterConfig } from '../../types';
@@ -10,30 +17,41 @@ interface TextFilterProps<TData> {
   config?: TextFilterConfig;
 }
 
-export function TextFilter<TData>({ column, config }: TextFilterProps<TData>) {
+export function TextFilter<TData>({
+  column,
+  config,
+}: TextFilterProps<TData>): React.ReactElement {
+
   const { placeholder = 'Buscar...', debounce = 300 } = config || {};
-  
-  const columnFilterValue = column.getFilterValue() as FilterValue | string | undefined;
-  
+
+  const columnFilterValue = column.getFilterValue() as
+    | FilterValue
+    | string
+    | undefined;
+
   const [operator, setOperator] = useState<FilterOperator>(
-      (typeof columnFilterValue === 'object' && columnFilterValue?.operator) 
-      ? (columnFilterValue as FilterValue).operator 
-      : 'contains'
+    typeof columnFilterValue === 'object' && columnFilterValue?.operator
+      ? (columnFilterValue as FilterValue).operator
+      : 'contains',
   );
-  
-  const [value, setValue] = useState<string>(
-      (typeof columnFilterValue === 'object' && columnFilterValue?.value)
-      ? (columnFilterValue as FilterValue).value
-      : (typeof columnFilterValue === 'string' ? columnFilterValue : '')
-  );
+
+  const initialValue: string =
+    typeof columnFilterValue === 'object' && columnFilterValue?.value
+      ? String((columnFilterValue as FilterValue).value)
+      : typeof columnFilterValue === 'string'
+      ? columnFilterValue
+      : '';
+
+  const [value, setValue] = useState<string>(initialValue);
+
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-        if (value === '' && operator !== 'isEmpty' && operator !== 'isNotEmpty') {
-            column.setFilterValue(undefined);
-        } else {
-            column.setFilterValue({ operator, value });
-        }
+      if (value === '' && operator !== 'isEmpty' && operator !== 'isNotEmpty') {
+        column.setFilterValue(undefined);
+      } else {
+        column.setFilterValue({ operator, value });
+      }
     }, debounce);
 
     return () => clearTimeout(timeout);
@@ -41,37 +59,37 @@ export function TextFilter<TData>({ column, config }: TextFilterProps<TData>) {
 
   return (
     <Box sx={{ display: 'flex', gap: 1, width: '100%' }}>
-        <FormControl size="small" sx={{ minWidth: 130 }}>
-            <Select
-                value={operator}
-                onChange={(e) => setOperator(e.target.value as FilterOperator)}
-                displayEmpty
-                variant="outlined"
-            >
-                <MenuItem value="contains">Contiene</MenuItem>
-                <MenuItem value="equals">Igual a</MenuItem>
-                <MenuItem value="startsWith">Empieza con</MenuItem>
-                <MenuItem value="endsWith">Termina con</MenuItem>
-                <MenuItem value="isEmpty">Vacío</MenuItem>
-                <MenuItem value="isNotEmpty">No vacío</MenuItem>
-            </Select>
-        </FormControl>
-        {operator !== 'isEmpty' && operator !== 'isNotEmpty' && (
-            <TextField
-            size="small"
-            fullWidth
-            placeholder={placeholder}
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            InputProps={{
-                startAdornment: (
-                <InputAdornment position="start">
-                    <SearchIcon fontSize="small" />
-                </InputAdornment>
-                ),
-            }}
-            />
-        )}
+      <FormControl size="small" sx={{ minWidth: 130 }}>
+        <Select
+          value={operator}
+          onChange={(e) => setOperator(e.target.value as FilterOperator)}
+          displayEmpty
+          variant="outlined"
+        >
+          <MenuItem value="contains">Contiene</MenuItem>
+          <MenuItem value="equals">Igual a</MenuItem>
+          <MenuItem value="startsWith">Empieza con</MenuItem>
+          <MenuItem value="endsWith">Termina con</MenuItem>
+          <MenuItem value="isEmpty">Vacío</MenuItem>
+          <MenuItem value="isNotEmpty">No vacío</MenuItem>
+        </Select>
+      </FormControl>
+      {operator !== 'isEmpty' && operator !== 'isNotEmpty' && (
+        <TextField
+          size="small"
+          fullWidth
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon fontSize="small" />
+              </InputAdornment>
+            ),
+          }}
+        />
+      )}
     </Box>
   );
 }
