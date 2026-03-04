@@ -24,7 +24,7 @@ export function TableHeaderComponent<TData>({
   enableColumnResizing,
   enableColumnOrdering,
   currentDensity,
-}: Props<TData>) {
+}: Props<TData>): React.ReactElement {
   return (
     <TableHead>
       {table.getHeaderGroups().map((headerGroup) => (
@@ -62,7 +62,7 @@ export function TableHeaderComponent<TData>({
                 {header.isPlaceholder ? null : (
                   <ColumnHeader
                     header={header}
-                    title={header.column.columnDef.header as any}
+                    title={header.column.columnDef.header as React.ReactNode}
                     enableResizing={enableColumnResizing}
                     enableReordering={enableColumnOrdering}
                   />
