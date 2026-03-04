@@ -1,12 +1,20 @@
-import { Box, LinearProgress, CircularProgress, Typography } from '@mui/material';
+import {
+  Box,
+  LinearProgress,
+  CircularProgress,
+  Typography,
+} from '@mui/material';
 import type { CellRendererProps, ProgressCellConfig } from '../../types';
 
 export function ProgressCell<TData>({
   getValue,
   column,
-}: CellRendererProps<TData> & { config?: ProgressCellConfig }) {
+}: CellRendererProps<TData> & {
+  config?: ProgressCellConfig;
+}): React.ReactNode {
   const value = getValue();
-  const config = (column.columnDef as { cellConfig?: ProgressCellConfig })?.cellConfig;
+  const config = (column.columnDef as { cellConfig?: ProgressCellConfig })
+    ?.cellConfig;
 
   const {
     type = 'linear',
@@ -22,10 +30,24 @@ export function ProgressCell<TData>({
 
   const numValue = Number(value);
   if (isNaN(numValue)) {
-    return <Typography variant="body2" color="error">Invalid</Typography>;
+    return (
+      <Typography variant="body2" color="error">
+        Invalid
+      </Typography>
+    );
   }
 
-  const color = typeof colorConfig === 'function' ? colorConfig(numValue) : colorConfig;
+  type MuiColor =
+    | 'primary'
+    | 'secondary'
+    | 'error'
+    | 'info'
+    | 'success'
+    | 'warning'
+    | 'inherit';
+
+  const color =
+    (typeof colorConfig === 'function' ? colorConfig(numValue) : colorConfig) as MuiColor;
 
   // Normalize value to 0-100 range
   const normalizedValue = ((numValue - min) / (max - min)) * 100;
