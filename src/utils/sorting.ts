@@ -4,7 +4,7 @@ import type { SortingFn } from '@tanstack/react-table';
 /**
  * Alphanumeric sorting function
  */
-export const alphanumericSort: SortingFn<any> = (rowA, rowB, columnId) => {
+export const alphanumericSort: SortingFn<unknown> = (rowA, rowB, columnId) => {
   const a = rowA.getValue(columnId);
   const b = rowB.getValue(columnId);
 
@@ -14,7 +14,7 @@ export const alphanumericSort: SortingFn<any> = (rowA, rowB, columnId) => {
 /**
  * Date sorting function
  */
-export const dateSort: SortingFn<any> = (rowA, rowB, columnId) => {
+export const dateSort: SortingFn<unknown> = (rowA, rowB, columnId) => {
   const a = rowA.getValue(columnId);
   const b = rowB.getValue(columnId);
 
@@ -27,7 +27,7 @@ export const dateSort: SortingFn<any> = (rowA, rowB, columnId) => {
 /**
  * Number sorting function
  */
-export const numberSort: SortingFn<any> = (rowA, rowB, columnId) => {
+export const numberSort: SortingFn<unknown> = (rowA, rowB, columnId) => {
   const a = Number(rowA.getValue(columnId));
   const b = Number(rowB.getValue(columnId));
 
@@ -41,7 +41,7 @@ export const numberSort: SortingFn<any> = (rowA, rowB, columnId) => {
 /**
  * Case-insensitive text sorting
  */
-export const textSort: SortingFn<any> = (rowA, rowB, columnId) => {
+export const textSort: SortingFn<unknown> = (rowA, rowB, columnId) => {
   const a = String(rowA.getValue(columnId) ?? '').toLowerCase();
   const b = String(rowB.getValue(columnId) ?? '').toLowerCase();
 
@@ -51,7 +51,7 @@ export const textSort: SortingFn<any> = (rowA, rowB, columnId) => {
 /**
  * Boolean sorting (false first, then true)
  */
-export const booleanSort: SortingFn<any> = (rowA, rowB, columnId) => {
+export const booleanSort: SortingFn<unknown> = (rowA, rowB, columnId) => {
   const a = Boolean(rowA.getValue(columnId));
   const b = Boolean(rowB.getValue(columnId));
 
