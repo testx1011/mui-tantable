@@ -5,7 +5,7 @@ import type { CellRendererProps, ChipCellConfig } from '../../types';
 export function ChipCell<TData>({
   getValue,
   column,
-}: CellRendererProps<TData> & { config?: ChipCellConfig }) {
+}: CellRendererProps<TData> & { config?: ChipCellConfig }): React.ReactNode {
   const value = getValue();
   const config = (column.columnDef as { cellConfig?: ChipCellConfig })?.cellConfig;
 
