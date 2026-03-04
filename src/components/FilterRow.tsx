@@ -1,13 +1,11 @@
 import { TableRow, TableCell } from '@mui/material';
 import type { Table } from '@tanstack/react-table';
 import type { TanTableColumnDef } from '../types/columns';
-import {
-  TextFilter,
-  NumberFilter,
-  DateFilter,
-  SelectFilter,
-  MultiSelectFilter,
-} from './index';
+import { TextFilter } from './filters/TextFilter';
+import { NumberFilter } from './filters/NumberFilter';
+import { DateFilter } from './filters/DateFilter';
+import { SelectFilter } from './filters/SelectFilter';
+import { MultiSelectFilter } from './filters/MultiSelectFilter';
 import type {
   FilterConfig,
   TextFilterConfig,
@@ -17,11 +15,45 @@ import type {
   MultiSelectFilterConfig,
 } from '../types/filters';
 
+// componente para renderizar una celda de filtro
+import type { Column } from '@tanstack/react-table';
+import { JSX } from 'react';
+
+interface FilterCellProps<TData> {
+  column: Column<TData, unknown>;
+  table: Table<TData>;
+  filterType?: string;
+  filterConfig?: FilterConfig;
+}
+
+function FilterCell<TData>({ column, table, filterType, filterConfig }: FilterCellProps<TData>) {
+  const commonProps = { column, table } as const;
+  switch (filterType) {
+    case 'text':
+      return <TextFilter {...commonProps} config={filterConfig as TextFilterConfig | undefined} />;
+    case 'number':
+      return <NumberFilter {...commonProps} config={filterConfig as NumberFilterConfig | undefined} />;
+    case 'date':
+      return <DateFilter {...commonProps} config={filterConfig as DateFilterConfig | undefined} />;
+    case 'select':
+      return <SelectFilter {...commonProps} config={filterConfig as SelectFilterConfig | undefined} />;
+    case 'multiSelect':
+      return (
+        <MultiSelectFilter
+          {...commonProps}
+          config={filterConfig as MultiSelectFilterConfig | undefined}
+        />
+      );
+    default:
+      return <TextFilter {...commonProps} config={filterConfig as TextFilterConfig | undefined} />;
+  }
+}
+
 interface FilterRowProps<TData> {
   table: Table<TData>;
 }
 
-export function FilterRow<TData>({ table }: FilterRowProps<TData>) {
+export function FilterRow<TData>({ table }: FilterRowProps<TData>): JSX.Element {
   return (
     <TableRow>
       {/* Spacer for expanding column */}
@@ -35,52 +67,18 @@ export function FilterRow<TData>({ table }: FilterRowProps<TData>) {
         const filterConfig = (column.columnDef as TanTableColumnDef<TData>)
           .filterConfig as FilterConfig | undefined;
 
-        // Skip filter if not enabled or no accessor
         if (!column.getCanFilter()) {
           return <TableCell key={column.id} />;
         }
 
-        const commonProps = {
-          column,
-          table,
-        };
-
-        const renderFilter = () => {
-          switch (filterType) {
-            case 'text':
-              return (
-                <TextFilter {...commonProps} config={filterConfig as TextFilterConfig | undefined} />
-              );
-            case 'number':
-              return (
-                <NumberFilter {...commonProps} config={filterConfig as NumberFilterConfig | undefined} />
-              );
-            case 'date':
-              return (
-                <DateFilter {...commonProps} config={filterConfig as DateFilterConfig | undefined} />
-              );
-            case 'select':
-              return (
-                <SelectFilter {...commonProps} config={filterConfig as SelectFilterConfig | undefined} />
-              );
-            case 'multiSelect':
-              return (
-                <MultiSelectFilter
-                  {...commonProps}
-                  config={filterConfig as MultiSelectFilterConfig | undefined}
-                />
-              );
-            default:
-              return (
-                <TextFilter {...commonProps} config={filterConfig as TextFilterConfig | undefined} />
-              );
-          }
-        };
-
         return (
-          <TableCell key={column.id} sx={{ p: 1 }}>
-            {renderFilter()}
-          </TableCell>
+          <FilterCell
+            key={column.id}
+            column={column}
+            table={table}
+            filterType={filterType}
+            filterConfig={filterConfig}
+          />
         );
       })}
     </TableRow>
