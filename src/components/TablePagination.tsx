@@ -8,17 +8,19 @@ import {
 } from '@mui/material';
 import type { Table } from '@tanstack/react-table';
 import type { PaginationConfig } from '../types/toolbar';
+import { JSX } from 'react';
 
 interface TablePaginationProps<TData> {
   table: Table<TData>;
   config?: PaginationConfig;
 }
 
-export function TablePagination<TData>({ table, config }: TablePaginationProps<TData>) {
-  const {
-    pageSizeOptions = [10, 25, 50, 100],
-    showFirstLastButtons = true,
-  } = config || {};
+export function TablePagination<TData>({
+  table,
+  config,
+}: TablePaginationProps<TData>): JSX.Element {
+  const { pageSizeOptions = [10, 25, 50, 100], showFirstLastButtons = true } =
+    config || {};
 
   const pageIndex = table.getState().pagination.pageIndex;
   const pageSize = table.getState().pagination.pageSize;
@@ -53,7 +55,7 @@ export function TablePagination<TData>({ table, config }: TablePaginationProps<T
               '& .MuiSelect-select': {
                 paddingBottom: 0,
                 paddingTop: 0,
-              }
+              },
             }}
           >
             {pageSizeOptions.map((size) => (
@@ -65,9 +67,7 @@ export function TablePagination<TData>({ table, config }: TablePaginationProps<T
         </FormControl>
       </Box>
       <Typography variant="body2" color="text.secondary">
-        {totalRows === 0
-          ? 'No rows'
-          : `${startRow}-${endRow} of ${totalRows}`}
+        {totalRows === 0 ? 'No rows' : `${startRow}-${endRow} of ${totalRows}`}
       </Typography>
 
       <MuiPagination
