@@ -331,7 +331,7 @@ const columns: TanTableColumnDef<Employee>[] = [
     cellConfig: {
       type: 'linear',
       showLabel: true,
-      color: (value: number) => {
+      color: (value: number): 'success' | 'primary' | 'warning' | 'error' => {
         if (value >= 90) return 'success';
         if (value >= 70) return 'primary';
         if (value >= 50) return 'warning';
@@ -471,7 +471,7 @@ export const InlineEditing: Story = {
     columns: columns.filter((c) => c.cellType !== 'action'),
     enableEditing: true,
     editMode: 'cell',
-    onEditingRowSave: (row: any) => {
+    onEditingRowSave: (row: Employee) => {
       console.log('Saved row:', row);
       alert(`Saved changes for ${row.name}`);
     },
@@ -485,7 +485,7 @@ export const RowEditing: Story = {
     columns: columns,
     enableEditing: true,
     editMode: 'row',
-    onEditingRowSave: (row: any) => {
+    onEditingRowSave: (row: Employee) => {
       console.log('Saved row:', row);
       alert(`Saved changes for ${row.name}`);
     },
