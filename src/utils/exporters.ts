@@ -6,7 +6,7 @@ import type { ExportOptions } from '../types/toolbar';
  */
 export function exportToCSV<TData>(
   table: Table<TData>,
-  options: Partial<ExportOptions> = {}
+  options: Partial<ExportOptions> = {},
 ): void {
   const {
     filename = 'table-export.csv',
@@ -29,7 +29,10 @@ export function exportToCSV<TData>(
   if (includeHeaders) {
     const headers = visibleColumns
       .map((col) => {
-        const header = typeof col.columnDef.header === 'string' ? col.columnDef.header : col.id;
+        const header =
+          typeof col.columnDef.header === 'string'
+            ? col.columnDef.header
+            : col.id;
         return escapeCsvValue(header);
       })
       .join(',');
@@ -56,9 +59,13 @@ export function exportToCSV<TData>(
  */
 export function exportToJSON<TData>(
   table: Table<TData>,
-  options: Partial<ExportOptions> = {}
+  options: Partial<ExportOptions> = {},
 ): void {
-  const { filename = 'table-export.json', columns, selectedOnly = false } = options;
+  const {
+    filename = 'table-export.json',
+    columns,
+    selectedOnly = false,
+  } = options;
 
   const rows = selectedOnly
     ? table.getSelectedRowModel().rows
@@ -69,10 +76,13 @@ export function exportToJSON<TData>(
     : table.getVisibleLeafColumns();
 
   const data = rows.map((row) => {
-    const obj: Record<string, any> = {};
+    const obj: Record<string, unknown> = {};
     visibleColumns.forEach((col) => {
       const cell = row.getAllCells().find((c) => c.column.id === col.id);
-      const header = typeof col.columnDef.header === 'string' ? col.columnDef.header : col.id;
+      const header =
+        typeof col.columnDef.header === 'string'
+          ? col.columnDef.header
+          : col.id;
       obj[header] = cell?.getValue() ?? null;
     });
     return obj;
@@ -87,7 +97,7 @@ export function exportToJSON<TData>(
  */
 export function exportToExcel<TData>(
   table: Table<TData>,
-  options: Partial<ExportOptions> = {}
+  options: Partial<ExportOptions> = {},
 ): void {
   const {
     filename = 'table-export.xls',
@@ -110,7 +120,10 @@ export function exportToExcel<TData>(
   if (includeHeaders) {
     html += '<thead><tr>';
     visibleColumns.forEach((col) => {
-      const header = typeof col.columnDef.header === 'string' ? col.columnDef.header : col.id;
+      const header =
+        typeof col.columnDef.header === 'string'
+          ? col.columnDef.header
+          : col.id;
       html += `<th>${escapeHtml(header)}</th>`;
     });
     html += '</tr></thead>';
@@ -168,7 +181,8 @@ export function printTable<TData>(table: Table<TData>): void {
   `;
 
   visibleColumns.forEach((col) => {
-    const header = typeof col.columnDef.header === 'string' ? col.columnDef.header : col.id;
+    const header =
+      typeof col.columnDef.header === 'string' ? col.columnDef.header : col.id;
     html += `<th>${escapeHtml(header)}</th>`;
   });
 
@@ -215,7 +229,11 @@ function escapeHtml(value: string): string {
 /**
  * Helper: Download file
  */
-function downloadFile(content: string, filename: string, mimeType: string): void {
+function downloadFile(
+  content: string,
+  filename: string,
+  mimeType: string,
+): void {
   const blob = new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
