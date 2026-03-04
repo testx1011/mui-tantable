@@ -1,15 +1,4 @@
 import { useState, useEffect } from 'react';
-import {
-  Box,
-  Button,
-  IconButton,
-  MenuItem,
-  Select,
-  Stack,
-  Typography,
-  FormControl,
-  InputLabel,
-} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import type { Table, Column } from '@tanstack/react-table';
@@ -28,6 +17,16 @@ import {
   MultiSelectFilterConfig,
   TanTableColumnDef,
 } from '../../types';
+
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import Stack from '@mui/material/Stack';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
 
 interface FilterPanelProps<TData> {
   table: Table<TData>;

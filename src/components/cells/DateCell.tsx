@@ -1,6 +1,8 @@
-import { Typography, Tooltip } from '@mui/material';
 import type { CellRendererProps, DateCellConfig } from '../../types';
 import { formatDate } from '../../utils/formatters';
+
+import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
 
 export function DateCell<TData>({
   getValue,

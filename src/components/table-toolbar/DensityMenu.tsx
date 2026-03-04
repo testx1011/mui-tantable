@@ -1,6 +1,8 @@
-import { Menu, MenuItem } from '@mui/material';
 import type { Density } from '../../types/core';
 import { JSX } from 'react';
+
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 interface Props {
   anchorEl: HTMLElement | null;

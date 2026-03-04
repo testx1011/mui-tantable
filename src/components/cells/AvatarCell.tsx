@@ -1,7 +1,9 @@
 
-import { Avatar, Box } from '@mui/material';
 import type { CellRendererProps, AvatarCellConfig } from '../../types';
 import { getInitials, stringToColor, getNestedValue } from '../../utils/formatters';
+
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
 
 export function AvatarCell<TData>({
   getValue,

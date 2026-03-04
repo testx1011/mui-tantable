@@ -1,12 +1,4 @@
 import { useReducer } from 'react';
-import {
-  Toolbar,
-  Typography,
-  IconButton,
-  Button,
-  Box,
-  Popover,
-} from '@mui/material';
 import ViewColumnIcon from '@mui/icons-material/ViewColumn';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
@@ -26,6 +18,13 @@ import { ColumnVisibilityMenu } from './table-toolbar/ColumnVisibilityMenu';
 import { DensityMenu } from './table-toolbar/DensityMenu';
 import { ExportMenu } from './table-toolbar/ExportMenu';
 import { ViewSwitcher } from './table-toolbar/ViewSwitcher';
+
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Popover from '@mui/material/Popover';
 
 interface TableToolbarProps<TData> {
   table: Table<TData>;

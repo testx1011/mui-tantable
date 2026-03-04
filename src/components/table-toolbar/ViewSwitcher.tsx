@@ -1,7 +1,9 @@
-import { ToggleButtonGroup, ToggleButton } from '@mui/material';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import { JSX } from 'react';
+
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import ToggleButton from '@mui/material/ToggleButton';
 
 interface Props {
   view: 'grid' | 'list';

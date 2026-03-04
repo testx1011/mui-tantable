@@ -1,15 +1,14 @@
-import {
-  Box,
-  Menu,
-  MenuItem,
-  Divider,
-  TextField,
-  FormControlLabel,
-  Checkbox,
-} from '@mui/material';
 import type { Table } from '@tanstack/react-table';
 import type { TanTableColumnDef } from '../../types/columns';
 import { JSX } from 'react';
+
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Divider from '@mui/material/Divider';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 
 interface Props<TData> {
   table: Table<TData>;

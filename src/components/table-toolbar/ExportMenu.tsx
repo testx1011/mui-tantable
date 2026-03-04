@@ -1,7 +1,10 @@
-import { Menu, MenuItem, Divider } from '@mui/material';
 import type { Table } from '@tanstack/react-table';
 import type { ExportFormat } from '../../types/toolbar';
 import { JSX } from 'react';
+
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Divider from '@mui/material/Divider';
 
 interface Props<TData> {
   anchorEl: HTMLElement | null;

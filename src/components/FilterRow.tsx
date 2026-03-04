@@ -1,4 +1,3 @@
-import { TableRow, TableCell } from '@mui/material';
 import type { Table } from '@tanstack/react-table';
 import type { TanTableColumnDef } from '../types/columns';
 import { TextFilter } from './filters/TextFilter';
@@ -18,6 +17,9 @@ import type {
 // componente para renderizar una celda de filtro
 import type { Column } from '@tanstack/react-table';
 import { JSX } from 'react';
+
+import TableRow from '@mui/material/TableRow';
+import TableCell from '@mui/material/TableCell';
 
 interface FilterCellProps<TData> {
   column: Column<TData, unknown>;

@@ -1,6 +1,10 @@
-import { FormControl, Select, MenuItem, InputLabel } from '@mui/material';
 import type { Column } from '@tanstack/react-table';
 import { SelectFilterConfig } from '../../types/filters';
+
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
 interface SelectFilterProps<TData> {
   column: Column<TData, unknown>;

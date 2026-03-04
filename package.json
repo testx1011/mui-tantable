@@ -36,6 +36,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "lint": "node --no-warnings ./node_modules/eslint/bin/eslint.js \"src/**/*.{ts,tsx,js,jsx}\" \"stories/**/*.{ts,tsx,js,jsx}\"",
+    "update-path-imports": "npx @mui/codemod@latest v5.0.0/path-imports src",
     "test": "vitest"
   },
   "dependencies": {

@@ -9,18 +9,6 @@ import {
   ColumnDef as TanStackColumnDef,
   type Column,
 } from '@tanstack/react-table';
-// virtualizer is used via hook
-import {
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  Paper,
-  Typography,
-  Skeleton,
-} from '@mui/material';
 // ColumnHeader is used inside TableHeaderComponent
 import type { TanTableProps, Density, TanTableState } from '../types/core';
 import type { TableState } from '@tanstack/react-table';
@@ -35,6 +23,16 @@ import { useEnhancedColumns } from './table/hooks/useEnhancedColumns';
 import { useCellNavigation } from './table/hooks/useCellNavigation';
 import { TableHeaderComponent } from './table/TableHeader';
 import { getCommonPinningStyles } from './table/utils';
+
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import Skeleton from '@mui/material/Skeleton';
 
 // using getCommonPinningStyles from './table/utils'
 

@@ -1,14 +1,13 @@
-import {
-  Box,
-  Pagination as MuiPagination,
-  Select,
-  MenuItem,
-  Typography,
-  FormControl,
-} from '@mui/material';
 import type { Table } from '@tanstack/react-table';
 import type { PaginationConfig } from '../types/toolbar';
 import { JSX } from 'react';
+
+import Box from '@mui/material/Box';
+import MuiPagination from '@mui/material/Pagination';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
+import FormControl from '@mui/material/FormControl';
 
 interface TablePaginationProps<TData> {
   table: Table<TData>;

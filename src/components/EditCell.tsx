@@ -1,7 +1,9 @@
 import React from 'react';
-import { TextField, Checkbox } from '@mui/material';
 import type { CellRendererProps } from '../types/columns';
 import type { CellType } from '../types/cells';
+
+import TextField from '@mui/material/TextField';
+import Checkbox from '@mui/material/Checkbox';
 
 interface EditCellProps<TData> extends CellRendererProps<TData> {
   value: unknown;

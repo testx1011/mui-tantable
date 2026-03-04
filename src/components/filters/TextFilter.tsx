@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import {
-  TextField,
-  InputAdornment,
-  Select,
-  MenuItem,
-  FormControl,
-  Box,
-} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import type { Column } from '@tanstack/react-table';
 import type { TextFilterConfig } from '../../types';
 import { FilterValue, FilterOperator } from '../../utils/filters';
+
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
 
 interface TextFilterProps<TData> {
   column: Column<TData, unknown>;

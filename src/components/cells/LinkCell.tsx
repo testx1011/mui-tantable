@@ -1,6 +1,8 @@
-import { Link as MuiLink, Box } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import type { CellRendererProps, LinkCellConfig } from '../../types';
+
+import Box from '@mui/material/Box';
+import MuiLink from '@mui/material/Link';
 
 export function LinkCell<TData>({
   getValue,

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Chip } from '@mui/material';
 import type { CellRendererProps, ChipCellConfig } from '../../types';
+
+import Chip from '@mui/material/Chip';
 
 export function ChipCell<TData>({
   getValue,

@@ -1,8 +1,12 @@
 import { useState, useRef, JSX } from 'react';
 import { styled } from '@mui/material/styles';
-import { TextField, IconButton, InputAdornment, Tooltip } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import CancelIcon from '@mui/icons-material/Cancel';
+
+import TextField from '@mui/material/TextField';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import Tooltip from '@mui/material/Tooltip';
 
 interface ExpandableSearchProps {
   value: string;

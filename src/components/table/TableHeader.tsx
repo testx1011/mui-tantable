@@ -1,8 +1,12 @@
-import { TableHead, TableRow, TableCell, Checkbox } from '@mui/material';
 import type { Table } from '@tanstack/react-table';
 import type { TanTableColumnDef } from '../../types/columns';
 import { ColumnHeader } from '../ColumnHeader';
 import { getCommonPinningStyles } from './utils';
+
+import TableRow from '@mui/material/TableRow';
+import TableCell from '@mui/material/TableCell';
+import Checkbox from '@mui/material/Checkbox';
+import TableHead from '@mui/material/TableHead';
 
 interface Props<TData> {
   table: Table<TData>;

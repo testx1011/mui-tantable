@@ -1,7 +1,11 @@
-import { Typography, Tooltip, IconButton, Box } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import type { CellRendererProps, TextCellConfig } from '../../types';
 import { truncateText, transformText } from '../../utils/formatters';
+
+import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
 
 export function TextCell<TData>({
   getValue,

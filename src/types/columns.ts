@@ -143,7 +143,7 @@ export type TanTableColumnDef<TData> =
   | GenericColumnDef<TData>;
 
 export type CellRenderer<TData> = (
-  props: CellRendererProps<TData>
+  props: CellRendererProps<TData>,
 ) => ReactNode;
 
 export interface CellRendererProps<TData> {

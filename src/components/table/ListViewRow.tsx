@@ -1,6 +1,8 @@
 import React from 'react';
-import { TableRow, TableCell } from '@mui/material';
 import type { Table, Row } from '@tanstack/react-table';
+
+import TableRow from '@mui/material/TableRow';
+import TableCell from '@mui/material/TableCell';
 
 interface ListViewRowProps<TData> {
   row: Row<TData>;

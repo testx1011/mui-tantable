@@ -1,10 +1,9 @@
-import {
-  Box,
-  LinearProgress,
-  CircularProgress,
-  Typography,
-} from '@mui/material';
 import type { CellRendererProps, ProgressCellConfig } from '../../types';
+
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import LinearProgress from '@mui/material/LinearProgress';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export function ProgressCell<TData>({
   getValue,

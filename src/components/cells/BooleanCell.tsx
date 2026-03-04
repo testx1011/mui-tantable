@@ -1,8 +1,12 @@
 import React from 'react';
-import { Checkbox, Switch, Box, Typography } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import type { CellRendererProps, BooleanCellConfig } from '../../types';
+
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Checkbox from '@mui/material/Checkbox';
+import Switch from '@mui/material/Switch';
 
 export function BooleanCell<TData>({
   getValue,

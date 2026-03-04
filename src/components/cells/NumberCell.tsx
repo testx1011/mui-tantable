@@ -1,6 +1,8 @@
-import { Typography, Box } from '@mui/material';
 import type { CellRendererProps, NumberCellConfig } from '../../types';
 import { formatNumber } from '../../utils/formatters';
+
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 export function NumberCell<TData>({
   getValue,

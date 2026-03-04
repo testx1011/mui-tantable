@@ -1,12 +1,4 @@
 import React from 'react';
-import {
-  TableRow,
-  TableCell,
-  Checkbox,
-  Button,
-  Collapse,
-  Box,
-} from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import type { Table, Row, Cell } from '@tanstack/react-table';
@@ -14,6 +6,13 @@ import type { TanTableColumnDef } from '../../types/columns';
 import { getCommonPinningStyles } from './utils';
 import { flexRender } from '@tanstack/react-table';
 import { ListViewRow } from './ListViewRow';
+
+import TableRow from '@mui/material/TableRow';
+import TableCell from '@mui/material/TableCell';
+import Checkbox from '@mui/material/Checkbox';
+import Button from '@mui/material/Button';
+import Collapse from '@mui/material/Collapse';
+import Box from '@mui/material/Box';
 
 // Wrapper for user-provided subcomponent renderFn, kept at module scope
 interface SubComponentWrapperProps<TData> {

@@ -1,14 +1,13 @@
-import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Chip,
-  Box,
-} from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import type { Column } from '@tanstack/react-table';
 import type { MultiSelectFilterConfig } from '../../types/filters';
+
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Chip from '@mui/material/Chip';
+import Box from '@mui/material/Box';
 
 interface MultiSelectFilterProps<TData> {
   column: Column<TData, unknown>;
