@@ -5,7 +5,7 @@ import { formatNumber } from '../../utils/formatters';
 export function NumberCell<TData>({
   getValue,
   column,
-}: CellRendererProps<TData> & { config?: NumberCellConfig }) {
+}: CellRendererProps<TData> & { config?: NumberCellConfig }): React.ReactNode {
   const value = getValue();
   const config = (column.columnDef as { cellConfig?: NumberCellConfig })?.cellConfig;
 
