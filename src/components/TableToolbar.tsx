@@ -1,11 +1,23 @@
-import { useState } from 'react';
-import { Toolbar, Typography, IconButton, Button, Box, Popover } from '@mui/material';
+import { useReducer } from 'react';
+import {
+  Toolbar,
+  Typography,
+  IconButton,
+  Button,
+  Box,
+  Popover,
+} from '@mui/material';
 import ViewColumnIcon from '@mui/icons-material/ViewColumn';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import ViewHeadlineIcon from '@mui/icons-material/ViewHeadline';
 import type { Table } from '@tanstack/react-table';
-import { exportToCSV, exportToJSON, exportToExcel, printTable } from '../utils/exporters';
+import {
+  exportToCSV,
+  exportToJSON,
+  exportToExcel,
+  printTable,
+} from '../utils/exporters';
 import { FilterPanel } from './filters/FilterPanel';
 import { ExpandableSearch } from './table-toolbar/ExpandableSearch';
 import type { ToolbarConfig } from '../types/toolbar';
@@ -33,7 +45,7 @@ export function TableToolbar<TData>({
   view,
   onViewChange,
   enableListView,
-}: TableToolbarProps<TData>) {
+}: TableToolbarProps<TData>): React.ReactElement {
   const {
     showSearch = true,
     searchPlaceholder = 'Search...',
@@ -47,16 +59,73 @@ export function TableToolbar<TData>({
     subtitle,
   } = config || {};
 
-  const [columnMenuAnchor, setColumnMenuAnchor] = useState<null | HTMLElement>(null);
-  const [exportMenuAnchor, setExportMenuAnchor] = useState<null | HTMLElement>(null);
-  const [densityMenuAnchor, setDensityMenuAnchor] = useState<null | HTMLElement>(null);
-  const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(null);
-  const [columnSearch, setColumnSearch] = useState('');
+  // grouping toolbar UI state into a single reducer helps avoid
+  // multiple related useState calls and satisfies react-doctor’s
+  // prefer-useReducer rule.
+  type State = {
+    columnMenuAnchor: HTMLElement | null;
+    exportMenuAnchor: HTMLElement | null;
+    densityMenuAnchor: HTMLElement | null;
+    filterAnchorEl: HTMLElement | null;
+    columnSearch: string;
+  };
+
+  type Action =
+    | { type: 'openColumn'; anchor: HTMLElement }
+    | { type: 'closeColumn' }
+    | { type: 'openExport'; anchor: HTMLElement }
+    | { type: 'closeExport' }
+    | { type: 'openDensity'; anchor: HTMLElement }
+    | { type: 'closeDensity' }
+    | { type: 'openFilter'; anchor: HTMLElement }
+    | { type: 'closeFilter' }
+    | { type: 'setColumnSearch'; value: string };
+
+  const reducer = (state: State, action: Action): State => {
+    switch (action.type) {
+      case 'openColumn':
+        return { ...state, columnMenuAnchor: action.anchor };
+      case 'closeColumn':
+        return { ...state, columnMenuAnchor: null, columnSearch: '' };
+      case 'openExport':
+        return { ...state, exportMenuAnchor: action.anchor };
+      case 'closeExport':
+        return { ...state, exportMenuAnchor: null };
+      case 'openDensity':
+        return { ...state, densityMenuAnchor: action.anchor };
+      case 'closeDensity':
+        return { ...state, densityMenuAnchor: null };
+      case 'openFilter':
+        return { ...state, filterAnchorEl: action.anchor };
+      case 'closeFilter':
+        return { ...state, filterAnchorEl: null };
+      case 'setColumnSearch':
+        return { ...state, columnSearch: action.value };
+      default:
+        return state;
+    }
+  };
+
+  const [state, dispatch] = useReducer(reducer, {
+    columnMenuAnchor: null,
+    exportMenuAnchor: null,
+    densityMenuAnchor: null,
+    filterAnchorEl: null,
+    columnSearch: '',
+  });
+
+  const {
+    columnMenuAnchor,
+    exportMenuAnchor,
+    densityMenuAnchor,
+    filterAnchorEl,
+    columnSearch,
+  } = state;
 
   const globalFilter = (table.getState().globalFilter as string) || '';
 
   const handleExport = (format: string) => {
-    setExportMenuAnchor(null);
+    dispatch({ type: 'closeExport' });
     switch (format) {
       case 'csv':
         exportToCSV(table);
@@ -74,8 +143,7 @@ export function TableToolbar<TData>({
   };
 
   const handleColumnMenuClose = () => {
-    setColumnMenuAnchor(null);
-    setColumnSearch('');
+    dispatch({ type: 'closeColumn' });
   };
   return (
     <Toolbar sx={{ gap: 0.5, flexWrap: 'wrap' }}>
@@ -93,56 +161,111 @@ export function TableToolbar<TData>({
 
       {/* Search */}
       {showSearch && (
-        <ExpandableSearch value={globalFilter} onChange={(value) => table.setGlobalFilter(value)} placeholder={searchPlaceholder} />
+        <ExpandableSearch
+          value={globalFilter}
+          onChange={(value) => table.setGlobalFilter(value)}
+          placeholder={searchPlaceholder}
+        />
       )}
 
       {/* Filters */}
-      <IconButton onClick={(e) => setFilterAnchorEl(e.currentTarget)} title="Filters" color={table.getState().columnFilters.length > 0 ? 'primary' : 'default'}>
+      <IconButton
+        onClick={(e) => dispatch({ type: 'openFilter', anchor: e.currentTarget })}
+        title="Filters"
+        color={
+          table.getState().columnFilters.length > 0 ? 'primary' : 'default'
+        }
+      >
         <FilterListIcon />
       </IconButton>
-      <Popover open={Boolean(filterAnchorEl)} anchorEl={filterAnchorEl} onClose={() => setFilterAnchorEl(null)} anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} PaperProps={{ sx: { minWidth: 350 } }}>
+      <Popover
+        open={Boolean(filterAnchorEl)}
+        anchorEl={filterAnchorEl}
+        onClose={() => dispatch({ type: 'closeFilter' })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        PaperProps={{ sx: { minWidth: 350 } }}
+      >
         <FilterPanel table={table} />
       </Popover>
 
       {/* Column Visibility */}
       {showColumnVisibility && (
         <>
-          <IconButton onClick={(e) => setColumnMenuAnchor(e.currentTarget)} title="Column Visibility">
+          <IconButton
+            onClick={(e) => dispatch({ type: 'openColumn', anchor: e.currentTarget })}
+            title="Column Visibility"
+          >
             <ViewColumnIcon />
           </IconButton>
-          <ColumnVisibilityMenu table={table} anchorEl={columnMenuAnchor} open={Boolean(columnMenuAnchor)} onClose={handleColumnMenuClose} columnSearch={columnSearch} setColumnSearch={setColumnSearch} />
+          <ColumnVisibilityMenu
+            table={table}
+            anchorEl={columnMenuAnchor}
+            open={Boolean(columnMenuAnchor)}
+            onClose={handleColumnMenuClose}
+            columnSearch={columnSearch}
+            setColumnSearch={(value) => dispatch({ type: 'setColumnSearch', value })}
+          />
         </>
       )}
 
       {/* View Switcher */}
-      {enableListView && showViewSwitcher && <ViewSwitcher view={view ?? 'grid'} onViewChange={onViewChange} />}
+      {enableListView && showViewSwitcher && (
+        <ViewSwitcher view={view ?? 'grid'} onViewChange={onViewChange} />
+      )}
 
       {/* Density */}
       {showDensity && onDensityChange && (
         <>
-          <IconButton onClick={(e) => setDensityMenuAnchor(e.currentTarget)} title="Density">
+          <IconButton
+            onClick={(e) => dispatch({ type: 'openDensity', anchor: e.currentTarget })}
+            title="Density"
+          >
             <ViewHeadlineIcon />
           </IconButton>
-          <DensityMenu anchorEl={densityMenuAnchor} open={Boolean(densityMenuAnchor)} onClose={() => setDensityMenuAnchor(null)} density={density} onDensityChange={onDensityChange} />
+          <DensityMenu
+            anchorEl={densityMenuAnchor}
+            open={Boolean(densityMenuAnchor)}
+            onClose={() => dispatch({ type: 'closeDensity' })}
+            density={density}
+            onDensityChange={onDensityChange}
+          />
         </>
       )}
 
       {/* Export */}
       {showExport && exportFormats.length > 0 && (
         <>
-          <IconButton onClick={(e) => setExportMenuAnchor(e.currentTarget)} title="Export">
+          <IconButton
+            onClick={(e) => dispatch({ type: 'openExport', anchor: e.currentTarget })}
+            title="Export"
+          >
             <FileDownloadIcon />
           </IconButton>
-          <ExportMenu anchorEl={exportMenuAnchor} open={Boolean(exportMenuAnchor)} onClose={() => setExportMenuAnchor(null)} exportFormats={exportFormats} handleExport={handleExport} table={table} />
+          <ExportMenu
+            anchorEl={exportMenuAnchor}
+            open={Boolean(exportMenuAnchor)}
+            onClose={() => dispatch({ type: 'closeExport' })}
+            exportFormats={exportFormats}
+            handleExport={handleExport}
+            table={table}
+          />
         </>
       )}
 
       {/* Custom Actions */}
-      {customActions.map((action, index) => {
+      {customActions.map((action) => {
         if (action.show === false) return null;
 
+        // use label as key; assume actions have unique labels
         return (
-          <Button key={index} onClick={() => action.onClick(table)} disabled={action.disabled} color={action.color} startIcon={action.icon} size="small">
+          <Button
+            key={action.label}
+            onClick={() => action.onClick(table)}
+            disabled={action.disabled}
+            color={action.color}
+            startIcon={action.icon}
+            size="small"
+          >
             {action.label}
           </Button>
         );
