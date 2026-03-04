@@ -29,7 +29,7 @@ export function ColumnHeader<TData, TValue>({
   title,
   enableResizing,
   enableReordering,
-}: ColumnHeaderProps<TData, TValue>) {
+}: ColumnHeaderProps<TData, TValue>): React.ReactElement {
   const { column } = header;
   const table = header.getContext().table;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -214,7 +214,7 @@ export function ColumnHeader<TData, TValue>({
             // Prevent parent column drag/reorder from starting when resizing
             e.stopPropagation();
             const handler = header.getResizeHandler();
-            if (handler) handler(e as any);
+            if (handler) handler(e as React.PointerEvent<HTMLDivElement>);
 
             // listen for pointer up to clear resizing flag
             const onUp = () => {
