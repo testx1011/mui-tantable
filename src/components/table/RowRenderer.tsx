@@ -1,11 +1,32 @@
 import React from 'react';
-import { TableRow, TableCell, Checkbox, Button, Collapse, Box } from '@mui/material';
+import {
+  TableRow,
+  TableCell,
+  Checkbox,
+  Button,
+  Collapse,
+  Box,
+} from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import type { Table, Row, Cell } from '@tanstack/react-table';
 import type { TanTableColumnDef } from '../../types/columns';
 import { getCommonPinningStyles } from './utils';
 import { flexRender } from '@tanstack/react-table';
+import { ListViewRow } from './ListViewRow';
+
+// Wrapper for user-provided subcomponent renderFn, kept at module scope
+interface SubComponentWrapperProps<TData> {
+  row: Row<TData>;
+  renderSubComponent: (props: { row: Row<TData> }) => React.ReactNode;
+}
+
+function SubComponentWrapper<TData>({
+  row,
+  renderSubComponent,
+}: SubComponentWrapperProps<TData>) {
+  return <>{renderSubComponent({ row })}</>;
+}
 
 interface Props<TData> {
   table: Table<TData>;
@@ -21,9 +42,8 @@ interface Props<TData> {
   cellPadding: string;
   selectedCell: { rowId: string; colId: string } | null;
   setSelectedCell: (s: { rowId: string; colId: string } | null) => void;
-  setEditingRowId: (id: string | null) => void;
-  setEditingCellId: (id: string | null) => void;
-  setEditingData: (d: any) => void;
+  startRowEdit: (row: Row<TData>) => void;
+  startCellEdit: (row: Row<TData>, colId: string) => void;
   renderSubComponent?: (props: { row: Row<TData> }) => React.ReactNode;
   onRowClick?: (row: Row<TData>) => void;
   onRowDoubleClick?: (row: Row<TData>) => void;
@@ -43,23 +63,25 @@ export function RowRenderer<TData>({
   cellPadding,
   selectedCell,
   setSelectedCell,
-  setEditingRowId,
-  setEditingCellId,
-  setEditingData,
+  startRowEdit,
+  startCellEdit,
   renderSubComponent,
   onRowClick,
   onRowDoubleClick,
-}: Props<TData>) {
+}: Props<TData>): React.ReactElement {
   return (
     <>
       {rows.map((row) => {
         if (enableListView && renderListViewItem) {
           return (
-            <TableRow key={row.id}>
-              <TableCell colSpan={table.getVisibleLeafColumns().length + (enableRowSelection ? 1 : 0) + (enableExpanding ? 1 : 0)}>
-                {renderListViewItem(row)}
-              </TableCell>
-            </TableRow>
+            <ListViewRow
+              key={row.id}
+              row={row}
+              renderListViewItem={renderListViewItem}
+              enableExpanding={enableExpanding}
+              enableRowSelection={enableRowSelection}
+              table={table}
+            />
           );
         }
 
@@ -71,20 +93,36 @@ export function RowRenderer<TData>({
               onClick={() => onRowClick?.(row)}
               onDoubleClick={() => {
                 if (enableEditing && editMode === 'row') {
-                  setEditingRowId(row.id);
-                  setEditingData({});
+                  startRowEdit(row);
                 }
                 onRowDoubleClick?.(row);
               }}
               sx={{
-                cursor: onRowClick || onRowDoubleClick || (enableEditing && editMode === 'row') ? 'pointer' : 'default',
+                cursor:
+                  onRowClick ||
+                  onRowDoubleClick ||
+                  (enableEditing && editMode === 'row')
+                    ? 'pointer'
+                    : 'default',
               }}
             >
               {enableExpanding && (
                 <TableCell sx={{ p: cellPadding }}>
                   {row.getCanExpand() && (
-                    <Button size="small" aria-label="Expandir fila" onClick={(e) => { e.stopPropagation(); row.toggleExpanded(); }} style={{ minWidth: 0, padding: 4 }}>
-                      {row.getIsExpanded() ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}
+                    <Button
+                      size="small"
+                      aria-label="Expandir fila"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        row.toggleExpanded();
+                      }}
+                      style={{ minWidth: 0, padding: 4 }}
+                    >
+                      {row.getIsExpanded() ? (
+                        <KeyboardArrowDownIcon />
+                      ) : (
+                        <KeyboardArrowRightIcon />
+                      )}
                     </Button>
                   )}
                 </TableCell>
@@ -96,14 +134,18 @@ export function RowRenderer<TData>({
                     checked={row.getIsSelected()}
                     disabled={!row.getCanSelect()}
                     onChange={row.getToggleSelectedHandler()}
-                    onClick={(e) => { e.stopPropagation(); if (enableCellSelection) setSelectedCell(null); }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (enableCellSelection) setSelectedCell(null);
+                    }}
                     size={currentDensity === 'compact' ? 'small' : 'medium'}
                   />
                 </TableCell>
               )}
 
               {row.getVisibleCells().map((cell: Cell<TData, unknown>) => {
-                const columnDef = cell.column.columnDef as TanTableColumnDef<TData>;
+                const columnDef = cell.column
+                  .columnDef as TanTableColumnDef<TData>;
                 const align = columnDef.align || 'left';
 
                 return (
@@ -115,27 +157,35 @@ export function RowRenderer<TData>({
                     onClick={(e) => {
                       if (enableCellSelection) {
                         e.stopPropagation();
-                        setSelectedCell({ rowId: row.id, colId: cell.column.id });
+                        setSelectedCell({
+                          rowId: row.id,
+                          colId: cell.column.id,
+                        });
                       }
                     }}
                     sx={{
                       p: cellPadding,
                       width: cell.column.getSize(),
-                      minWidth: (cell.column.columnDef as TanTableColumnDef<TData>).minSize,
-                      maxWidth: (cell.column.columnDef as TanTableColumnDef<TData>).maxSize,
+                      minWidth: (
+                        cell.column.columnDef as TanTableColumnDef<TData>
+                      ).minSize,
+                      maxWidth: (
+                        cell.column.columnDef as TanTableColumnDef<TData>
+                      ).maxSize,
                       ...getCommonPinningStyles(cell.column),
-                      ...(enableCellSelection && selectedCell?.rowId === row.id && selectedCell?.colId === cell.column.id && {
-                        outline: '2px solid',
-                        outlineColor: 'primary.main',
-                        outlineOffset: '-2px',
-                        zIndex: 1,
-                      }),
+                      ...(enableCellSelection &&
+                        selectedCell?.rowId === row.id &&
+                        selectedCell?.colId === cell.column.id && {
+                          outline: '2px solid',
+                          outlineColor: 'primary.main',
+                          outlineOffset: '-2px',
+                          zIndex: 1,
+                        }),
                     }}
                     onDoubleClick={(e) => {
                       if (enableEditing && editMode === 'cell') {
                         e.stopPropagation();
-                        setEditingCellId(`${row.id}_${cell.column.id}`);
-                        setEditingData({});
+                        startCellEdit(row, cell.column.id);
                       }
                     }}
                   >
@@ -147,9 +197,25 @@ export function RowRenderer<TData>({
 
             {enableExpanding && row.getIsExpanded() && renderSubComponent && (
               <TableRow>
-                <TableCell colSpan={table.getAllColumns().length + (enableRowSelection ? 1 : 0) + (enableExpanding ? 1 : 0)} sx={{ p: 0 }}>
-                  <Collapse in={row.getIsExpanded()} timeout="auto" unmountOnExit>
-                    <Box sx={{ p: 2 }}>{renderSubComponent({ row })}</Box>
+                <TableCell
+                  colSpan={
+                    table.getAllColumns().length +
+                    (enableRowSelection ? 1 : 0) +
+                    (enableExpanding ? 1 : 0)
+                  }
+                  sx={{ p: 0 }}
+                >
+                  <Collapse
+                    in={row.getIsExpanded()}
+                    timeout="auto"
+                    unmountOnExit
+                  >
+                    <Box sx={{ p: 2 }}>
+                      <SubComponentWrapper
+                        row={row}
+                        renderSubComponent={renderSubComponent}
+                      />
+                    </Box>
                   </Collapse>
                 </TableCell>
               </TableRow>
