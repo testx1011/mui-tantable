@@ -54,7 +54,14 @@ module.exports = (async () => {
         reportUnusedDisableDirectives: true,
       },
       // merge recommended storybook rules if available (non-destructive)
-      rules: Object.assign({}, storybookRecommended.rules || {}),
+      rules: Object.assign(
+        {},
+        storybookRecommended.rules || {},
+        {
+          '@typescript-eslint/no-explicit-any': 'error',
+          '@typescript-eslint/explicit-module-boundary-types': 'warn',
+        }
+      ),
       settings: {
         react: { version: 'detect' },
       },
