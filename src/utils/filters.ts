@@ -16,8 +16,8 @@ export type FilterOperator =
 
 export interface FilterValue {
   operator: FilterOperator;
-  value: any;
-  value2?: any; // For 'between'
+  value: unknown;
+  value2?: unknown; // For 'between'
 }
 
 /**
@@ -26,88 +26,122 @@ export interface FilterValue {
 export function smartFilter<TData>(
   row: Row<TData>,
   columnId: string,
-  filterValue: FilterValue | string | number | unknown
+  filterValue: FilterValue | string | number | unknown,
 ): boolean {
   const cellValue = row.getValue(columnId);
 
   // Handle legacy simple values or direct values
-  if (typeof filterValue !== 'object' || filterValue === null || !('operator' in (filterValue as object))) {
-      // Fallback logic for simple values
-      if (filterValue === undefined || filterValue === '') return true;
-      
-      if (typeof filterValue === 'string') {
-          return String(cellValue ?? '').toLowerCase().includes(filterValue.toLowerCase());
-      }
-      // Array for multi-select
-      if (Array.isArray(filterValue)) {
-          return filterValue.includes(cellValue);
-      }
-      return cellValue == filterValue;
+  if (
+    typeof filterValue !== 'object' ||
+    filterValue === null ||
+    !('operator' in (filterValue as object))
+  ) {
+    // Fallback logic for simple values
+    if (filterValue === undefined || filterValue === '') return true;
+
+    if (typeof filterValue === 'string') {
+      return String(cellValue ?? '')
+        .toLowerCase()
+        .includes(filterValue.toLowerCase());
+    }
+    // Array for multi-select
+    if (Array.isArray(filterValue)) {
+      return filterValue.includes(cellValue);
+    }
+    return cellValue == filterValue;
   }
 
   const { operator, value, value2 } = filterValue as FilterValue;
 
   // Handle empty checks first as they don't require a comparison value
   if (operator === 'isEmpty') {
-      return cellValue === null || cellValue === undefined || cellValue === '';
+    return cellValue === null || cellValue === undefined || cellValue === '';
   }
   if (operator === 'isNotEmpty') {
-      return cellValue !== null && cellValue !== undefined && cellValue !== '';
+    return cellValue !== null && cellValue !== undefined && cellValue !== '';
   }
 
   // If cell value is null/undefined and we are not checking for empty, usually return false
   // unless operator is notEquals
   if (cellValue == null) {
-      return operator === 'notEquals';
+    return operator === 'notEquals';
   }
 
   // Date handling
-  if (value instanceof Date || (typeof value === 'string' && !isNaN(Date.parse(value)) && (operator.includes('Than') || operator === 'between' || operator === 'equals' || operator === 'notEquals'))) {
-      const cellDate = cellValue instanceof Date ? cellValue : new Date(cellValue as string | number);
-      const filterDate = value instanceof Date ? value : new Date(value);
-      
-      if (isNaN(cellDate.getTime())) return false;
+  if (
+    value instanceof Date ||
+    (typeof value === 'string' &&
+      !isNaN(Date.parse(value)) &&
+      (operator.includes('Than') ||
+        operator === 'between' ||
+        operator === 'equals' ||
+        operator === 'notEquals'))
+  ) {
+    const cellDate =
+      cellValue instanceof Date
+        ? cellValue
+        : new Date(cellValue as string | number);
+    const filterDate = value instanceof Date ? value : new Date(value);
 
-      // Normalize dates to ignore time for equality checks if needed, but for now keep as is
-      // Or maybe just compare timestamps
-      const cellTime = cellDate.getTime();
-      const filterTime = filterDate.getTime();
+    if (isNaN(cellDate.getTime())) return false;
 
-      switch (operator) {
-          case 'equals':
-              // Simple day comparison could be better, but let's stick to exact or timestamp
-              return cellTime === filterTime;
-          case 'notEquals':
-              return cellTime !== filterTime;
-          case 'greaterThan':
-              return cellTime > filterTime;
-          case 'greaterThanOrEqual':
-              return cellTime >= filterTime;
-          case 'lessThan':
-              return cellTime < filterTime;
-          case 'lessThanOrEqual':
-              return cellTime <= filterTime;
-          case 'between':
-              const filterDate2 = value2 instanceof Date ? value2 : new Date(value2);
-              return cellTime >= filterTime && cellTime <= filterDate2.getTime();
-      }
+    // Normalize dates to ignore time for equality checks if needed, but for now keep as is
+    // Or maybe just compare timestamps
+    const cellTime = cellDate.getTime();
+    const filterTime = filterDate.getTime();
+
+    switch (operator) {
+      case 'equals':
+        // Simple day comparison could be better, but let's stick to exact or timestamp
+        return cellTime === filterTime;
+      case 'notEquals':
+        return cellTime !== filterTime;
+      case 'greaterThan':
+        return cellTime > filterTime;
+      case 'greaterThanOrEqual':
+        return cellTime >= filterTime;
+      case 'lessThan':
+        return cellTime < filterTime;
+      case 'lessThanOrEqual':
+        return cellTime <= filterTime;
+      case 'between':
+        let filterDate2: Date;
+        if (value2 instanceof Date) {
+          filterDate2 = value2;
+        } else if (typeof value2 === 'string' || typeof value2 === 'number') {
+          filterDate2 = new Date(value2);
+        } else {
+          filterDate2 = new Date(''); // invalid date fallback
+        }
+        return cellTime >= filterTime && cellTime <= filterDate2.getTime();
+    }
   }
 
   // Number handling
-  if (typeof cellValue === 'number' || (typeof cellValue === 'string' && !isNaN(Number(cellValue)))) {
-      const numCell = Number(cellValue);
-      const numValue = Number(value);
-      const numValue2 = Number(value2);
+  if (
+    typeof cellValue === 'number' ||
+    (typeof cellValue === 'string' && !isNaN(Number(cellValue)))
+  ) {
+    const numCell = Number(cellValue);
+    const numValue = Number(value);
+    const numValue2 = Number(value2);
 
-      switch (operator) {
-          case 'equals': return numCell === numValue;
-          case 'notEquals': return numCell !== numValue;
-          case 'greaterThan': return numCell > numValue;
-          case 'greaterThanOrEqual': return numCell >= numValue;
-          case 'lessThan': return numCell < numValue;
-          case 'lessThanOrEqual': return numCell <= numValue;
-          case 'between': return numCell >= numValue && numCell <= numValue2;
-      }
+    switch (operator) {
+      case 'equals':
+        return numCell === numValue;
+      case 'notEquals':
+        return numCell !== numValue;
+      case 'greaterThan':
+        return numCell > numValue;
+      case 'greaterThanOrEqual':
+        return numCell >= numValue;
+      case 'lessThan':
+        return numCell < numValue;
+      case 'lessThanOrEqual':
+        return numCell <= numValue;
+      case 'between':
+        return numCell >= numValue && numCell <= numValue2;
+    }
   }
 
   // String handling (default)
@@ -136,7 +170,7 @@ export function smartFilter<TData>(
 export function fuzzyFilter<TData>(
   row: Row<TData>,
   columnId: string,
-  filterValue: string
+  filterValue: string,
 ): boolean {
   const value = row.getValue(columnId);
   if (value == null) return false;
@@ -146,7 +180,11 @@ export function fuzzyFilter<TData>(
 
   // Simple fuzzy matching - checks if all characters appear in order
   let searchIndex = 0;
-  for (let i = 0; i < stringValue.length && searchIndex < searchValue.length; i++) {
+  for (
+    let i = 0;
+    i < stringValue.length && searchIndex < searchValue.length;
+    i++
+  ) {
     if (stringValue[i] === searchValue[searchIndex]) {
       searchIndex++;
     }
@@ -161,9 +199,8 @@ export function fuzzyFilter<TData>(
 export function globalFilterFn<TData>(
   row: Row<TData>,
   _columnId: string,
-  filterValue: string
+  filterValue: string,
 ): boolean {
-
   const search = filterValue.toLowerCase();
 
   // Search across all cell values in the row
