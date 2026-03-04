@@ -7,7 +7,7 @@ export function AvatarCell<TData>({
   getValue,
   row,
   column,
-}: CellRendererProps<TData> & { config?: AvatarCellConfig }) {
+}: CellRendererProps<TData> & { config?: AvatarCellConfig }): React.ReactNode {
   const value = getValue();
   const config = (column.columnDef as { cellConfig?: AvatarCellConfig })?.cellConfig;
 
@@ -33,7 +33,9 @@ export function AvatarCell<TData>({
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      {/* key agregado a propósito para que el linter muestre la advertencia */}
       <Avatar
+        key={row.id}
         src={image as string | undefined}
         alt={displayName}
         variant={variant}
