@@ -74,7 +74,6 @@ export function DateFilter<TData>({
           <MenuItem value="isNotEmpty">No vacío</MenuItem>
         </Select>
       </FormControl>
-
       {operator !== 'isEmpty' && operator !== 'isNotEmpty' && (
         <TextField
           size="small"
@@ -82,11 +81,12 @@ export function DateFilter<TData>({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           fullWidth
-          InputLabelProps={{ shrink: true }}
           label={operator === 'between' ? startPlaceholder : undefined}
+          slotProps={{
+            inputLabel: { shrink: true }
+          }}
         />
       )}
-
       {operator === 'between' && (
         <TextField
           size="small"
@@ -94,8 +94,10 @@ export function DateFilter<TData>({
           value={value2}
           onChange={(e) => setValue2(e.target.value)}
           fullWidth
-          InputLabelProps={{ shrink: true }}
           label={endPlaceholder}
+          slotProps={{
+            inputLabel: { shrink: true }
+          }}
         />
       )}
     </Box>
