@@ -1,0 +1,6 @@
+# Define code owners for automatic PR review requests
+# Format: <file pattern> <GitHub username>
+
+# Root files
+/README.md @testx1011
+/src/ @testx1011
