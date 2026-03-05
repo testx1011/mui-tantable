@@ -64,7 +64,9 @@ export function EditCell<TData>({
           variant="standard"
           fullWidth
           onKeyDown={handleKeyDown}
-          InputLabelProps={{ shrink: true }}
+          slotProps={{
+            inputLabel: { shrink: true }
+          }}
         />
       );
 
