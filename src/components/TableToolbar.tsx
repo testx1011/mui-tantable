@@ -157,7 +157,6 @@ export function TableToolbar<TData>({
           )}
         </Box>
       )}
-
       {/* Search */}
       {showSearch && (
         <ExpandableSearch
@@ -166,7 +165,6 @@ export function TableToolbar<TData>({
           placeholder={searchPlaceholder}
         />
       )}
-
       {/* Filters */}
       <IconButton
         onClick={(e) => dispatch({ type: 'openFilter', anchor: e.currentTarget })}
@@ -182,11 +180,12 @@ export function TableToolbar<TData>({
         anchorEl={filterAnchorEl}
         onClose={() => dispatch({ type: 'closeFilter' })}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        PaperProps={{ sx: { minWidth: 350 } }}
+        slotProps={{
+          paper: { sx: { minWidth: 350 } }
+        }}
       >
         <FilterPanel table={table} />
       </Popover>
-
       {/* Column Visibility */}
       {showColumnVisibility && (
         <>
@@ -206,12 +205,10 @@ export function TableToolbar<TData>({
           />
         </>
       )}
-
       {/* View Switcher */}
       {enableListView && showViewSwitcher && (
         <ViewSwitcher view={view ?? 'grid'} onViewChange={onViewChange} />
       )}
-
       {/* Density */}
       {showDensity && onDensityChange && (
         <>
@@ -230,7 +227,6 @@ export function TableToolbar<TData>({
           />
         </>
       )}
-
       {/* Export */}
       {showExport && exportFormats.length > 0 && (
         <>
@@ -250,7 +246,6 @@ export function TableToolbar<TData>({
           />
         </>
       )}
-
       {/* Custom Actions */}
       {customActions.map((action) => {
         if (action.show === false) return null;
