@@ -87,7 +87,6 @@ export function NumberFilter<TData>({
           <MenuItem value="isNotEmpty">No vacío</MenuItem>
         </Select>
       </FormControl>
-
       {operator !== 'isEmpty' && operator !== 'isNotEmpty' && (
         <TextField
           size="small"
@@ -95,11 +94,12 @@ export function NumberFilter<TData>({
           placeholder={operator === 'between' ? minPlaceholder : 'Valor'}
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          inputProps={{ step }}
           fullWidth
+          slotProps={{
+            htmlInput: { step }
+          }}
         />
       )}
-
       {operator === 'between' && (
         <TextField
           size="small"
@@ -107,8 +107,10 @@ export function NumberFilter<TData>({
           placeholder={maxPlaceholder}
           value={value2}
           onChange={(e) => setValue2(e.target.value)}
-          inputProps={{ step }}
           fullWidth
+          slotProps={{
+            htmlInput: { step }
+          }}
         />
       )}
     </Box>
