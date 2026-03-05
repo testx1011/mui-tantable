@@ -39,6 +39,7 @@
     "mui:imports": "npx @mui/codemod@latest v5.0.0/path-imports src",
     "mui:sx-prop": "npx @mui/codemod@latest v6.0.0/sx-prop",
     "mui:deprecations": "npx @mui/codemod@latest deprecations/all",
+    "pretest": "npx playwright install",
     "test": "vitest",
     "postinstall": "node scripts/fix-storybook-mocker.cjs"
   },
