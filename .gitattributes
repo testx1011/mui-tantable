@@ -1,0 +1,15 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Explicitly declare UTF-8 files
+*.js text
+*.ts text
+*.tsx text
+*.json text
+*.md text
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
