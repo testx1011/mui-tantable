@@ -162,27 +162,30 @@ export function RowRenderer<TData>({
                         });
                       }
                     }}
-                    sx={[{
-                      p: cellPadding,
-                      width: cell.column.getSize(),
+                    sx={[
+                      {
+                        p: cellPadding,
+                        width: cell.column.getSize(),
 
-                      minWidth: (
-                        cell.column.columnDef as TanTableColumnDef<TData>
-                      ).minSize,
+                        minWidth: (
+                          cell.column.columnDef as TanTableColumnDef<TData>
+                        ).minSize,
 
-                      maxWidth: (
-                        cell.column.columnDef as TanTableColumnDef<TData>
-                      ).maxSize,
+                        maxWidth: (
+                          cell.column.columnDef as TanTableColumnDef<TData>
+                        ).maxSize,
 
-                      ...getCommonPinningStyles(cell.column)
-                    }, enableCellSelection &&
-                      selectedCell?.rowId === row.id &&
-                      selectedCell?.colId === cell.column.id && {
-                        outline: '2px solid',
-                        outlineColor: 'primary.main',
-                        outlineOffset: '-2px',
-                        zIndex: 1,
-                      }]}
+                        ...getCommonPinningStyles(cell.column),
+                      },
+                      enableCellSelection &&
+                        selectedCell?.rowId === row.id &&
+                        selectedCell?.colId === cell.column.id && {
+                          outline: '2px solid',
+                          outlineColor: 'primary.main',
+                          outlineOffset: '-2px',
+                          zIndex: 1,
+                        },
+                    ]}
                     onDoubleClick={(e) => {
                       if (enableEditing && editMode === 'cell') {
                         e.stopPropagation();
@@ -225,4 +228,4 @@ export function RowRenderer<TData>({
       })}
     </>
   );
-}
+}
