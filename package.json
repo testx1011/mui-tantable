@@ -1,6 +1,6 @@
 {
   "name": "mui-tantable",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A lightweight MUI-styled TanStack table with list-view, filters and virtualization.",
   "keywords": [
     "mui",
