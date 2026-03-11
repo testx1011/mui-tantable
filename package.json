@@ -40,8 +40,7 @@
     "mui:sx-prop": "npx @mui/codemod@latest v6.0.0/sx-prop",
     "mui:deprecations": "npx @mui/codemod@latest deprecations/all",
     "pretest": "npx playwright install",
-    "test": "vitest",
-    "postinstall": "node scripts/fix-storybook-mocker.cjs"
+    "test": "vitest"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -49,7 +48,7 @@
     "@mui/icons-material": "^7.3.9",
     "@mui/material": "^7.3.9",
     "@tanstack/react-table": "^8.21.3",
-    "@tanstack/react-virtual": "^3.13.19",
+    "@tanstack/react-virtual": "^3.13.21",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },
