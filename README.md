@@ -6,10 +6,10 @@
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/testx1011/mui-tantable?style=flat-square&logo=github)](https://github.com/testx1011/mui-tantable/pulls)
 [![License](https://img.shields.io/github/license/testx1011/mui-tantable?style=flat-square)](https://github.com/testx1011/mui-tantable/blob/main/LICENSE)
 [![Code of Conduct](https://img.shields.io/badge/code%20of%20conduct-Contributor%20Covenant-blue?style=flat-square)](CODE_OF_CONDUCT.md)
-[![Security Policy](https://img.shields.io/badge/security-policy-report%20vulns-green?style=flat-square)](SECURITY.md)
 [![Build (GitHub Actions)](https://img.shields.io/github/actions/workflow/status/testx1011/mui-tantable/ci.yml?style=flat-square)](https://github.com/testx1011/mui-tantable/actions)
 [![npm (latest)](https://img.shields.io/npm/v/mui-tantable?style=flat-square)](https://www.npmjs.com/package/mui-tantable)
 [![npm downloads](https://img.shields.io/npm/dw/mui-tantable?style=flat-square)](https://www.npmjs.com/package/mui-tantable)
+[![Socket Badge](https://badge.socket.dev/npm/package/mui-tantable/0.1.4)](https://badge.socket.dev/npm/package/mui-tantable/0.1.4)
 
 Un componente de tabla basado en TanStack Table y Material‑UI (MUI) pensado para listas y tablas ricas en funcionalidades, rendimiento y accesibilidad. ✨
 
