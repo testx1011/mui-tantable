@@ -149,3 +149,9 @@ Consulta el [CONTRIBUTING](CONTRIBUTING.md) para detalles completos: desde cómo
 - Añadir badges (build, coverage, npm) al `README.md`.
 - Documentar la API de `ColumnDef` y los `cellType` en detalle.
 - Añadir ejemplos de integración (Next.js, CRA, Vite).
+
+## ☕ Apoyo
+
+Si encuentras útil este proyecto, ¡puedes invitarme un café!
+
+<a href="https://www.buymeacoffee.com/testx1011"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=testx1011&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" /></a>
