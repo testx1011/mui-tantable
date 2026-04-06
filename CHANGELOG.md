@@ -1,17 +1,22 @@
 # Changelog
 
-Todas las notas de la librería se documentan según [Keep a Changelog](https://keepachangelog.com/).
+All library notes are documented according to [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
-- Estructura inicial del proyecto con funcionalidades básicas.
+
+- Initial project structure with basic functionality.
 
 ## [0.1.4] - 2026-03-05
+
 ### Added
-- Se publicó versión inicial con `TanTable`, filtros, virtualización, lista, toolbar y exportación.
-- Documentación del proyecto (README, CONTRIBUTING, CODE_OF_CONDUCT, SECURITY).
+
+- Initial version published with `TanTable`, filters, virtualization, list view, toolbar, and export.
+- Project documentation (README, CONTRIBUTING, CODE_OF_CONDUCT, SECURITY).
 
 ### Changed
-- Agregados badges de GitHub y npm al README.
+
+- Added GitHub and npm badges to README.
 
 ### Fixed
-- --
+
+---

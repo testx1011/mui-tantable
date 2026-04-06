@@ -1,55 +1,56 @@
-# Contribuyendo a mui-tantable
+# Contributing to mui-tantable
 
-¡Gracias por tu interés en mejorar el proyecto! Para mantener nuestro código claro y colaborar de forma eficiente, sigue estos pasos:
+Thank you for your interest in improving the project! To keep our code clear and collaborate efficiently, please follow these steps:
 
-## Requisitos previos
+## Prerequisites
 
-1. Node.js 18+ instalado.
-2. Clonar el repositorio y ejecutar `npm install`.
-3. Familiarizarte con TypeScript y React.
+1. Node.js 18+ installed.
+2. Clone the repository and install dependencies with `npm install`.
+3. Familiarize yourself with TypeScript and React.
 
 ```bash
 git clone https://github.com/testx1011/mui-tantable.git
 cd mui-tantable
 npm install
+# or pnpm install
 ```
 
-## Formato y calidad
+## Format and Quality
 
-- Ejecuta `npm run lint` antes de mandar un PR y corrige los errores.
-- Usa `npm run build` para asegurarte de que la librería compila.
-- Añade/actualiza tipos en `src/` si introduces nueva funcionalidad.
-- Mantén las dependencias bajo control y agrega entradas a `package.json` sólo si son estrictamente necesarias.
+- Run `npm run lint` before submitting a PR and fix any errors.
+- Use `npm run build` to ensure the library compiles.
+- Add/update types in `src/` if you introduce new functionality.
+- Keep dependencies under control and add entries to `package.json` only if strictly necessary.
 
-## Workflow de Git
+## Git Workflow
 
-1. Crea una rama descriptiva a partir de `main`:
+1. Create a descriptive branch from `main`:
    ```bash
-git checkout -b feature/nombre-corto
-```
-2. Haz commits pequeños y con mensajes claros.
-3. Rebase o merge desde `main` regularmente para evitar conflictos.
+   git checkout -b feature/short-name
+   ```
+2. Make small commits with clear messages.
+3. Rebase or merge from `main` regularly to avoid conflicts.
 
 ## Pull Requests
 
-- Abre un issue antes de trabajar en cambios grandes.
-- Incluye en la descripción del PR:
-  - Objetivo del cambio.
-  - Cómo probarlo (link a Storybook, ejemplos, etc.).
-  - Si modifica la API, explica los efectos y añade documentación.
-- Añade pruebas cuando sea posible (Vitest, Playwright).
-- Etiqueta al menos un revisor o deja un comentario solicitando revisión.
+- Open an issue before working on large changes.
+- Include in the PR description:
+  - Objective of the change.
+  - How to test it (link to Storybook, examples, etc.).
+  - If it modifies the API, explain the effects and add documentation.
+- Add tests when possible (Vitest, Playwright).
+- Tag at least one reviewer or leave a comment requesting review.
 
-## Reporte de errores y solicitudes de características
+## Bug Reports and Feature Requests
 
-Usa las [plantillas de issue](.github/ISSUE_TEMPLATE/) para facilitar la información.
+Use the [issue templates](.github/ISSUE_TEMPLATE/) to provide the necessary information.
 
-## Código de conducta
+## Code of Conduct
 
-Este proyecto adopta el [Código de Conducta de los Colaboradores](CODE_OF_CONDUCT.md). Al participar, acepta cumplir con sus normas y puede ser removido del proyecto si infringe las reglas.
+This project adopts the [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating, you agree to comply with its rules and may be removed from the project if you violate them.
 
 ---
 
-Gracias de nuevo por contribuir. ¡Tus mejoras hacen la librería más útil para todos!  
+Thank you again for contributing! Your improvements make the library more useful for everyone.
 
-[salto]: # (Este archivo se incluye en README.md para proporcionar más detalles.)
+[jump]: # "This file is included in README.md for more details."

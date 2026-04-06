@@ -15,6 +15,7 @@ jobs:
     strategy:
       matrix:
         node-version: [22]
+        package-manager: [npm, pnpm]
 
     steps:
       - name: Checkout repository
@@ -24,7 +25,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          cache: ${{ matrix.package-manager }}
+          cache-dependency-path: ${{ matrix.package-manager == 'pnpm' && 'pnpm-lock.yaml' || '' }}
           registry-url: 'https://registry.npmjs.org'
 
       - name: Upgrade npm to latest (fixes provenance bugs)
@@ -32,15 +34,29 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm ci || npm ci --legacy-peer-deps
+          if [ "${{ matrix.package-manager }}" = "pnpm" ]; then
+            corepack enable
+            pnpm install --frozen-lockfile
+          else
+            npm install
+          fi
 
       - name: Run linter
         run: |
           echo "Running ESLint..."
-          npm run lint
+          if [ "${{ matrix.package-manager }}" = "pnpm" ]; then
+            pnpm run lint
+          else
+            npm run lint
+          fi
 
       - name: Build
-        run: npm run build
+        run: |
+          if [ "${{ matrix.package-manager }}" = "pnpm" ]; then
+            pnpm run build
+          else
+            npm run build
+          fi
 
       - name: Prepare Playwright browsers
         run: |
@@ -50,9 +66,13 @@ jobs:
       - name: Run tests
         run: |
           echo "Running tests..."
-          npm test
+          if [ "${{ matrix.package-manager }}" = "pnpm" ]; then
+            pnpm test
+          else
+            npm test
+          fi
 
       - name: Publish to npm
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && matrix.package-manager == 'npm'
         run: npm publish --provenance
  

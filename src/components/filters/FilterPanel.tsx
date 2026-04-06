@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import CloseIcon from '@mui/icons-material/Close';
-import AddIcon from '@mui/icons-material/Add';
-import type { Table, Column } from '@tanstack/react-table';
-import { TextFilter } from './TextFilter';
-import { NumberFilter } from './NumberFilter';
-import { DateFilter } from './DateFilter';
-import { SelectFilter } from './SelectFilter';
-import { MultiSelectFilter } from './MultiSelectFilter';
+import { useState, useEffect } from "react";
+import CloseIcon from "@mui/icons-material/Close";
+import AddIcon from "@mui/icons-material/Add";
+import type { Table, Column } from "@tanstack/react-table";
+import { TextFilter } from "./TextFilter";
+import { NumberFilter } from "./NumberFilter";
+import { DateFilter } from "./DateFilter";
+import { SelectFilter } from "./SelectFilter";
+import { MultiSelectFilter } from "./MultiSelectFilter";
 import {
   FilterType,
   FilterConfig,
@@ -16,23 +16,23 @@ import {
   SelectFilterConfig,
   MultiSelectFilterConfig,
   TanTableColumnDef,
-} from '../../types';
+} from "../../types";
 
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import Stack from '@mui/material/Stack';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import Stack from "@mui/material/Stack";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
 
 interface FilterPanelProps<TData> {
   table: Table<TData>;
 }
 
-// componente auxiliar para renderizar el input de filtro
+// helper component to render filter input
 function FilterInput<TData>({
   column,
   table,
@@ -45,18 +45,18 @@ function FilterInput<TData>({
   const filterConfig = colDef.filterConfig as FilterConfig | undefined;
 
   switch (filterType) {
-    case 'text':
+    case "text":
       return (
         <TextFilter column={column} config={filterConfig as TextFilterConfig} />
       );
-    case 'number':
+    case "number":
       return (
         <NumberFilter
           column={column}
           config={filterConfig as NumberFilterConfig}
         />
       );
-    case 'date':
+    case "date":
       return (
         <DateFilter
           column={column}
@@ -64,14 +64,14 @@ function FilterInput<TData>({
           table={table}
         />
       );
-    case 'select':
+    case "select":
       return (
         <SelectFilter
           column={column}
           config={filterConfig as SelectFilterConfig}
         />
       );
-    case 'multiSelect':
+    case "multiSelect":
       return (
         <MultiSelectFilter
           column={column}
@@ -85,7 +85,9 @@ function FilterInput<TData>({
   }
 }
 
-export function FilterPanel<TData>({ table }: FilterPanelProps<TData>): React.ReactElement {
+export function FilterPanel<TData>({
+  table,
+}: FilterPanelProps<TData>): React.ReactElement {
   // Initialize with currently active filters
   const [filterRows, setFilterRows] = useState<string[]>(() =>
     table.getState().columnFilters.map((f) => f.id),
@@ -136,12 +138,12 @@ export function FilterPanel<TData>({ table }: FilterPanelProps<TData>): React.Re
   return (
     <Box sx={{ p: 2, minWidth: 600, maxWidth: 800 }}>
       <Typography variant="h6" sx={{ mb: 2 }}>
-        Filtros
+        Filters
       </Typography>
       <Stack spacing={2}>
         {filterRows.length === 0 && (
           <Typography variant="body2" color="text.secondary">
-            No hay filtros activos.
+            No active filters.
           </Typography>
         )}
         {filterRows.map((colId) => {
@@ -151,13 +153,13 @@ export function FilterPanel<TData>({ table }: FilterPanelProps<TData>): React.Re
           return (
             <Box
               key={colId}
-              sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}
+              sx={{ display: "flex", gap: 1, alignItems: "flex-start" }}
             >
               <FormControl size="small" sx={{ minWidth: 150 }}>
-                <InputLabel>Columna</InputLabel>
+                <InputLabel>Column</InputLabel>
                 <Select
                   value={colId}
-                  label="Columna"
+                  label="Column"
                   onChange={(e) => handleColumnChange(colId, e.target.value)}
                 >
                   {allColumns.map((col) => (
@@ -184,7 +186,7 @@ export function FilterPanel<TData>({ table }: FilterPanelProps<TData>): React.Re
           onClick={handleAddFilter}
           disabled={filterRows.length >= allColumns.length}
         >
-          Añadir filtro
+          Add filter
         </Button>
       </Stack>
     </Box>
@@ -196,7 +198,7 @@ function flexRenderHeader<TData>(column: Column<TData, unknown>) {
   // This is a simplification. In reality, header could be a function or component.
   // We try to get a string representation.
   const header = column.columnDef.header;
-  if (typeof header === 'string') return header;
-  if (typeof header === 'function') return column.id; // Fallback
+  if (typeof header === "string") return header;
+  if (typeof header === "function") return column.id; // Fallback
   return column.id;
 }

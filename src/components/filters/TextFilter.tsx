@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import SearchIcon from '@mui/icons-material/Search';
-import type { Column } from '@tanstack/react-table';
-import type { TextFilterConfig } from '../../types';
-import { FilterValue, FilterOperator } from '../../utils/filters';
+import React, { useState, useEffect } from "react";
+import SearchIcon from "@mui/icons-material/Search";
+import type { Column } from "@tanstack/react-table";
+import type { TextFilterConfig } from "../../types";
+import { FilterValue, FilterOperator } from "../../utils/filters";
 
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
 
 interface TextFilterProps<TData> {
   column: Column<TData, unknown>;
@@ -20,8 +20,7 @@ export function TextFilter<TData>({
   column,
   config,
 }: TextFilterProps<TData>): React.ReactElement {
-
-  const { placeholder = 'Buscar...', debounce = 300 } = config || {};
+  const { placeholder = "Search...", debounce = 300 } = config || {};
 
   const columnFilterValue = column.getFilterValue() as
     | FilterValue
@@ -29,24 +28,23 @@ export function TextFilter<TData>({
     | undefined;
 
   const [operator, setOperator] = useState<FilterOperator>(
-    typeof columnFilterValue === 'object' && columnFilterValue?.operator
+    typeof columnFilterValue === "object" && columnFilterValue?.operator
       ? (columnFilterValue as FilterValue).operator
-      : 'contains',
+      : "contains",
   );
 
   const initialValue: string =
-    typeof columnFilterValue === 'object' && columnFilterValue?.value
+    typeof columnFilterValue === "object" && columnFilterValue?.value
       ? String((columnFilterValue as FilterValue).value)
-      : typeof columnFilterValue === 'string'
-      ? columnFilterValue
-      : '';
+      : typeof columnFilterValue === "string"
+        ? columnFilterValue
+        : "";
 
   const [value, setValue] = useState<string>(initialValue);
 
-
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (value === '' && operator !== 'isEmpty' && operator !== 'isNotEmpty') {
+      if (value === "" && operator !== "isEmpty" && operator !== "isNotEmpty") {
         column.setFilterValue(undefined);
       } else {
         column.setFilterValue({ operator, value });
@@ -57,7 +55,7 @@ export function TextFilter<TData>({
   }, [value, operator, debounce, column]);
 
   return (
-    <Box sx={{ display: 'flex', gap: 1, width: '100%' }}>
+    <Box sx={{ display: "flex", gap: 1, width: "100%" }}>
       <FormControl size="small" sx={{ minWidth: 130 }}>
         <Select
           value={operator}
@@ -65,15 +63,15 @@ export function TextFilter<TData>({
           displayEmpty
           variant="outlined"
         >
-          <MenuItem value="contains">Contiene</MenuItem>
-          <MenuItem value="equals">Igual a</MenuItem>
-          <MenuItem value="startsWith">Empieza con</MenuItem>
-          <MenuItem value="endsWith">Termina con</MenuItem>
-          <MenuItem value="isEmpty">Vacío</MenuItem>
-          <MenuItem value="isNotEmpty">No vacío</MenuItem>
+          <MenuItem value="contains">Contains</MenuItem>
+          <MenuItem value="equals">Equals</MenuItem>
+          <MenuItem value="startsWith">Starts with</MenuItem>
+          <MenuItem value="endsWith">Ends with</MenuItem>
+          <MenuItem value="isEmpty">Empty</MenuItem>
+          <MenuItem value="isNotEmpty">Not empty</MenuItem>
         </Select>
       </FormControl>
-      {operator !== 'isEmpty' && operator !== 'isNotEmpty' && (
+      {operator !== "isEmpty" && operator !== "isNotEmpty" && (
         <TextField
           size="small"
           fullWidth
@@ -87,7 +85,7 @@ export function TextFilter<TData>({
                   <SearchIcon fontSize="small" />
                 </InputAdornment>
               ),
-            }
+            },
           }}
         />
       )}

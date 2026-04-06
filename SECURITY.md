@@ -1,15 +1,15 @@
-# Seguridad
+# Security
 
-La seguridad de los usuarios es una prioridad. Si descubres una vulnerabilidad, por favor sigue estas pautas para reportarla:
+User security is a priority. If you discover a vulnerability, please follow these guidelines to report it:
 
-1. **No divulgar públicamente** la vulnerabilidad hasta que haya sido corregida.
-2. Envía un correo a `text.x1011@gmail.com` (reemplaza con un contacto real) o abre un issue privado si está disponible.
-3. Describe el problema, versiones afectadas, pasos para reproducir y posible parche o mitigación.
-4. Los mantenedores se comprometen a responder en un plazo razonable (72 horas) y mantener la comunicación hasta que se resuelva.
+1. **Do not publicly disclose** the vulnerability until it has been fixed.
+2. Send an email to `text.x1011@gmail.com` (replace with actual contact) or open a private issue if available.
+3. Describe the problem, affected versions, steps to reproduce, and possible patch or mitigation.
+4. The maintainers commit to responding within a reasonable timeframe (72 hours) and maintaining communication until resolved.
 
-## Políticas adicionales
+## Additional Policies
 
-- Se recomienda utilizar dependabot o herramientas similares para alertas de dependencias.
-- El proyecto pretende seguir las mejores prácticas de cifrado en tránsito y en reposo.
+- Using dependabot or similar tools for dependency alerts is recommended.
+- The project aims to follow best practices for encryption in transit and at rest.
 
-*Este documento puede ser actualizado según se necesite.*
+_This document may be updated as needed._

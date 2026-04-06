@@ -1,13 +1,13 @@
-import { useState, useEffect, JSX } from 'react';
-import type { Column } from '@tanstack/react-table';
-import { FilterValue, FilterOperator } from '../../utils/filters';
-import { NumberFilterConfig } from '../../types/filters';
+import { useState, useEffect, JSX } from "react";
+import type { Column } from "@tanstack/react-table";
+import { FilterValue, FilterOperator } from "../../utils/filters";
+import { NumberFilterConfig } from "../../types/filters";
 
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
 
 interface NumberFilterProps<TData> {
   column: Column<TData, unknown>;
@@ -18,38 +18,38 @@ export function NumberFilter<TData>({
   column,
   config,
 }: NumberFilterProps<TData>): JSX.Element {
-  const { minPlaceholder = 'Min', maxPlaceholder = 'Max', step } = config || {};
+  const { minPlaceholder = "Min", maxPlaceholder = "Max", step } = config || {};
 
   const columnFilterValue = column.getFilterValue() as FilterValue | undefined;
 
   const [operator, setOperator] = useState<FilterOperator>(
-    columnFilterValue?.operator || 'equals',
+    columnFilterValue?.operator || "equals",
   );
 
   const [value, setValue] = useState<string>(
     columnFilterValue?.value !== undefined
       ? String(columnFilterValue.value)
-      : '',
+      : "",
   );
 
   const [value2, setValue2] = useState<string>(
     columnFilterValue?.value2 !== undefined
       ? String(columnFilterValue.value2)
-      : '',
+      : "",
   );
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (
-        value === '' &&
-        operator !== 'isEmpty' &&
-        operator !== 'isNotEmpty' &&
-        operator !== 'between'
+        value === "" &&
+        operator !== "isEmpty" &&
+        operator !== "isNotEmpty" &&
+        operator !== "between"
       ) {
         column.setFilterValue(undefined);
-      } else if (operator === 'between' && (value === '' || value2 === '')) {
+      } else if (operator === "between" && (value === "" || value2 === "")) {
         // Wait for both values? Or allow partial? Let's wait for both or clear if empty
-        if (value === '' && value2 === '') column.setFilterValue(undefined);
+        if (value === "" && value2 === "") column.setFilterValue(undefined);
         else
           column.setFilterValue({
             operator,
@@ -59,8 +59,8 @@ export function NumberFilter<TData>({
       } else {
         column.setFilterValue({
           operator,
-          value: value !== '' ? Number(value) : undefined,
-          value2: value2 !== '' ? Number(value2) : undefined,
+          value: value !== "" ? Number(value) : undefined,
+          value2: value2 !== "" ? Number(value2) : undefined,
         });
       }
     }, 300);
@@ -69,38 +69,38 @@ export function NumberFilter<TData>({
   }, [value, value2, operator, column]);
 
   return (
-    <Box sx={{ display: 'flex', gap: 1 }}>
+    <Box sx={{ display: "flex", gap: 1 }}>
       <FormControl size="small" sx={{ minWidth: 130 }}>
         <Select
           value={operator}
           onChange={(e) => setOperator(e.target.value as FilterOperator)}
           displayEmpty
         >
-          <MenuItem value="equals">Igual a</MenuItem>
-          <MenuItem value="notEquals">Diferente de</MenuItem>
-          <MenuItem value="greaterThan">Mayor que</MenuItem>
-          <MenuItem value="greaterThanOrEqual">Mayor o igual</MenuItem>
-          <MenuItem value="lessThan">Menor que</MenuItem>
-          <MenuItem value="lessThanOrEqual">Menor o igual</MenuItem>
-          <MenuItem value="between">Entre</MenuItem>
-          <MenuItem value="isEmpty">Vacío</MenuItem>
-          <MenuItem value="isNotEmpty">No vacío</MenuItem>
+          <MenuItem value="equals">Equals</MenuItem>
+          <MenuItem value="notEquals">Not equal</MenuItem>
+          <MenuItem value="greaterThan">Greater than</MenuItem>
+          <MenuItem value="greaterThanOrEqual">Greater or equal</MenuItem>
+          <MenuItem value="lessThan">Less than</MenuItem>
+          <MenuItem value="lessThanOrEqual">Less or equal</MenuItem>
+          <MenuItem value="between">Between</MenuItem>
+          <MenuItem value="isEmpty">Empty</MenuItem>
+          <MenuItem value="isNotEmpty">Not empty</MenuItem>
         </Select>
       </FormControl>
-      {operator !== 'isEmpty' && operator !== 'isNotEmpty' && (
+      {operator !== "isEmpty" && operator !== "isNotEmpty" && (
         <TextField
           size="small"
           type="number"
-          placeholder={operator === 'between' ? minPlaceholder : 'Valor'}
+          placeholder={operator === "between" ? minPlaceholder : "Value"}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           fullWidth
           slotProps={{
-            htmlInput: { step }
+            htmlInput: { step },
           }}
         />
       )}
-      {operator === 'between' && (
+      {operator === "between" && (
         <TextField
           size="small"
           type="number"
@@ -109,7 +109,7 @@ export function NumberFilter<TData>({
           onChange={(e) => setValue2(e.target.value)}
           fullWidth
           slotProps={{
-            htmlInput: { step }
+            htmlInput: { step },
           }}
         />
       )}

@@ -11,92 +11,101 @@
 [![npm downloads](https://img.shields.io/npm/dw/mui-tantable?style=flat-square)](https://www.npmjs.com/package/mui-tantable)
 [![Socket Badge](https://badge.socket.dev/npm/package/mui-tantable/0.1.4)](https://badge.socket.dev/npm/package/mui-tantable/0.1.4)
 
-Un componente de tabla basado en TanStack Table y Material‑UI (MUI) pensado para listas y tablas ricas en funcionalidades, rendimiento y accesibilidad. ✨
+A table component based on TanStack Table and Material‑UI (MUI) designed for feature-rich, high-performance, and accessible lists and tables. ✨
 
-**Estado**: 🛠️ desarrollo — funcionalidad principal implementada (virtualización, selección de celdas, atajos de teclado, vista lista, búsqueda expandible).
+**Status**: 🛠️ development — core functionality implemented (virtualization, cell selection, keyboard shortcuts, list view, expandable search).
 
-**Repositorio:** 🔗 https://github.com/testx1011/mui-tantable
+**Repository:** 🔗 https://github.com/testx1011/mui-tantable
 
-**📚 Documentación**
-- [CONTRIBUTING](CONTRIBUTING.md)  
-- [CODE OF CONDUCT](CODE_OF_CONDUCT.md)  
-- [SECURITY](SECURITY.md)  
+**📚 Documentation**
+
+- [CONTRIBUTING](CONTRIBUTING.md)
+- [CODE OF CONDUCT](CODE_OF_CONDUCT.md)
+- [SECURITY](SECURITY.md)
 - [CHANGELOG](CHANGELOG.md)
 
+**Quick Install (clone from GitHub)**
 
-**Instalación rápida (clonar desde GitHub)**
 ```bash
 git clone https://github.com/testx1011/mui-tantable.git
 cd mui-tantable
 npm install
+# or use pnpm if you prefer
+# pnpm install
 ```
 
-**Instalación desde npm**
+**Install from npm**
+
 ```bash
 npm install mui-tantable
-# o con yarn
+# or with yarn
 yarn add mui-tantable
 ```
 
-**🎯 Objetivo**
-- Proveer una tabla altamente personalizable y eficiente para aplicaciones React con estilo MUI.
-- Ofrecer características tipo Data Grid (filtrado, ordenación, paginación, selección, virtualización y vista lista).
+**🎯 Goal**
 
-**✨ Características principales**
-- ⚙️ **Renderizado flexible**: columnas definidas con `ColumnDef` y renderers personalizados.
-- ⚡️ **Virtualización**: soporta `@tanstack/react-virtual` para miles de filas.
-- 📋 **Vista Lista**: `enableListView` + `renderListViewItem` para presentar datos en un solo columna estilo list view (inspirado en MUI X List View).
-- 🔘 **Selección de celdas y filas**: selección visual de celdas y selección multi-fila.
-- ⌨️ **Atajos del teclado**: `Ctrl+C` copia el contenido de la celda/filas en formato tabular compatible con Excel/Sheets.
-- 🔎 **Búsqueda expandible**: UI de búsqueda con animación al estilo MUI Data Grid quick filter.
-- ✍️ **Edición in-cell / in-row**: soporte para modos de edición por celda o por fila (configurable).
-- 🧭 **Toolbar**: búsqueda, visibilidad de columnas, exportación (CSV/Excel/JSON), opciones de densidad y conmutador de vista (grid/list).
+- Provide a highly customizable and efficient table for React applications with MUI styling.
+- Offer Data Grid features (filtering, sorting, pagination, selection, virtualization, and list view).
 
-**📁 Estructura del proyecto (resumen)**
-- `src/components/TanTable.tsx` — componente principal.
-- `src/components/TableToolbar.tsx` — barra de herramientas (search, export, density, view switcher).
-- `src/components/ExpandableSearch.tsx` — búsqueda expandible.
-- `src/components/cells/*` — renderers de celdas (texto, número, fecha, avatar...).
-- `src/components/filters/*` — filtros integrados.
-- `src/utils/*` — exportadores, formateadores y utilidades.
-- `stories/TanTable.stories.tsx` — historias de Storybook con ejemplos (incluye `ListView`, `Virtualization`).
+**✨ Key Features**
 
-**Requisitos**
-- Node.js 18+ (recomendado).
-- Dependencias gestionadas en `package.json`.
+- ⚙️ **Flexible Rendering**: Columns defined with `ColumnDef` and custom renderers.
+- ⚡️ **Virtualization**: Supports `@tanstack/react-virtual` for thousands of rows.
+- 📋 **List View**: `enableListView` + `renderListViewItem` to present data in a single-column list view style (inspired by MUI X List View).
+- 🔘 **Cell & Row Selection**: Visual cell selection and multi-row selection.
+- ⌨️ **Keyboard Shortcuts**: `Ctrl+C` copies cell/row content in tabular format compatible with Excel/Sheets.
+- 🔎 **Expandable Search**: Search UI with animation MUI Data Grid quick filter style.
+- ✍️ **In-cell / In-row Editing**: Support for cell-by-cell or row-by-row editing modes (configurable).
+- 🧭 **Toolbar**: Search, column visibility, export (CSV/Excel/JSON), density options, and view switcher (grid/list).
 
-**🧰 Instalación (desarrollo local)**
+**📁 Project Structure (summary)**
+
+- `src/components/TanTable.tsx` — main component.
+- `src/components/TableToolbar.tsx` — toolbar (search, export, density, view switcher).
+- `src/components/ExpandableSearch.tsx` — expandable search.
+- `src/components/cells/*` — cell renderers (text, number, date, avatar...).
+- `src/components/filters/*` — built-in filters.
+- `src/utils/*` — exporters, formatters, and utilities.
+- `stories/TanTable.stories.tsx` — Storybook stories with examples (includes `ListView`, `Virtualization`).
+
+**Requirements**
+
+- Node.js 18+ (recommended).
+- Dependencies managed in `package.json`.
+
+**🧰 Installation (local development)**
+
 ```bash
-# clona el repo
+# clone the repo
 git clone https://github.com/testx1011/mui-tantable.git
 cd mui-tantable
 
-# instala dependencias
+# install dependencies
 npm install
 
-# levantar storybook (si está configurado)
+# start storybook (if configured)
 npm run storybook
 
-# o construir el paquete
+# or build the package
 npm run build
 ```
 
-**⚡ Uso básico**
-Ejemplo mínimo con `TanTable`:
+**⚡ Basic Usage**
+Minimal example with `TanTable`:
 
 ```tsx
-import React from 'react';
-import { TanTable } from 'mui-tantable';
+import React from "react";
+import { TanTable } from "mui-tantable";
 
 const columns = [
-  { accessorKey: 'id', header: 'ID' },
-  { accessorKey: 'name', header: 'Name', cellType: 'text' },
-  { accessorKey: 'email', header: 'Email', cellType: 'link' },
+  { accessorKey: "id", header: "ID" },
+  { accessorKey: "name", header: "Name", cellType: "text" },
+  { accessorKey: "email", header: "Email", cellType: "link" },
 ];
 
 const data = [
-  { id: 1, name: 'Alice', email: 'alice@example.com' },
-  { id: 2, name: 'Bob', email: 'bob@example.com' },
+  { id: 1, name: "Alice", email: "alice@example.com" },
+  { id: 2, name: "Bob", email: "bob@example.com" },
 ];
 
 export default function App() {
@@ -106,52 +115,60 @@ export default function App() {
       columns={columns}
       enableVirtualization={true}
       enableRowSelection={true}
-      toolbarConfig={{ title: 'Mi Tabla' }}
+      toolbarConfig={{ title: "My Table" }}
     />
   );
 }
 ```
 
-**Activar vista Lista**
+**Enable List View**
+
 ```tsx
 <TanTable
   data={data}
   columns={columns}
   enableListView={true}
   renderListViewItem={(row) => (
-    <div style={{ padding: 12, display: 'flex', alignItems: 'center' }}>
-      <img src={row.original.avatar} alt="avatar" style={{ width: 40, height: 40, borderRadius: 20 }} />
+    <div style={{ padding: 12, display: "flex", alignItems: "center" }}>
+      <img
+        src={row.original.avatar}
+        alt="avatar"
+        style={{ width: 40, height: 40, borderRadius: 20 }}
+      />
       <div style={{ marginLeft: 12 }}>
         <div>{row.original.name}</div>
-        <div style={{ color: '#666' }}>{row.original.email}</div>
+        <div style={{ color: "#666" }}>{row.original.email}</div>
       </div>
     </div>
   )}
 />
 ```
 
-**🛠️ Comandos útiles**
-- `npm run build` — compila la librería (usa `tsup`).
-- `npm run dev` — (si está definido) desarrolla localmente.
-- `npm run storybook` — abre Storybook con ejemplos interactivos.
+**🛠️ Useful Commands**
 
-**Desarrollo y pruebas**
-- Mantén `typescript` y `eslint` limpios (si están configurados).
-- Ejecuta `npm run build` después de cambios de tipos o exports.
+- `npm run build` — compiles the library (uses `tsup`).
+- `npm run dev` — (if defined) local development.
+- `npm run storybook` — opens Storybook with interactive examples.
 
-**🙌 Guía rápida de contribuciones**
-Consulta el [CONTRIBUTING](CONTRIBUTING.md) para detalles completos: desde cómo clonar el repo hasta el flujo de PR y estándares de código.
+**Development and Testing**
 
-- Abre un issue para discutir cambios grandes.
-- Crea PRs pequeños y enfocados; incluye el objetivo y demos en Storybook cuando sea posible.
+- Keep `typescript` and `eslint` clean (if configured).
+- Run `npm run build` after type or export changes.
 
-**🔮 Siguientes pasos sugeridos**
-- Añadir badges (build, coverage, npm) al `README.md`.
-- Documentar la API de `ColumnDef` y los `cellType` en detalle.
-- Añadir ejemplos de integración (Next.js, CRA, Vite).
+**🙌 Quick Contribution Guide**
+See [CONTRIBUTING](CONTRIBUTING.md) for complete details: from cloning the repo to PR workflow and code standards.
 
-## ☕ Apoyo
+- Open an issue to discuss large changes.
+- Create small, focused PRs; include the objective and Storybook demos when possible.
 
-Si encuentras útil este proyecto, ¡puedes invitarme un café!
+**🔮 Suggested Next Steps**
+
+- Add badges (build, coverage, npm) to `README.md`.
+- Document `ColumnDef` API and `cellType` in detail.
+- Add integration examples (Next.js, CRA, Vite).
+
+## ☕ Support
+
+If you find this project useful, you can buy me a coffee!
 
 [![Buy me a coffee](https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=&slug=testx1011&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff)](https://www.buymeacoffee.com/testx1011)
