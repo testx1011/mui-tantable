@@ -26,7 +26,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: ${{ matrix.package-manager }}
-          cache-dependency-path: ${{ matrix.package-manager == 'pnpm' && 'pnpm-lock.yaml' || '' }}
+          cache-dependency-path: ${{ matrix.package-manager == 'npm' && 'package-lock.json' || '' }}
           registry-url: 'https://registry.npmjs.org'
 
       - name: Upgrade npm to latest (fixes provenance bugs)
