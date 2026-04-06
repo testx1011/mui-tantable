@@ -31,9 +31,6 @@ jobs:
           cache-dependency-path: pnpm-lock.yaml
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Upgrade npm to latest (fixes provenance bugs)
-        run: npm install -g npm@latest
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
