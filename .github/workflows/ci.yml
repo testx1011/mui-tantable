@@ -15,48 +15,35 @@ jobs:
     strategy:
       matrix:
         node-version: [22]
-        package-manager: [npm, pnpm]
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: ${{ matrix.package-manager }}
-          cache-dependency-path: ${{ matrix.package-manager == 'npm' && 'package-lock.json' || '' }}
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
           registry-url: 'https://registry.npmjs.org'
 
       - name: Upgrade npm to latest (fixes provenance bugs)
         run: npm install -g npm@latest
 
       - name: Install dependencies
-        run: |
-          if [ "${{ matrix.package-manager }}" = "pnpm" ]; then
-            corepack enable
-            pnpm install --frozen-lockfile
-          else
-            npm install
-          fi
+        run: pnpm install --frozen-lockfile
 
       - name: Run linter
-        run: |
-          echo "Running ESLint..."
-          if [ "${{ matrix.package-manager }}" = "pnpm" ]; then
-            pnpm run lint
-          else
-            npm run lint
-          fi
+        run: pnpm run lint
 
       - name: Build
-        run: |
-          if [ "${{ matrix.package-manager }}" = "pnpm" ]; then
-            pnpm run build
-          else
-            npm run build
-          fi
+        run: pnpm run build
 
       - name: Prepare Playwright browsers
         run: |
@@ -64,15 +51,9 @@ jobs:
           npx playwright install
 
       - name: Run tests
-        run: |
-          echo "Running tests..."
-          if [ "${{ matrix.package-manager }}" = "pnpm" ]; then
-            pnpm test
-          else
-            npm test
-          fi
+        run: pnpm test
 
       - name: Publish to npm
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && matrix.package-manager == 'npm'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: npm publish --provenance
  
