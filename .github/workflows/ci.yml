@@ -29,6 +29,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
+          registry-url: 'https://registry.npmjs.org/'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -49,4 +50,4 @@ jobs:
 
       - name: Publish to npm
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: npm publish --provenance
+        run: npm publish --provenance --registry https://registry.npmjs.org/
