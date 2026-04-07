@@ -1,5 +1,5 @@
 {
-  "name": "mui-tantable",
+  "name": "@testx1011/mui-tantable",
   "version": "0.1.9",
   "packageManager": "pnpm@10.33.0",
   "description": "A lightweight MUI-styled TanStack table with list-view, filters and virtualization.",
@@ -30,6 +30,9 @@
     "dist",
     "README.md"
   ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsup",
@@ -76,9 +79,5 @@
     "typescript": "^6.0.2",
     "vite": "^8.0.5",
     "vitest": "^4.1.2"
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
   }
 }

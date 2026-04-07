@@ -50,7 +50,3 @@ jobs:
 
       - name: Run tests
         run: pnpm test
-
-      - name: Publish to npm
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: npm publish
