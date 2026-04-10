@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 import type {
   Row,
   SortingState,
@@ -9,16 +9,16 @@ import type {
   ExpandedState,
   RowSelectionState,
   PaginationState,
-} from '@tanstack/react-table';
+} from "@tanstack/react-table";
 import type {
   ToolbarConfig,
   PaginationConfig,
   ServerSideHandlers,
-} from './toolbar';
-import type { TanTableColumnDef } from './columns';
-import { SxProps, Theme } from '@mui/material/styles';
+} from "./toolbar";
+import type { TanTableColumnDef } from "./columns";
+import { SxProps, Theme } from "@mui/material/styles";
 
-export type Density = 'compact' | 'standard' | 'comfortable';
+export type Density = "compact" | "standard" | "comfortable";
 
 export interface TanTableProps<TData> {
   /** Table data array */
@@ -49,8 +49,12 @@ export interface TanTableProps<TData> {
   enableExpanding?: boolean;
   /** Enable virtualization */
   enableVirtualization?: boolean;
-  /** Auto-enable virtualization when data length >= this threshold (used when enableVirtualization is undefined) */
+  /** @deprecated This prop is deprecated. Virtualization is now always enabled by default. Set enableVirtualization={false} to disable. */
   virtualizationThreshold?: number;
+  /** Enable auto-height mode - table grows to content height (disables virtualization) */
+  autoHeight?: boolean;
+  /** Fixed height for the table container (used when virtualization is enabled) */
+  height?: number | string;
   /** Initial state */
   initialState?: Partial<TanTableState>;
   /** Controlled state */
@@ -108,7 +112,7 @@ export interface TanTableProps<TData> {
   /** Render list view item */
   renderListViewItem?: (row: Row<TData>) => ReactNode;
   /** Edit mode */
-  editMode?: 'cell' | 'row';
+  editMode?: "cell" | "row";
   /** Callback when row edit is saved */
   onEditingRowSave?: (row: TData) => Promise<void> | void;
   /** Callback when row edit is cancelled */

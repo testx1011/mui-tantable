@@ -1,4 +1,4 @@
-import React, { JSX, useEffect } from 'react';
+import React, { JSX, useEffect } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -8,31 +8,31 @@ import {
   getExpandedRowModel,
   ColumnDef as TanStackColumnDef,
   type Column,
-} from '@tanstack/react-table';
+} from "@tanstack/react-table";
 // ColumnHeader is used inside TableHeaderComponent
-import type { TanTableProps, Density, TanTableState } from '../types/core';
-import type { TableState } from '@tanstack/react-table';
+import type { TanTableProps, Density, TanTableState } from "../types/core";
+import type { TableState } from "@tanstack/react-table";
 
-import { TablePagination } from './TablePagination';
-import { TableToolbar } from './TableToolbar';
-import { RowRenderer } from './table/RowRenderer';
+import { TablePagination } from "./TablePagination";
+import { TableToolbar } from "./TableToolbar";
+import { RowRenderer } from "./table/RowRenderer";
 
-import { useTableVirtualizer } from './table/hooks/useTableVirtualizer';
-import { useEditingState } from './table/hooks/useEditingState';
-import { useEnhancedColumns } from './table/hooks/useEnhancedColumns';
-import { useCellNavigation } from './table/hooks/useCellNavigation';
-import { TableHeaderComponent } from './table/TableHeader';
-import { getCommonPinningStyles } from './table/utils';
+import { useTableVirtualizer } from "./table/hooks/useTableVirtualizer";
+import { useEditingState } from "./table/hooks/useEditingState";
+import { useEnhancedColumns } from "./table/hooks/useEnhancedColumns";
+import { useCellNavigation } from "./table/hooks/useCellNavigation";
+import { TableHeaderComponent } from "./table/TableHeader";
+import { getCommonPinningStyles } from "./table/utils";
 
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Skeleton from '@mui/material/Skeleton';
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import Skeleton from "@mui/material/Skeleton";
 
 // using getCommonPinningStyles from './table/utils'
 
@@ -80,7 +80,7 @@ const SkeletonRows = <TData,>({
               <Skeleton
                 variant="text"
                 width={
-                  ['60%', '75%', '40%', '90%', '55%', '85%', '70%'][
+                  ["60%", "75%", "40%", "90%", "55%", "85%", "70%"][
                     rowIndex % 7
                   ]
                 }
@@ -106,6 +106,8 @@ export function TanTable<TData>({
   enableExpanding = false,
   enableVirtualization = false,
   virtualizationThreshold = 100,
+  autoHeight = false,
+  height,
   enableColumnResizing = false,
   enableColumnOrdering = false,
   initialState,
@@ -115,9 +117,9 @@ export function TanTable<TData>({
   onRowDoubleClick,
   onRowSelectionChange,
   loading = false,
-  emptyMessage = 'No data available',
+  emptyMessage = "No data available",
   error,
-  density = 'standard',
+  density = "standard",
   onDensityChange,
   showToolbar = true,
   toolbarConfig,
@@ -136,11 +138,11 @@ export function TanTable<TData>({
   enableCellSelection = false,
   enableListView = false,
   renderListViewItem,
-  editMode = 'cell',
+  editMode = "cell",
   onEditingRowSave,
   onEditingRowCancel,
 }: TanTableProps<TData>): JSX.Element {
-  const [view, setView] = React.useState<'grid' | 'list'>('grid');
+  const [view, setView] = React.useState<"grid" | "list">("grid");
 
   // density can be controlled by caller or managed internally; similar to an
   // uncontrolled component pattern. react-doctor flags the previous
@@ -148,7 +150,7 @@ export function TanTable<TData>({
   // and update internal state only when uncontrolled.
   const isControlledDensity = density !== undefined;
   const [internalDensity, setInternalDensity] = React.useState<Density>(
-    density ?? 'standard',
+    density ?? "standard",
   );
   const currentDensity: Density = isControlledDensity
     ? (density as Density)
@@ -199,7 +201,7 @@ export function TanTable<TData>({
     enableGlobalFilter,
     enablePinning: true,
     enableColumnResizing,
-    columnResizeMode: 'onChange',
+    columnResizeMode: "onChange",
     getRowId,
     autoResetPageIndex,
     debugTable: debug,
@@ -221,7 +223,7 @@ export function TanTable<TData>({
       }
 
       if (onStateChange) {
-        if (typeof updater === 'function') {
+        if (typeof updater === "function") {
           try {
             const newState = (updater as (prev: TableState) => TableState)(
               table.getState(),
@@ -232,7 +234,7 @@ export function TanTable<TData>({
                 (newState as unknown as { density?: Density }).density ??
                 (table.getState() as unknown as { density?: Density })
                   .density ??
-                'standard',
+                "standard",
             } as TanTableState;
             onStateChange(tanState);
           } catch (e) {
@@ -244,7 +246,7 @@ export function TanTable<TData>({
             density:
               (updater as unknown as { density?: Density }).density ??
               (table.getState() as unknown as { density?: Density }).density ??
-              'standard',
+              "standard",
           } as TanTableState;
           onStateChange(tanState);
         }
@@ -264,20 +266,22 @@ export function TanTable<TData>({
 
   // Density styles
   const densityPadding: Record<Density, string> = {
-    compact: '4px 8px',
-    standard: '8px 16px',
-    comfortable: '12px 16px',
+    compact: "4px 8px",
+    standard: "8px 16px",
+    comfortable: "12px 16px",
   };
 
-  const cellPadding = densityPadding[currentDensity ?? 'standard'];
+  const cellPadding = densityPadding[currentDensity ?? "standard"];
 
   // Decide whether to virtualize: explicit prop > auto threshold
-  const effectiveVirtualization =
-    enableVirtualization === true
-      ? true
-      : enableVirtualization === false
-        ? false
-        : (data?.length ?? 0) >= (virtualizationThreshold ?? 100);
+  // Virtualization: always ON by default (like MUI Data Grid), unless explicitly disabled
+  // autoHeight overrides virtualization - when true, table grows to content height
+  const effectiveVirtualization = autoHeight
+    ? false
+    : enableVirtualization !== false;
+
+  // Container height: use height prop when virtualization is active, autoHeight removes maxHeight
+  const containerMaxHeight = autoHeight ? undefined : (height ?? 600);
 
   // Virtualization (hook)
   const { rowVirtualizer, virtualItems, visibleRows } = useTableVirtualizer(
@@ -321,7 +325,7 @@ export function TanTable<TData>({
       );
 
       if (cellElement) {
-        cellElement.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        cellElement.scrollIntoView({ block: "nearest", inline: "nearest" });
       }
     }, 0);
   }, [navigation.selectedCell, effectiveVirtualization, rowVirtualizer, table]);
@@ -329,9 +333,9 @@ export function TanTable<TData>({
   // Error state
   if (error) {
     return (
-      <Paper sx={{ p: 3, textAlign: 'center', ...sx }} className={className}>
+      <Paper sx={{ p: 3, textAlign: "center", ...sx }} className={className}>
         <Typography color="error" variant="h6">
-          {typeof error === 'string' ? error : 'An error occurred'}
+          {typeof error === "string" ? error : "An error occurred"}
         </Typography>
       </Paper>
     );
@@ -339,7 +343,7 @@ export function TanTable<TData>({
 
   return (
     <Box
-      sx={{ outline: 'none', ...sx }}
+      sx={{ outline: "none", ...sx }}
       className={className}
       tabIndex={0}
       onKeyDown={navigation.handleKeyDown}
@@ -360,15 +364,15 @@ export function TanTable<TData>({
         component={Paper}
         ref={tableContainerRef}
         sx={{
-          maxHeight: effectiveVirtualization ? 600 : undefined,
-          overflow: 'auto',
+          maxHeight: effectiveVirtualization ? containerMaxHeight : undefined,
+          overflow: "auto",
           ...(tableContainerSx || {}),
         }}
       >
         <Table
-          size={currentDensity === 'compact' ? 'small' : 'medium'}
+          size={currentDensity === "compact" ? "small" : "medium"}
           stickyHeader
-          sx={{ tableLayout: 'fixed' }}
+          sx={{ tableLayout: "fixed" }}
         >
           <TableHeaderComponent
             table={table}
@@ -398,7 +402,7 @@ export function TanTable<TData>({
                     (enableRowSelection ? 1 : 0) +
                     (enableExpanding ? 1 : 0)
                   }
-                  sx={{ textAlign: 'center', p: 4 }}
+                  sx={{ textAlign: "center", p: 4 }}
                 >
                   <Typography color="text.secondary">{emptyMessage}</Typography>
                 </TableCell>
