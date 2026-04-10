@@ -42,6 +42,20 @@ npm install mui-tantable
 yarn add mui-tantable
 ```
 
+### Peer Dependencies
+
+mui-tantable requires the following peer dependencies. Install them along with the package:
+
+```bash
+npm install @mui/material @emotion/react @emotion/styled
+# or
+pnpm add @mui/material @emotion/react @emotion/styled
+# or
+yarn add @mui/material @emotion/react @emotion/styled
+```
+
+> **Note:** `react` and `react-dom` are also peer dependencies but are usually already installed in your project.
+
 **🎯 Goal**
 
 - Provide a highly customizable and efficient table for React applications with MUI styling.
