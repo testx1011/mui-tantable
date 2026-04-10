@@ -1,5 +1,8 @@
-/debug-storybook.log
 /dist
 /node_modules
 /.vscode
+
+# Ignore Storybook's static build output
 /storybook-static
+/debug-storybook.log
+
