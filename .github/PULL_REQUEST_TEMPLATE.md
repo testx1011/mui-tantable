@@ -3,7 +3,7 @@ Summary of the changes implemented and their purpose.
 
 ## How to Test
 - [ ] Steps to reproduce or verify the changes
-- [ ] Link to Storybook story or added tests
+- [ ] Link to examples or added tests
 
 ## Related Issues
 Closes # (issue number)
