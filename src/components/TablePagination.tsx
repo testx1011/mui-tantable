@@ -1,13 +1,13 @@
-import type { Table } from '@tanstack/react-table';
-import type { PaginationConfig } from '../types/toolbar';
-import { JSX } from 'react';
+import type { Table } from "@tanstack/react-table";
+import type { PaginationConfig } from "../types/toolbar";
+import { JSX } from "react";
 
-import Box from '@mui/material/Box';
-import MuiPagination from '@mui/material/Pagination';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import Typography from '@mui/material/Typography';
-import FormControl from '@mui/material/FormControl';
+import Box from "@mui/material/Box";
+import MuiPagination from "@mui/material/Pagination";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Typography from "@mui/material/Typography";
+import FormControl from "@mui/material/FormControl";
 
 interface TablePaginationProps<TData> {
   table: Table<TData>;
@@ -32,16 +32,20 @@ export function TablePagination<TData>({
   return (
     <Box
       sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "flex-end",
         p: 1,
         gap: 2,
-        flexWrap: 'wrap',
+        flexWrap: "wrap",
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <Typography variant="body2" color="text.secondary">
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          id="pagination-rows-label"
+        >
           Rows per page:
         </Typography>
         <FormControl variant="standard">
@@ -49,9 +53,10 @@ export function TablePagination<TData>({
             value={pageSize}
             onChange={(e) => table.setPageSize(Number(e.target.value))}
             disableUnderline
+            aria-labelledby="pagination-rows-label"
             sx={{
-              fontSize: '0.875rem',
-              '& .MuiSelect-select': {
+              fontSize: "0.875rem",
+              "& .MuiSelect-select": {
                 paddingBottom: 0,
                 paddingTop: 0,
               },
@@ -66,7 +71,7 @@ export function TablePagination<TData>({
         </FormControl>
       </Box>
       <Typography variant="body2" color="text.secondary">
-        {totalRows === 0 ? 'No rows' : `${startRow}-${endRow} of ${totalRows}`}
+        {totalRows === 0 ? "No rows" : `${startRow}-${endRow} of ${totalRows}`}
       </Typography>
 
       <MuiPagination
@@ -78,6 +83,7 @@ export function TablePagination<TData>({
         color="primary"
         siblingCount={0}
         boundaryCount={1}
+        aria-label="Pagination navigation"
       />
     </Box>
   );

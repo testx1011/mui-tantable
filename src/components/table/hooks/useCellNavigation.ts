@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import type { Table } from '@tanstack/react-table';
+import { useState, useEffect, useCallback } from "react";
+import type { Table } from "@tanstack/react-table";
 
 export interface SelectedCell {
   rowId: string;
@@ -10,9 +10,21 @@ interface UseCellNavigationParams<TData> {
   table: Table<TData>;
   enableCellSelection?: boolean;
   enableEditing?: boolean;
-  editMode?: 'cell' | 'row';
+  editMode?: "cell" | "row";
+  /** Check if currently in editing mode */
+  isEditing?: () => boolean;
   /** invoked when Enter is pressed while a cell is selected */
   onStartCellEdit?: (rowId: string, colId: string) => void;
+  /** invoked when Escape is pressed to cancel editing */
+  onCancelEdit?: () => void;
+  /** Check if undo is available */
+  canUndo?: () => boolean;
+  /** Check if redo is available */
+  canRedo?: () => boolean;
+  /** Perform undo */
+  onUndo?: () => void;
+  /** Perform redo */
+  onRedo?: () => void;
 }
 
 /**
@@ -24,8 +36,14 @@ export function useCellNavigation<TData>({
   table,
   enableCellSelection = false,
   enableEditing = false,
-  editMode = 'cell',
+  editMode = "cell",
+  isEditing,
   onStartCellEdit,
+  onCancelEdit,
+  canUndo,
+  canRedo,
+  onUndo,
+  onRedo,
 }: UseCellNavigationParams<TData>): {
   selectedCell: SelectedCell | null;
   setSelectedCell: React.Dispatch<React.SetStateAction<SelectedCell | null>>;
@@ -41,15 +59,16 @@ export function useCellNavigation<TData>({
       setSelectedCell(null);
     };
 
-    document.addEventListener('click', handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
     return () => {
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener("click", handleClickOutside);
     };
   }, [enableCellSelection]);
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
+      // Ctrl+C or Cmd+C - Copy cell/row content
+      if ((event.ctrlKey || event.metaKey) && event.key === "c") {
         const selectedRows = table.getSelectedRowModel().rows;
 
         if (selectedCell) {
@@ -62,10 +81,10 @@ export function useCellNavigation<TData>({
               .find((c) => c.column.id === selectedCell.colId);
             if (cell) {
               const value = cell.getValue();
-              let textValue = String(value ?? '');
+              let textValue = String(value ?? "");
               if (value instanceof Date) {
                 textValue = value.toLocaleDateString();
-              } else if (typeof value === 'object' && value !== null) {
+              } else if (typeof value === "object" && value !== null) {
                 textValue = JSON.stringify(value);
               }
               navigator.clipboard.writeText(textValue);
@@ -87,13 +106,13 @@ export function useCellNavigation<TData>({
                     .find((c) => c.column.id === col.id);
                   let val = cell?.getValue();
                   if (val instanceof Date) return val.toLocaleDateString();
-                  if (typeof val === 'object' && val !== null)
+                  if (typeof val === "object" && val !== null)
                     return JSON.stringify(val);
-                  return String(val ?? '');
+                  return String(val ?? "");
                 })
-                .join('\t');
+                .join("\t");
             })
-            .join('\n');
+            .join("\n");
 
           if (tsv) {
             navigator.clipboard.writeText(tsv);
@@ -104,7 +123,7 @@ export function useCellNavigation<TData>({
 
       if (enableCellSelection) {
         const key = event.key;
-        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
+        if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(key)) {
           event.preventDefault();
 
           const visibleRows = table.getRowModel().rows;
@@ -133,19 +152,19 @@ export function useCellNavigation<TData>({
           let nextColIndex = currentColIndex;
 
           switch (key) {
-            case 'ArrowUp':
+            case "ArrowUp":
               nextRowIndex = Math.max(0, currentRowIndex - 1);
               break;
-            case 'ArrowDown':
+            case "ArrowDown":
               nextRowIndex = Math.min(
                 visibleRows.length - 1,
                 currentRowIndex + 1,
               );
               break;
-            case 'ArrowLeft':
+            case "ArrowLeft":
               nextColIndex = Math.max(0, currentColIndex - 1);
               break;
-            case 'ArrowRight':
+            case "ArrowRight":
               nextColIndex = Math.min(
                 visibleColumns.length - 1,
                 currentColIndex + 1,
@@ -165,18 +184,73 @@ export function useCellNavigation<TData>({
         }
 
         if (
-          event.key === 'Enter' &&
+          event.key === "Enter" &&
           enableEditing &&
-          editMode === 'cell' &&
+          editMode === "cell" &&
           selectedCell
         ) {
           event.preventDefault();
           const { rowId, colId } = selectedCell;
           onStartCellEdit?.(rowId, colId);
         }
+
+        // Escape - Cancel editing / deselect
+        if (event.key === "Escape") {
+          if (isEditing?.()) {
+            onCancelEdit?.();
+            event.preventDefault();
+          } else if (selectedCell) {
+            setSelectedCell(null);
+            event.preventDefault();
+          }
+        }
+
+        // Delete/Backspace - Clear selected rows
+        if (
+          (event.key === "Delete" || event.key === "Backspace") &&
+          table.getSelectedRowModel().rows.length > 0
+        ) {
+          table.setRowSelection({});
+          event.preventDefault();
+        }
+
+        // Ctrl+Z / Cmd+Z - Undo
+        if (
+          (event.ctrlKey || event.metaKey) &&
+          event.key === "z" &&
+          !event.shiftKey
+        ) {
+          if (canUndo?.()) {
+            onUndo?.();
+            event.preventDefault();
+          }
+        }
+
+        // Ctrl+Y / Cmd+Y or Ctrl+Shift+Z / Cmd+Shift+Z - Redo
+        if (
+          (event.ctrlKey || event.metaKey) &&
+          (event.key === "y" || (event.key === "z" && event.shiftKey))
+        ) {
+          if (canRedo?.()) {
+            onRedo?.();
+            event.preventDefault();
+          }
+        }
       }
     },
-    [table, selectedCell, enableCellSelection, enableEditing, editMode],
+    [
+      table,
+      selectedCell,
+      enableCellSelection,
+      enableEditing,
+      editMode,
+      isEditing,
+      onCancelEdit,
+      canUndo,
+      canRedo,
+      onUndo,
+      onRedo,
+    ],
   );
 
   return { selectedCell, setSelectedCell, handleKeyDown };

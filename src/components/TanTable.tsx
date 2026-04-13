@@ -6,6 +6,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getExpandedRowModel,
+  getGroupedRowModel,
   ColumnDef as TanStackColumnDef,
   type Column,
 } from "@tanstack/react-table";
@@ -22,6 +23,7 @@ import { useEditingState } from "./table/hooks/useEditingState";
 import { useEnhancedColumns } from "./table/hooks/useEnhancedColumns";
 import { useCellNavigation } from "./table/hooks/useCellNavigation";
 import { TableHeaderComponent } from "./table/TableHeader";
+import { TableFooterComponent } from "./table/TableFooter";
 import { getCommonPinningStyles } from "./table/utils";
 
 import Box from "@mui/material/Box";
@@ -44,6 +46,7 @@ interface SkeletonRowsProps<TData> {
   count: number;
   enableExpanding: boolean;
   enableRowSelection: boolean;
+  enableRowNumbering: boolean;
   cellPadding: string;
   columns: Column<TData, unknown>[];
 }
@@ -52,6 +55,7 @@ const SkeletonRows = <TData,>({
   count,
   enableExpanding,
   enableRowSelection,
+  enableRowNumbering,
   cellPadding,
   columns,
 }: SkeletonRowsProps<TData>) => {
@@ -59,6 +63,11 @@ const SkeletonRows = <TData,>({
     <>
       {Array.from({ length: count }).map((_, rowIndex) => (
         <TableRow key={`skeleton-${rowIndex}`}>
+          {enableRowNumbering && (
+            <TableCell sx={{ p: cellPadding, textAlign: "center", width: 50 }}>
+              <Skeleton variant="text" width={20} />
+            </TableCell>
+          )}
           {enableExpanding && (
             <TableCell sx={{ p: cellPadding }}>
               <Skeleton variant="circular" width={24} height={24} />
@@ -105,7 +114,6 @@ export function TanTable<TData>({
   enablePagination = true,
   enableExpanding = false,
   enableVirtualization = false,
-  virtualizationThreshold = 100,
   autoHeight = false,
   height,
   enableColumnResizing = false,
@@ -141,6 +149,17 @@ export function TanTable<TData>({
   editMode = "cell",
   onEditingRowSave,
   onEditingRowCancel,
+  enableRowNumbering = false,
+  stickyPagination = false,
+  enableFooter = false,
+  footerConfig,
+  enableInfiniteScroll = false,
+  onLoadMore,
+  hasMore = false,
+  loadingMore = false,
+  enableGrouping = false,
+  groupedColumns = [],
+  onGroupChange,
 }: TanTableProps<TData>): JSX.Element {
   const [view, setView] = React.useState<"grid" | "list">("grid");
 
@@ -193,6 +212,7 @@ export function TanTable<TData>({
       ? getPaginationRowModel()
       : undefined,
     getExpandedRowModel: enableExpanding ? getExpandedRowModel() : undefined,
+    getGroupedRowModel: enableGrouping ? getGroupedRowModel() : undefined,
     enableRowSelection,
     enableMultiRowSelection,
     enableSorting,
@@ -210,6 +230,7 @@ export function TanTable<TData>({
     state: {
       ...initialState,
       ...state,
+      ...(enableGrouping ? { grouping: groupedColumns } : {}),
     },
     onStateChange: (
       updater: TableState | ((prev: TableState) => TableState),
@@ -220,6 +241,12 @@ export function TanTable<TData>({
           .getSelectedRowModel()
           .rows.map((row) => row.original);
         onRowSelectionChange(selectedRows);
+      }
+
+      // Handle grouping changes
+      if (enableGrouping && onGroupChange) {
+        const currentGrouping = table.getState().grouping;
+        onGroupChange(currentGrouping);
       }
 
       if (onStateChange) {
@@ -264,14 +291,13 @@ export function TanTable<TData>({
         : undefined,
   });
 
-  // Density styles
-  const densityPadding: Record<Density, string> = {
-    compact: "4px 8px",
-    standard: "8px 16px",
-    comfortable: "12px 16px",
-  };
-
-  const cellPadding = densityPadding[currentDensity ?? "standard"];
+  // Density styles - defined at module scope for consistency
+  const cellPadding =
+    currentDensity === "compact"
+      ? "4px 8px"
+      : currentDensity === "comfortable"
+        ? "12px 16px"
+        : "8px 16px";
 
   // Decide whether to virtualize: explicit prop > auto threshold
   // Virtualization: always ON by default (like MUI Data Grid), unless explicitly disabled
@@ -291,35 +317,61 @@ export function TanTable<TData>({
     currentDensity,
   );
 
+  // Infinite scroll handler
+  React.useEffect(() => {
+    if (!enableInfiniteScroll || !onLoadMore || !hasMore || loadingMore) return;
+
+    const container = tableContainerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      if (scrollHeight - scrollTop - clientHeight < 100) {
+        onLoadMore();
+      }
+    };
+
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [enableInfiniteScroll, onLoadMore, hasMore, loadingMore]);
+
   // navigation & selection hook (depends on table instance, so created here)
   const navigation = useCellNavigation<TData>({
     table,
     enableCellSelection,
     enableEditing,
     editMode,
+    isEditing: editing.isEditing,
+    canUndo: editing.canUndo,
+    canRedo: editing.canRedo,
+    onUndo: editing.undo,
+    onRedo: editing.redo,
     onStartCellEdit: (rowId, colId) => {
       const row = table.getRowModel().rows.find((r) => r.id === rowId);
       if (row) {
         editing.startCellEdit(row, colId);
       }
     },
+    onCancelEdit: () => {
+      editing.cancel();
+    },
   });
 
   // Scroll into view when selection changes
+  const tableRows = table.getRowModel().rows;
+  const tableColumns = table.getVisibleLeafColumns();
   useEffect(() => {
     const sel = navigation.selectedCell;
     if (!sel) return;
 
     if (effectiveVirtualization) {
-      const rowIndex = table
-        .getRowModel()
-        .rows.findIndex((r) => r.id === sel.rowId);
+      const rowIndex = tableRows.findIndex((r) => r.id === sel.rowId);
       if (rowIndex !== -1) {
         rowVirtualizer.scrollToIndex(rowIndex);
       }
     }
 
-    setTimeout(() => {
+    const frameId = requestAnimationFrame(() => {
       const cellElement = tableContainerRef.current?.querySelector(
         `td[data-row-id="${sel.rowId}"][data-col-id="${sel.colId}"]`,
       );
@@ -327,8 +379,16 @@ export function TanTable<TData>({
       if (cellElement) {
         cellElement.scrollIntoView({ block: "nearest", inline: "nearest" });
       }
-    }, 0);
-  }, [navigation.selectedCell, effectiveVirtualization, rowVirtualizer, table]);
+    });
+
+    return () => cancelAnimationFrame(frameId);
+  }, [
+    navigation.selectedCell,
+    effectiveVirtualization,
+    rowVirtualizer,
+    tableRows,
+    tableColumns,
+  ]);
 
   // Error state
   if (error) {
@@ -347,6 +407,8 @@ export function TanTable<TData>({
       className={className}
       tabIndex={0}
       onKeyDown={navigation.handleKeyDown}
+      role="region"
+      aria-label="Data table"
     >
       {showToolbar && (
         <TableToolbar
@@ -360,103 +422,74 @@ export function TanTable<TData>({
         />
       )}
 
-      <TableContainer
-        component={Paper}
-        ref={tableContainerRef}
+      <Box
         sx={{
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
           maxHeight: effectiveVirtualization ? containerMaxHeight : undefined,
-          overflow: "auto",
-          ...(tableContainerSx || {}),
         }}
       >
-        <Table
-          size={currentDensity === "compact" ? "small" : "medium"}
-          stickyHeader
-          sx={{ tableLayout: "fixed" }}
+        <TableContainer
+          component={Paper}
+          ref={tableContainerRef}
+          sx={{
+            flex: stickyPagination ? 1 : "none",
+            overflow: "auto",
+            ...(tableContainerSx || {}),
+          }}
         >
-          <TableHeaderComponent
-            table={table}
-            cellPadding={cellPadding}
-            enableExpanding={enableExpanding}
-            enableRowSelection={Boolean(enableRowSelection)}
-            enableMultiRowSelection={enableMultiRowSelection}
-            enableColumnResizing={enableColumnResizing}
-            enableColumnOrdering={enableColumnOrdering}
-            currentDensity={currentDensity}
-          />
+          <Table
+            size={currentDensity === "compact" ? "small" : "medium"}
+            stickyHeader
+            sx={{ tableLayout: "fixed" }}
+          >
+            <TableHeaderComponent
+              table={table}
+              cellPadding={cellPadding}
+              enableExpanding={enableExpanding}
+              enableRowSelection={Boolean(enableRowSelection)}
+              enableMultiRowSelection={enableMultiRowSelection}
+              enableColumnResizing={enableColumnResizing}
+              enableColumnOrdering={enableColumnOrdering}
+              enableRowNumbering={enableRowNumbering}
+              currentDensity={currentDensity}
+            />
 
-          <TableBody>
-            {loading ? (
-              <SkeletonRows<TData>
-                count={table.getState().pagination.pageSize || 10}
-                enableExpanding={enableExpanding}
-                enableRowSelection={Boolean(enableRowSelection)}
-                cellPadding={cellPadding}
-                columns={table.getVisibleLeafColumns()}
-              />
-            ) : table.getRowModel().rows.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={
-                    table.getAllColumns().length +
-                    (enableRowSelection ? 1 : 0) +
-                    (enableExpanding ? 1 : 0)
-                  }
-                  sx={{ textAlign: "center", p: 4 }}
-                >
-                  <Typography color="text.secondary">{emptyMessage}</Typography>
-                </TableCell>
-              </TableRow>
-            ) : (
-              <>
-                {effectiveVirtualization && virtualItems.length > 0 && (
-                  <TableRow style={{ height: virtualItems[0].start }}>
-                    <TableCell
-                      colSpan={
-                        table.getVisibleLeafColumns().length +
-                        (enableRowSelection ? 1 : 0) +
-                        (enableExpanding ? 1 : 0)
-                      }
-                      style={{ padding: 0, border: 0 }}
-                    />
-                  </TableRow>
-                )}
-
-                <RowRenderer<TData>
-                  table={table}
-                  rows={visibleRows}
+            <TableBody>
+              {loading ? (
+                <SkeletonRows<TData>
+                  count={table.getState().pagination.pageSize || 10}
                   enableExpanding={enableExpanding}
                   enableRowSelection={Boolean(enableRowSelection)}
-                  enableCellSelection={enableCellSelection}
-                  enableEditing={enableEditing}
-                  enableListView={enableListView}
-                  renderListViewItem={renderListViewItem}
-                  editMode={editMode}
-                  currentDensity={currentDensity}
+                  enableRowNumbering={enableRowNumbering}
                   cellPadding={cellPadding}
-                  selectedCell={navigation.selectedCell}
-                  setSelectedCell={navigation.setSelectedCell}
-                  startRowEdit={editing.startRowEdit}
-                  startCellEdit={editing.startCellEdit}
-                  renderSubComponent={renderSubComponent}
-                  onRowClick={onRowClick}
-                  onRowDoubleClick={onRowDoubleClick}
+                  columns={table.getVisibleLeafColumns()}
                 />
-
-                {effectiveVirtualization &&
-                  rowVirtualizer.getVirtualItems().length > 0 && (
-                    <TableRow
-                      style={{
-                        height:
-                          rowVirtualizer.getTotalSize() -
-                          rowVirtualizer.getVirtualItems()[
-                            rowVirtualizer.getVirtualItems().length - 1
-                          ].end,
-                      }}
-                    >
+              ) : table.getRowModel().rows.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={
+                      table.getAllColumns().length +
+                      (enableRowNumbering ? 1 : 0) +
+                      (enableRowSelection ? 1 : 0) +
+                      (enableExpanding ? 1 : 0)
+                    }
+                    sx={{ textAlign: "center", p: 4 }}
+                  >
+                    <Typography color="text.secondary">
+                      {emptyMessage}
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                <>
+                  {effectiveVirtualization && virtualItems.length > 0 && (
+                    <TableRow style={{ height: virtualItems[0].start }}>
                       <TableCell
                         colSpan={
                           table.getVisibleLeafColumns().length +
+                          (enableRowNumbering ? 1 : 0) +
                           (enableRowSelection ? 1 : 0) +
                           (enableExpanding ? 1 : 0)
                         }
@@ -464,15 +497,94 @@ export function TanTable<TData>({
                       />
                     </TableRow>
                   )}
-              </>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
 
-      {showPagination && enablePagination && !loading && (
-        <TablePagination table={table} config={paginationConfig} />
-      )}
+                  <RowRenderer<TData>
+                    table={table}
+                    rows={visibleRows}
+                    enableExpanding={enableExpanding}
+                    enableRowSelection={Boolean(enableRowSelection)}
+                    enableCellSelection={enableCellSelection}
+                    enableEditing={enableEditing}
+                    enableListView={enableListView}
+                    enableRowNumbering={enableRowNumbering}
+                    renderListViewItem={renderListViewItem}
+                    editMode={editMode}
+                    currentDensity={currentDensity}
+                    cellPadding={cellPadding}
+                    selectedCell={navigation.selectedCell}
+                    setSelectedCell={navigation.setSelectedCell}
+                    startRowEdit={editing.startRowEdit}
+                    startCellEdit={editing.startCellEdit}
+                    renderSubComponent={renderSubComponent}
+                    onRowClick={onRowClick}
+                    onRowDoubleClick={onRowDoubleClick}
+                    virtualRowStartIndex={
+                      effectiveVirtualization && virtualItems.length > 0
+                        ? virtualItems[0].index
+                        : 0
+                    }
+                  />
+
+                  {effectiveVirtualization &&
+                    rowVirtualizer.getVirtualItems().length > 0 && (
+                      <TableRow
+                        style={{
+                          height:
+                            rowVirtualizer.getTotalSize() -
+                            rowVirtualizer.getVirtualItems()[
+                              rowVirtualizer.getVirtualItems().length - 1
+                            ].end,
+                        }}
+                      >
+                        <TableCell
+                          colSpan={
+                            table.getVisibleLeafColumns().length +
+                            (enableRowNumbering ? 1 : 0) +
+                            (enableRowSelection ? 1 : 0) +
+                            (enableExpanding ? 1 : 0)
+                          }
+                          style={{ padding: 0, border: 0 }}
+                        />
+                      </TableRow>
+                    )}
+                </>
+              )}
+            </TableBody>
+            {enableFooter && (
+              <TableFooterComponent
+                table={table}
+                enableRowNumbering={enableRowNumbering}
+                enableRowSelection={Boolean(enableRowSelection)}
+                enableExpanding={enableExpanding}
+                cellPadding={cellPadding}
+                footerConfig={footerConfig}
+              />
+            )}
+          </Table>
+          {enableInfiniteScroll && loadingMore && (
+            <Box sx={{ p: 2, textAlign: "center" }}>
+              <Typography variant="body2" color="text.secondary">
+                Loading more...
+              </Typography>
+            </Box>
+          )}
+        </TableContainer>
+
+        {showPagination && enablePagination && !loading && (
+          <Box
+            sx={{
+              position: stickyPagination ? "sticky" : "relative",
+              bottom: stickyPagination ? 0 : "auto",
+              backgroundColor: "background.paper",
+              zIndex: stickyPagination ? 1 : "auto",
+              borderTop: stickyPagination ? "1px solid" : "none",
+              borderColor: "divider",
+            }}
+          >
+            <TablePagination table={table} config={paginationConfig} />
+          </Box>
+        )}
+      </Box>
     </Box>
   );
 }

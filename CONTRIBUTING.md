@@ -36,7 +36,7 @@ npm install
 - Open an issue before working on large changes.
 - Include in the PR description:
   - Objective of the change.
-  - How to test it (link to Storybook, examples, etc.).
+  - How to test it (examples, tests, etc.).
   - If it modifies the API, explain the effects and add documentation.
 - Add tests when possible (Vitest, Playwright).
 - Tag at least one reviewer or leave a comment requesting review.

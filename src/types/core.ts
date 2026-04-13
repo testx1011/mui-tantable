@@ -117,6 +117,28 @@ export interface TanTableProps<TData> {
   onEditingRowSave?: (row: TData) => Promise<void> | void;
   /** Callback when row edit is cancelled */
   onEditingRowCancel?: () => void;
+  /** Enable row numbering - shows row number in first column */
+  enableRowNumbering?: boolean;
+  /** Enable sticky pagination - keeps pagination visible while scrolling */
+  stickyPagination?: boolean;
+  /** Enable footer with totals - shows sum/avg/count for numeric columns */
+  enableFooter?: boolean;
+  /** Footer configuration - define aggregation functions per column */
+  footerConfig?: FooterConfig;
+  /** Enable infinite scroll - loads more data when scrolling to bottom */
+  enableInfiniteScroll?: boolean;
+  /** Callback when user scrolls to bottom (for loading more data) */
+  onLoadMore?: () => void | Promise<void>;
+  /** Whether more data is available to load */
+  hasMore?: boolean;
+  /** Loading state for infinite scroll */
+  loadingMore?: boolean;
+  /** Enable grouping - allows grouping rows by column values */
+  enableGrouping?: boolean;
+  /** Grouped columns */
+  groupedColumns?: string[];
+  /** Callback when group changes */
+  onGroupChange?: (groupedColumns: string[]) => void;
 }
 
 export interface TanTableState {
@@ -129,7 +151,36 @@ export interface TanTableState {
   expanded: ExpandedState;
   rowSelection: RowSelectionState;
   pagination: PaginationState;
+  grouping: string[];
   density: Density;
+}
+
+export type FooterAggregation =
+  | "sum"
+  | "avg"
+  | "count"
+  | "min"
+  | "max"
+  | "none";
+
+export interface ColumnFooterConfig {
+  /** Aggregation type for this column */
+  aggregation?: FooterAggregation;
+  /** Custom label for the footer */
+  label?: string;
+  /** Custom formatter for the value */
+  format?: (value: number) => string;
+}
+
+export interface FooterConfig {
+  /** Footer title (default: "Totals") */
+  title?: string;
+  /** Per-column footer configuration */
+  columns?: Partial<Record<string, ColumnFooterConfig>>;
+  /** Show count row */
+  showCount?: boolean;
+  /** Show only for numeric columns */
+  numericOnly?: boolean;
 }
 
 // Types exported by declaration.

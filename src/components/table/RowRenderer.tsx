@@ -1,18 +1,18 @@
-import React from 'react';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import type { Table, Row, Cell } from '@tanstack/react-table';
-import type { TanTableColumnDef } from '../../types/columns';
-import { getCommonPinningStyles } from './utils';
-import { flexRender } from '@tanstack/react-table';
-import { ListViewRow } from './ListViewRow';
+import React from "react";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import type { Table, Row, Cell } from "@tanstack/react-table";
+import type { TanTableColumnDef } from "../../types/columns";
+import { getCommonPinningStyles } from "./utils";
+import { flexRender } from "@tanstack/react-table";
+import { ListViewRow } from "./ListViewRow";
 
-import TableRow from '@mui/material/TableRow';
-import TableCell from '@mui/material/TableCell';
-import Checkbox from '@mui/material/Checkbox';
-import Button from '@mui/material/Button';
-import Collapse from '@mui/material/Collapse';
-import Box from '@mui/material/Box';
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
+import Checkbox from "@mui/material/Checkbox";
+import Button from "@mui/material/Button";
+import Collapse from "@mui/material/Collapse";
+import Box from "@mui/material/Box";
 
 // Wrapper for user-provided subcomponent renderFn, kept at module scope
 interface SubComponentWrapperProps<TData> {
@@ -35,9 +35,10 @@ interface Props<TData> {
   enableCellSelection: boolean;
   enableEditing: boolean;
   enableListView: boolean;
+  enableRowNumbering: boolean;
   renderListViewItem?: (row: Row<TData>) => React.ReactNode;
-  editMode: 'cell' | 'row';
-  currentDensity: 'compact' | 'standard' | 'comfortable';
+  editMode: "cell" | "row";
+  currentDensity: "compact" | "standard" | "comfortable";
   cellPadding: string;
   selectedCell: { rowId: string; colId: string } | null;
   setSelectedCell: (s: { rowId: string; colId: string } | null) => void;
@@ -46,6 +47,7 @@ interface Props<TData> {
   renderSubComponent?: (props: { row: Row<TData> }) => React.ReactNode;
   onRowClick?: (row: Row<TData>) => void;
   onRowDoubleClick?: (row: Row<TData>) => void;
+  virtualRowStartIndex?: number;
 }
 
 export function RowRenderer<TData>({
@@ -56,6 +58,7 @@ export function RowRenderer<TData>({
   enableCellSelection,
   enableEditing,
   enableListView,
+  enableRowNumbering,
   renderListViewItem,
   editMode,
   currentDensity,
@@ -67,10 +70,20 @@ export function RowRenderer<TData>({
   renderSubComponent,
   onRowClick,
   onRowDoubleClick,
+  virtualRowStartIndex = 0,
 }: Props<TData>): React.ReactElement {
+  const pageIndex = table.getState().pagination.pageIndex;
+  const pageSize = table.getState().pagination.pageSize;
+  const isServerSide = table.getCoreRowModel().rows.length > pageSize;
+
   return (
     <>
-      {rows.map((row) => {
+      {rows.map((row, index) => {
+        const rowIndex = virtualRowStartIndex + index;
+        const displayIndex = isServerSide
+          ? pageIndex * pageSize + index + 1
+          : rowIndex + 1;
+
         if (enableListView && renderListViewItem) {
           return (
             <ListViewRow
@@ -91,7 +104,7 @@ export function RowRenderer<TData>({
               selected={row.getIsSelected()}
               onClick={() => onRowClick?.(row)}
               onDoubleClick={() => {
-                if (enableEditing && editMode === 'row') {
+                if (enableEditing && editMode === "row") {
                   startRowEdit(row);
                 }
                 onRowDoubleClick?.(row);
@@ -100,17 +113,33 @@ export function RowRenderer<TData>({
                 cursor:
                   onRowClick ||
                   onRowDoubleClick ||
-                  (enableEditing && editMode === 'row')
-                    ? 'pointer'
-                    : 'default',
+                  (enableEditing && editMode === "row")
+                    ? "pointer"
+                    : "default",
               }}
             >
+              {enableRowNumbering && (
+                <TableCell
+                  sx={{
+                    p: cellPadding,
+                    textAlign: "center",
+                    color: "text.secondary",
+                    fontSize: "0.75rem",
+                    width: 50,
+                  }}
+                >
+                  {displayIndex}
+                </TableCell>
+              )}
+
               {enableExpanding && (
                 <TableCell sx={{ p: cellPadding }}>
                   {row.getCanExpand() && (
                     <Button
                       size="small"
-                      aria-label="Expandir fila"
+                      aria-label={
+                        row.getIsExpanded() ? "Collapse row" : "Expand row"
+                      }
                       onClick={(e) => {
                         e.stopPropagation();
                         row.toggleExpanded();
@@ -137,7 +166,8 @@ export function RowRenderer<TData>({
                       e.stopPropagation();
                       if (enableCellSelection) setSelectedCell(null);
                     }}
-                    size={currentDensity === 'compact' ? 'small' : 'medium'}
+                    size={currentDensity === "compact" ? "small" : "medium"}
+                    aria-label={`Select row ${displayIndex}`}
                   />
                 </TableCell>
               )}
@@ -145,7 +175,7 @@ export function RowRenderer<TData>({
               {row.getVisibleCells().map((cell: Cell<TData, unknown>) => {
                 const columnDef = cell.column
                   .columnDef as TanTableColumnDef<TData>;
-                const align = columnDef.align || 'left';
+                const align = columnDef.align || "left";
 
                 return (
                   <TableCell
@@ -180,14 +210,14 @@ export function RowRenderer<TData>({
                       enableCellSelection &&
                         selectedCell?.rowId === row.id &&
                         selectedCell?.colId === cell.column.id && {
-                          outline: '2px solid',
-                          outlineColor: 'primary.main',
-                          outlineOffset: '-2px',
+                          outline: "2px solid",
+                          outlineColor: "primary.main",
+                          outlineOffset: "-2px",
                           zIndex: 1,
                         },
                     ]}
                     onDoubleClick={(e) => {
-                      if (enableEditing && editMode === 'cell') {
+                      if (enableEditing && editMode === "cell") {
                         e.stopPropagation();
                         startCellEdit(row, cell.column.id);
                       }
@@ -203,6 +233,7 @@ export function RowRenderer<TData>({
                 <TableCell
                   colSpan={
                     table.getAllColumns().length +
+                    (enableRowNumbering ? 1 : 0) +
                     (enableRowSelection ? 1 : 0) +
                     (enableExpanding ? 1 : 0)
                   }

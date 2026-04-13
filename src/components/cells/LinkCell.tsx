@@ -1,8 +1,8 @@
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import type { CellRendererProps, LinkCellConfig } from '../../types';
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import type { CellRendererProps, LinkCellConfig } from "../../types";
 
-import Box from '@mui/material/Box';
-import MuiLink from '@mui/material/Link';
+import Box from "@mui/material/Box";
+import MuiLink from "@mui/material/Link";
 
 export function LinkCell<TData>({
   getValue,
@@ -10,7 +10,8 @@ export function LinkCell<TData>({
   column,
 }: CellRendererProps<TData> & { config?: LinkCellConfig }): React.ReactNode {
   const value = getValue();
-  const config = (column.columnDef as { cellConfig?: LinkCellConfig })?.cellConfig;
+  const config = (column.columnDef as { cellConfig?: LinkCellConfig })
+    ?.cellConfig;
 
   if (!config || !config.href) {
     return null;
@@ -18,22 +19,26 @@ export function LinkCell<TData>({
 
   const { href, external = false, showExternalIcon = true } = config;
 
-  const url = typeof href === 'function' ? href(row.original) : href;
+  const url = typeof href === "function" ? href(row.original) : href;
   const displayText = value != null ? String(value) : url;
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
       <MuiLink
         href={url}
-        target={external ? '_blank' : undefined}
-        rel={external ? 'noopener noreferrer' : undefined}
+        target={external ? "_blank" : undefined}
+        rel={external ? "noopener noreferrer" : undefined}
         onClick={(e) => e.stopPropagation()}
         underline="hover"
       >
         {displayText}
       </MuiLink>
       {external && showExternalIcon && (
-        <OpenInNewIcon fontSize="small" sx={{ opacity: 0.6 }} />
+        <OpenInNewIcon
+          fontSize="small"
+          sx={{ opacity: 0.6 }}
+          aria-hidden="true"
+        />
       )}
     </Box>
   );

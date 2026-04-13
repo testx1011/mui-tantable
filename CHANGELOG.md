@@ -6,6 +6,13 @@ All library notes are documented according to [Keep a Changelog](https://keepach
 
 - Initial project structure with basic functionality.
 
+## [0.1.9] - 2026-04-13
+
+### Changed
+
+- Updated package version to `0.1.9` in `package.json`.
+- Changed package name to `mui-tantable` to match npm registry install URL.
+
 ## [0.1.4] - 2026-03-05
 
 ### Added

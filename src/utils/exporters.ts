@@ -1,5 +1,5 @@
-import type { Table } from '@tanstack/react-table';
-import type { ExportOptions } from '../types/toolbar';
+import type { Table } from "@tanstack/react-table";
+import type { ExportOptions } from "../types/toolbar";
 
 /**
  * Export table data to CSV
@@ -9,7 +9,7 @@ export function exportToCSV<TData>(
   options: Partial<ExportOptions> = {},
 ): void {
   const {
-    filename = 'table-export.csv',
+    filename = "table-export.csv",
     includeHeaders = true,
     columns,
     selectedOnly = false,
@@ -23,20 +23,20 @@ export function exportToCSV<TData>(
     ? table.getAllColumns().filter((col) => columns.includes(col.id))
     : table.getVisibleLeafColumns();
 
-  let csv = '';
+  let csv = "";
 
   // Add headers
   if (includeHeaders) {
     const headers = visibleColumns
       .map((col) => {
         const header =
-          typeof col.columnDef.header === 'string'
+          typeof col.columnDef.header === "string"
             ? col.columnDef.header
             : col.id;
         return escapeCsvValue(header);
       })
-      .join(',');
-    csv += headers + '\n';
+      .join(",");
+    csv += headers + "\n";
   }
 
   // Add rows
@@ -44,14 +44,14 @@ export function exportToCSV<TData>(
     const values = visibleColumns
       .map((col) => {
         const cell = row.getAllCells().find((c) => c.column.id === col.id);
-        const value = cell?.getValue() ?? '';
+        const value = cell?.getValue() ?? "";
         return escapeCsvValue(String(value));
       })
-      .join(',');
-    csv += values + '\n';
+      .join(",");
+    csv += values + "\n";
   });
 
-  downloadFile(csv, filename, 'text/csv;charset=utf-8;');
+  downloadFile(csv, filename, "text/csv;charset=utf-8;");
 }
 
 /**
@@ -62,7 +62,7 @@ export function exportToJSON<TData>(
   options: Partial<ExportOptions> = {},
 ): void {
   const {
-    filename = 'table-export.json',
+    filename = "table-export.json",
     columns,
     selectedOnly = false,
   } = options;
@@ -80,7 +80,7 @@ export function exportToJSON<TData>(
     visibleColumns.forEach((col) => {
       const cell = row.getAllCells().find((c) => c.column.id === col.id);
       const header =
-        typeof col.columnDef.header === 'string'
+        typeof col.columnDef.header === "string"
           ? col.columnDef.header
           : col.id;
       obj[header] = cell?.getValue() ?? null;
@@ -89,7 +89,7 @@ export function exportToJSON<TData>(
   });
 
   const json = JSON.stringify(data, null, 2);
-  downloadFile(json, filename, 'application/json;charset=utf-8;');
+  downloadFile(json, filename, "application/json;charset=utf-8;");
 }
 
 /**
@@ -100,7 +100,7 @@ export function exportToExcel<TData>(
   options: Partial<ExportOptions> = {},
 ): void {
   const {
-    filename = 'table-export.xls',
+    filename = "table-export.xls",
     includeHeaders = true,
     columns,
     selectedOnly = false,
@@ -118,40 +118,40 @@ export function exportToExcel<TData>(
 
   // Add headers
   if (includeHeaders) {
-    html += '<thead><tr>';
+    html += "<thead><tr>";
     visibleColumns.forEach((col) => {
       const header =
-        typeof col.columnDef.header === 'string'
+        typeof col.columnDef.header === "string"
           ? col.columnDef.header
           : col.id;
       html += `<th>${escapeHtml(header)}</th>`;
     });
-    html += '</tr></thead>';
+    html += "</tr></thead>";
   }
 
   // Add rows
-  html += '<tbody>';
+  html += "<tbody>";
   rows.forEach((row) => {
-    html += '<tr>';
+    html += "<tr>";
     visibleColumns.forEach((col) => {
       const cell = row.getAllCells().find((c) => c.column.id === col.id);
-      const value = cell?.getValue() ?? '';
+      const value = cell?.getValue() ?? "";
       html += `<td>${escapeHtml(String(value))}</td>`;
     });
-    html += '</tr>';
+    html += "</tr>";
   });
-  html += '</tbody></table></body></html>';
+  html += "</tbody></table></body></html>";
 
-  downloadFile(html, filename, 'application/vnd.ms-excel');
+  downloadFile(html, filename, "application/vnd.ms-excel");
 }
 
 /**
  * Print table
  */
 export function printTable<TData>(table: Table<TData>): void {
-  const printWindow = window.open('', '_blank');
+  const printWindow = window.open("", "_blank");
   if (!printWindow) {
-    console.error('Failed to open print window');
+    console.error("Failed to open print window");
     return;
   }
 
@@ -182,23 +182,23 @@ export function printTable<TData>(table: Table<TData>): void {
 
   visibleColumns.forEach((col) => {
     const header =
-      typeof col.columnDef.header === 'string' ? col.columnDef.header : col.id;
+      typeof col.columnDef.header === "string" ? col.columnDef.header : col.id;
     html += `<th>${escapeHtml(header)}</th>`;
   });
 
-  html += '</tr></thead><tbody>';
+  html += "</tr></thead><tbody>";
 
   rows.forEach((row) => {
-    html += '<tr>';
+    html += "<tr>";
     visibleColumns.forEach((col) => {
       const cell = row.getAllCells().find((c) => c.column.id === col.id);
-      const value = cell?.getValue() ?? '';
+      const value = cell?.getValue() ?? "";
       html += `<td>${escapeHtml(String(value))}</td>`;
     });
-    html += '</tr>';
+    html += "</tr>";
   });
 
-  html += '</tbody></table></body></html>';
+  html += "</tbody></table></body></html>";
 
   printWindow.document.write(html);
   printWindow.document.close();
@@ -208,10 +208,22 @@ export function printTable<TData>(table: Table<TData>): void {
 }
 
 /**
+ * Export table data to PDF (using browser print dialog)
+ */
+export function exportToPDF<TData>(
+  table: Table<TData>,
+  options: Partial<ExportOptions> = {},
+): void {
+  void options;
+
+  printTable(table);
+}
+
+/**
  * Helper: Escape CSV value
  */
 function escapeCsvValue(value: string): string {
-  if (value.includes(',') || value.includes('"') || value.includes('\n')) {
+  if (value.includes(",") || value.includes('"') || value.includes("\n")) {
     return `"${value.replace(/"/g, '""')}"`;
   }
   return value;
@@ -221,7 +233,7 @@ function escapeCsvValue(value: string): string {
  * Helper: Escape HTML
  */
 function escapeHtml(value: string): string {
-  const div = document.createElement('div');
+  const div = document.createElement("div");
   div.textContent = value;
   return div.innerHTML;
 }
@@ -236,7 +248,7 @@ function downloadFile(
 ): void {
   const blob = new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
+  const link = document.createElement("a");
   link.href = url;
   link.download = filename;
   document.body.appendChild(link);

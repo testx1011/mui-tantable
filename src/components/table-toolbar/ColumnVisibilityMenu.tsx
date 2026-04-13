@@ -1,14 +1,14 @@
-import type { Table } from '@tanstack/react-table';
-import type { TanTableColumnDef } from '../../types/columns';
-import { JSX } from 'react';
+import type { Table } from "@tanstack/react-table";
+import type { TanTableColumnDef } from "../../types/columns";
+import { JSX } from "react";
 
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Divider from '@mui/material/Divider';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Divider from "@mui/material/Divider";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 
 interface Props<TData> {
   table: Table<TData>;
@@ -32,8 +32,8 @@ export function ColumnVisibilityMenu<TData>({
       anchorEl={anchorEl}
       open={open}
       onClose={onClose}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      transformOrigin={{ vertical: "top", horizontal: "right" }}
       slotProps={{ paper: { sx: { minWidth: 350, paddingY: 0 } } }}
     >
       <Box sx={{ px: 2, py: 1 }}>
@@ -49,13 +49,13 @@ export function ColumnVisibilityMenu<TData>({
         />
       </Box>
       <Divider />
-      <Box sx={{ maxHeight: 300, overflow: 'auto' }}>
+      <Box sx={{ maxHeight: 300, overflow: "auto" }}>
         {table
           .getAllLeafColumns()
           .filter((column) => {
             const columnDef = column.columnDef as TanTableColumnDef<TData>;
             const header =
-              typeof columnDef.header === 'string'
+              typeof columnDef.header === "string"
                 ? columnDef.header
                 : column.id;
             return header.toLowerCase().includes(columnSearch.toLowerCase());
@@ -65,7 +65,7 @@ export function ColumnVisibilityMenu<TData>({
             if (columnDef.enableHiding === false) return null;
 
             const header =
-              typeof columnDef.header === 'string'
+              typeof columnDef.header === "string"
                 ? columnDef.header
                 : column.id;
 
@@ -75,7 +75,7 @@ export function ColumnVisibilityMenu<TData>({
                 dense
                 onClick={(e) => {
                   const target = e.target as HTMLElement;
-                  if (target.tagName !== 'INPUT') {
+                  if (target.tagName !== "INPUT") {
                     column.toggleVisibility();
                   }
                 }}
@@ -96,8 +96,8 @@ export function ColumnVisibilityMenu<TData>({
           })}
       </Box>
       <Divider />
-      <Box sx={{ p: 1, display: 'flex', justifyContent: 'space-between' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Box sx={{ p: 1, display: "flex", justifyContent: "space-between" }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Checkbox
             checked={table.getIsAllColumnsVisible()}
             indeterminate={
@@ -110,11 +110,12 @@ export function ColumnVisibilityMenu<TData>({
           <Box
             component="button"
             onClick={() => table.resetColumnVisibility()}
+            aria-label="Reset column visibility"
             style={{
-              background: 'none',
-              border: 'none',
+              background: "none",
+              border: "none",
               padding: 0,
-              cursor: 'pointer',
+              cursor: "pointer",
             }}
           >
             Reset

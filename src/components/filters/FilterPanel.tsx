@@ -175,6 +175,7 @@ export function FilterPanel<TData>({
               <IconButton
                 size="small"
                 onClick={() => handleRemoveFilter(colId)}
+                aria-label={`Remove filter for ${column?.columnDef.header || colId}`}
               >
                 <CloseIcon />
               </IconButton>

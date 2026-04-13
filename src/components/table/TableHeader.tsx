@@ -1,12 +1,13 @@
-import type { Table } from '@tanstack/react-table';
-import type { TanTableColumnDef } from '../../types/columns';
-import { ColumnHeader } from '../ColumnHeader';
-import { getCommonPinningStyles } from './utils';
+import type { Table } from "@tanstack/react-table";
+import type { TanTableColumnDef } from "../../types/columns";
+import { ColumnHeader } from "../ColumnHeader";
+import { getCommonPinningStyles } from "./utils";
 
-import TableRow from '@mui/material/TableRow';
-import TableCell from '@mui/material/TableCell';
-import Checkbox from '@mui/material/Checkbox';
-import TableHead from '@mui/material/TableHead';
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
+import Checkbox from "@mui/material/Checkbox";
+import TableHead from "@mui/material/TableHead";
+import Typography from "@mui/material/Typography";
 
 interface Props<TData> {
   table: Table<TData>;
@@ -16,7 +17,8 @@ interface Props<TData> {
   enableMultiRowSelection: boolean;
   enableColumnResizing: boolean;
   enableColumnOrdering: boolean;
-  currentDensity: 'compact' | 'standard' | 'comfortable';
+  enableRowNumbering: boolean;
+  currentDensity: "compact" | "standard" | "comfortable";
 }
 
 export function TableHeaderComponent<TData>({
@@ -27,12 +29,23 @@ export function TableHeaderComponent<TData>({
   enableMultiRowSelection,
   enableColumnResizing,
   enableColumnOrdering,
+  enableRowNumbering,
   currentDensity,
 }: Props<TData>): React.ReactElement {
   return (
     <TableHead>
       {table.getHeaderGroups().map((headerGroup) => (
         <TableRow key={headerGroup.id}>
+          {enableRowNumbering && (
+            <TableCell
+              sx={{ width: 50, p: cellPadding, textAlign: "center" }}
+              aria-label="Row number"
+            >
+              <Typography variant="caption" color="text.secondary">
+                #
+              </Typography>
+            </TableCell>
+          )}
           {enableExpanding && <TableCell sx={{ width: 48, p: cellPadding }} />}
           {enableRowSelection && (
             <TableCell sx={{ width: 48, p: cellPadding }}>
@@ -41,15 +54,17 @@ export function TableHeaderComponent<TData>({
                   checked={table.getIsAllRowsSelected()}
                   indeterminate={table.getIsSomeRowsSelected()}
                   onChange={table.getToggleAllRowsSelectedHandler()}
-                  size={currentDensity === 'compact' ? 'small' : 'medium'}
+                  size={currentDensity === "compact" ? "small" : "medium"}
+                  aria-label="Select all rows"
                 />
               )}
             </TableCell>
           )}
 
           {headerGroup.headers.map((header) => {
-            const columnDef = header.column.columnDef as TanTableColumnDef<TData>;
-            const align = columnDef.align || 'left';
+            const columnDef = header.column
+              .columnDef as TanTableColumnDef<TData>;
+            const align = columnDef.align || "left";
 
             return (
               <TableCell

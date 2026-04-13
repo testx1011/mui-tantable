@@ -1,9 +1,8 @@
-import { useMemo } from 'react';
-import type { TanTableColumnDef } from '../../../types/columns';
-import { smartFilter } from '../../../utils/filters';
-import { EditCell } from '../../EditCell';
-import { flexRender } from '@tanstack/react-table';
-import type { CellRendererProps } from '../../../types/columns';
+import { useMemo } from "react";
+import type { TanTableColumnDef, CellRendererProps } from "../../../types/columns";
+import { smartFilter } from "../../../utils/filters";
+import { EditCell } from "../../EditCell";
+import { flexRender } from "@tanstack/react-table";
 import {
   TextCell,
   NumberCell,
@@ -11,16 +10,19 @@ import {
   BooleanCell,
   ActionCell,
   LinkCell,
+  EmailCell,
   ChipCell,
   AvatarCell,
   ProgressCell,
-} from '../../cells';
+  ImageCell,
+  CurrencyCell,
+} from "../../cells";
 
 interface UseEnhancedColumnsParams<TData> {
   columns: TanTableColumnDef<TData>[];
-  editMode: 'cell' | 'row';
+  editMode: "cell" | "row";
   editing: ReturnType<
-    typeof import('./useEditingState').useEditingState<TData>
+    typeof import("./useEditingState").useEditingState<TData>
   >;
 }
 
@@ -61,32 +63,41 @@ export function useEnhancedColumns<TData>({
 
       if (!CellComponent && column.cellType) {
         switch (column.cellType) {
-          case 'text':
+          case "text":
             CellComponent = TextCell;
             break;
-          case 'number':
+          case "number":
             CellComponent = NumberCell;
             break;
-          case 'date':
+          case "date":
             CellComponent = DateCell;
             break;
-          case 'boolean':
+          case "boolean":
             CellComponent = BooleanCell;
             break;
-          case 'action':
+          case "action":
             CellComponent = ActionCell;
             break;
-          case 'link':
+          case "link":
             CellComponent = LinkCell;
             break;
-          case 'chip':
+          case "email":
+            CellComponent = EmailCell;
+            break;
+          case "chip":
             CellComponent = ChipCell;
             break;
-          case 'avatar':
+          case "avatar":
             CellComponent = AvatarCell;
             break;
-          case 'progress':
+          case "progress":
             CellComponent = ProgressCell;
+            break;
+          case "image":
+            CellComponent = ImageCell;
+            break;
+          case "currency":
+            CellComponent = CurrencyCell;
             break;
           default:
             break;
@@ -99,14 +110,14 @@ export function useEnhancedColumns<TData>({
         const cellEditing = isCellEditing(row, colInstance.id);
 
         const isEditable =
-          typeof column.editable === 'function'
+          typeof column.editable === "function"
             ? column.editable(row)
             : column.editable;
 
         if (
           (rowEditing || cellEditing) &&
           isEditable !== false &&
-          column.cellType !== 'action'
+          column.cellType !== "action"
         ) {
           return (
             <EditCell
@@ -131,7 +142,7 @@ export function useEnhancedColumns<TData>({
           );
         }
 
-        if (column.cellType === 'action') {
+        if (column.cellType === "action") {
           const actionProps = {
             ...props,
             isEditing: rowEditing,
@@ -143,7 +154,7 @@ export function useEnhancedColumns<TData>({
             },
           };
 
-          if (typeof CellComponent === 'function') {
+          if (typeof CellComponent === "function") {
             const Comp = CellComponent as React.ComponentType<
               CellRendererProps<TData>
             >;
@@ -157,7 +168,7 @@ export function useEnhancedColumns<TData>({
         }
 
         if (CellComponent) {
-          if (typeof CellComponent === 'function') {
+          if (typeof CellComponent === "function") {
             const Comp = CellComponent as React.ComponentType<
               CellRendererProps<TData>
             >;

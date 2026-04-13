@@ -1,5 +1,5 @@
 {
-  "name": "@testx1011/mui-tantable",
+  "name": "mui-tantable",
   "version": "0.1.9",
   "packageManager": "pnpm@10.33.0",
   "description": "A lightweight MUI-styled TanStack table with list-view, filters and virtualization.",
@@ -23,28 +23,36 @@
   },
   "private": false,
   "type": "module",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
   "files": [
     "dist",
     "README.md"
   ],
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
+  "engines": {
+    "node": ">=18"
   },
   "scripts": {
-    "dev": "vite",
     "build": "tsup",
-    "prepare": "npm run build",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "lint": "node --no-warnings ./node_modules/eslint/bin/eslint.js \"src/**/*.{ts,tsx,js,jsx}\" \"stories/**/*.{ts,tsx,js,jsx}\"",
-    "mui:imports": "npx @mui/codemod@latest v5.0.0/path-imports src",
-    "mui:sx-prop": "npx @mui/codemod@latest v6.0.0/sx-prop",
-    "mui:deprecations": "npx @mui/codemod@latest deprecations/all",
-    "pretest": "npx playwright install",
-    "test": "vitest"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "prepare": "pnpm build",
+    "lint": "eslint \"src/**/*.{ts,tsx,js,jsx}\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "pretest": "pnpm dlx playwright install",
+    "test": "vitest",
+    "mui:imports": "pnpm dlx @mui/codemod@latest v5.0.0/path-imports src",
+    "mui:sx-prop": "pnpm dlx @mui/codemod@latest v6.0.0/sx-prop",
+    "mui:deprecations": "pnpm dlx @mui/codemod@latest deprecations/all"
   },
   "dependencies": {
     "@tanstack/react-table": "^8.21.3",
@@ -59,29 +67,21 @@
     "react-dom": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "^5.1.1",
     "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
+    "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^9.0.0",
     "@mui/material": "^9.0.0",
-    "@storybook/addon-a11y": "^10.3.5",
-    "@storybook/addon-docs": "^10.3.5",
-    "@storybook/addon-mcp": "^0.5.0",
-    "@storybook/addon-onboarding": "^10.3.5",
-    "@storybook/addon-vitest": "^10.3.5",
-    "@storybook/react-vite": "^10.3.5",
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@typescript-eslint/eslint-plugin": "^8.58.1",
-    "@typescript-eslint/parser": "^8.58.1",
+    "@typescript-eslint/eslint-plugin": "^8.22.0",
+    "@typescript-eslint/parser": "^8.22.0",
+    "@vitejs/plugin-react": "^5.0.0",
     "@vitest/browser-playwright": "^4.1.4",
     "@vitest/coverage-v8": "^4.1.4",
-    "eslint": "^10.2.0",
-    "eslint-plugin-storybook": "^10.3.5",
+    "eslint": "^9.16.0",
     "playwright": "^1.59.1",
     "prettier": "^3.8.2",
-    "storybook": "^10.3.5",
     "tsup": "^8.5.1",
     "typescript": "^6.0.2",
     "vite": "^8.0.8",

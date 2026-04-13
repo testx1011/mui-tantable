@@ -9,7 +9,7 @@
 [![Build (GitHub Actions)](https://img.shields.io/github/actions/workflow/status/testx1011/mui-tantable/ci.yml?style=flat-square)](https://github.com/testx1011/mui-tantable/actions)
 [![npm (latest)](https://img.shields.io/npm/v/mui-tantable?style=flat-square)](https://www.npmjs.com/package/mui-tantable)
 [![npm downloads](https://img.shields.io/npm/dw/mui-tantable?style=flat-square)](https://www.npmjs.com/package/mui-tantable)
-[![Socket Badge](https://badge.socket.dev/npm/package/mui-tantable/0.1.4)](https://badge.socket.dev/npm/package/mui-tantable/0.1.4)
+[![Socket Badge](https://badge.socket.dev/npm/package/mui-tantable/0.1.9)](https://badge.socket.dev/npm/package/mui-tantable/0.1.9)
 
 A table component based on TanStack Table and Material‑UI (MUI) designed for feature-rich, high-performance, and accessible lists and tables. ✨
 
@@ -80,7 +80,7 @@ yarn add @mui/material @emotion/react @emotion/styled
 - `src/components/cells/*` — cell renderers (text, number, date, avatar...).
 - `src/components/filters/*` — built-in filters.
 - `src/utils/*` — exporters, formatters, and utilities.
-- `stories/TanTable.stories.tsx` — Storybook stories with examples (includes `ListView`, `Virtualization`).
+- `src/components/TanTable.tsx` — main component.
 
 **Requirements**
 
@@ -97,10 +97,7 @@ cd mui-tantable
 # install dependencies
 npm install
 
-# start storybook (if configured)
-npm run storybook
-
-# or build the package
+# build the package
 npm run build
 ```
 
@@ -161,8 +158,9 @@ export default function App() {
 **🛠️ Useful Commands**
 
 - `npm run build` — compiles the library (uses `tsup`).
-- `npm run dev` — (if defined) local development.
-- `npm run storybook` — opens Storybook with interactive examples.
+- `npm test` — runs the test suite.
+- `npm run lint` — runs ESLint.
+- `npm run format` — formats code with Prettier.
 
 **Development and Testing**
 
@@ -173,13 +171,40 @@ export default function App() {
 See [CONTRIBUTING](CONTRIBUTING.md) for complete details: from cloning the repo to PR workflow and code standards.
 
 - Open an issue to discuss large changes.
-- Create small, focused PRs; include the objective and Storybook demos when possible.
+- Create small, focused PRs; include the objective and examples when possible.
 
 **🔮 Suggested Next Steps**
 
 - Add badges (build, coverage, npm) to `README.md`.
 - Document `ColumnDef` API and `cellType` in detail.
 - Add integration examples (Next.js, CRA, Vite).
+
+---
+
+## 🚧 Roadmap - Pending Improvements
+
+### 🟢 Easy
+
+| #   | Feature               | Description                                                                   | Status  |
+| --- | --------------------- | ----------------------------------------------------------------------------- | ------- |
+| 1   | **Row Numbering**     | Display row number in each row                                                | ✅ Done |
+| 2   | **Sticky Pagination** | Make pagination sticky/fixed when scrolling                                   | ✅ Done |
+| 3   | **Currency Cell**     | Cell type for currency formatted with symbol and decimals                     | ✅ Done |
+| 4   | **Image Cell**        | Cell type to display images with preview                                      | ✅ Done |
+| 5   | **Extended Keyboard** | More shortcuts: `Delete` (clear selection), `Enter` (edit), `Escape` (cancel) | ✅ Done |
+
+### 🟡 Medium
+
+| #   | Feature                | Description                                             | Status  |
+| --- | ---------------------- | ------------------------------------------------------- | ------- |
+| 1   | **Footer with Totals** | Display sum, avg, count on numeric columns              | ✅ Done |
+| 2   | **Export to PDF**      | Add PDF export option from export menu                  | ✅ Done |
+| 3   | **Cell Validation**    | Inline validation with error messages in editable cells | ✅ Done |
+| 4   | **Undo/Redo**          | Undo and redo changes in edit mode                      | ✅ Done |
+| 5   | **Infinite Scroll**    | Lazy loading as alternative to traditional pagination   | ✅ Done |
+| 6   | **Grouping**           | Group rows by column values with aggregation            | ✅ Done |
+
+---
 
 ## ☕ Support
 
