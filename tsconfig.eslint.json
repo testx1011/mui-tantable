@@ -18,8 +18,7 @@
   },
   "include": [
     "src",
-    "stories",
-    "./.storybook/**/*",
+    "src/demo",
     "tsup.config.ts",
     "vitest.config.ts",
     "vitest.shims.d.ts"

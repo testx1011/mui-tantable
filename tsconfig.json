@@ -27,7 +27,8 @@
         "emitDeclarationOnly": false
     },
     "include": [
-        "src"
+        "src",
+        "src/demo"
     ],
     "exclude": [
         "node_modules",
