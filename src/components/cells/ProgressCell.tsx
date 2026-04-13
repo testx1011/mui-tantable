@@ -45,6 +45,9 @@ export function ProgressCell<TData>({
   const normalizedValue = ((numValue - min) / (max - min)) * 100;
   const clampedValue = Math.max(0, Math.min(100, normalizedValue));
 
+  // Accessible label shared by both circular and linear variants
+  const progressLabel = `Progress: ${Math.round(clampedValue)}%`;
+
   if (type === 'circular') {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -53,7 +56,7 @@ export function ProgressCell<TData>({
           value={clampedValue}
           size={24}
           color={color}
-          aria-label={`Progress: ${Math.round(clampedValue)}%`}
+          aria-label={progressLabel}
         />
         {showLabel && <Typography variant="body2">{Math.round(clampedValue)}%</Typography>}
       </Box>
@@ -67,7 +70,7 @@ export function ProgressCell<TData>({
           variant="determinate"
           value={clampedValue}
           color={color}
-          aria-label={`Progress: ${Math.round(clampedValue)}%`}
+          aria-label={progressLabel}
         />
       </Box>
       {showLabel && (
