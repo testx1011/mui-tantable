@@ -32,6 +32,7 @@ export function ActionCell<TData>(
           <IconButton
             size="small"
             color="primary"
+            aria-label="Save changes"
             onClick={(e) => {
               e.stopPropagation();
               onSave?.();
@@ -44,6 +45,7 @@ export function ActionCell<TData>(
           <IconButton
             size="small"
             color="error"
+            aria-label="Cancel changes"
             onClick={(e) => {
               e.stopPropagation();
               onCancel?.();
@@ -99,7 +101,12 @@ export function ActionCell<TData>(
   if (asMenu) {
     return (
       <>
-        <IconButton size="small" onClick={handleMenuOpen}>
+        <IconButton
+          size="small"
+          onClick={handleMenuOpen}
+          aria-label="Open actions menu"
+          aria-haspopup="menu"
+        >
           {menuIcon || <MoreVertIcon />}
         </IconButton>
         <Menu
@@ -107,12 +114,14 @@ export function ActionCell<TData>(
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}
           onClick={(e) => e.stopPropagation()}
+          role="menu"
         >
           {visibleActions.map((action) => (
             <MenuItem
               key={action.label}
               onClick={handleActionClick(action)}
               disabled={isDisabled(action)}
+              role="menuitem"
             >
               {action.icon && <ListItemIcon>{action.icon}</ListItemIcon>}
               <ListItemText>{action.label}</ListItemText>
@@ -124,7 +133,7 @@ export function ActionCell<TData>(
   }
 
   return (
-    <Box sx={{ display: 'flex', gap: 0.5 }}>
+    <Box sx={{ display: 'flex', gap: 0.5 }} role="group" aria-label="Row actions">
       {visibleActions.map((action) => (
         <IconButton
           key={action.label}
@@ -132,6 +141,7 @@ export function ActionCell<TData>(
           onClick={handleActionClick(action)}
           disabled={isDisabled(action)}
           color={action.color}
+          aria-label={action.label}
           title={action.label}
         >
           {action.icon}
