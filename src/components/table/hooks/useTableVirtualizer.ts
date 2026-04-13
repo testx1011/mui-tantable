@@ -55,7 +55,8 @@ export function useTableVirtualizer<TData>(
       count: rows.length,
     });
     rowVirtualizer.measure();
-  }, [rows.length, rowVirtualizer]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows.length]);
 
   const virtualItems = enableVirtualization ? rowVirtualizer.getVirtualItems() : [];
 
