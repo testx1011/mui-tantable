@@ -3,6 +3,8 @@ import type { ExportOptions } from '../types/toolbar';
 
 /**
  * Export table data to CSV
+ * @param table - The TanStack Table instance
+ * @param options - Export options (filename, includeHeaders, columns, selectedOnly)
  */
 export function exportToCSV<TData>(
   table: Table<TData>,
@@ -51,6 +53,8 @@ export function exportToCSV<TData>(
 
 /**
  * Export table data to JSON
+ * @param table - The TanStack Table instance
+ * @param options - Export options (filename, columns, selectedOnly)
  */
 export function exportToJSON<TData>(
   table: Table<TData>,
@@ -80,6 +84,8 @@ export function exportToJSON<TData>(
 
 /**
  * Export table data to Excel (simple HTML table format)
+ * @param table - The TanStack Table instance
+ * @param options - Export options (filename, includeHeaders, columns, selectedOnly)
  */
 export function exportToExcel<TData>(
   table: Table<TData>,
