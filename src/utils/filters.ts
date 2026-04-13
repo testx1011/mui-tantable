@@ -16,8 +16,8 @@ export type FilterOperator =
 
 export interface FilterValue {
   operator: FilterOperator;
-  value: unknown;
-  value2?: unknown; // For 'between'
+  value: string | number | boolean | Date | null;
+  value2?: string | number | boolean | Date | null; // For 'between'
 }
 
 /**
