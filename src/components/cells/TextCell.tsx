@@ -14,15 +14,14 @@ export function TextCell<TData>({
   const value = getValue();
   const config = (column.columnDef as { cellConfig?: TextCellConfig })?.cellConfig;
 
-  const {
-    maxLength,
-    showTooltip = true,
-    transform,
-    enableCopy = false,
-  } = config || {};
+  const { maxLength, showTooltip = true, transform, enableCopy = false } = config || {};
 
   if (value == null || value === '') {
-    return <Typography variant="body2" color="text.secondary">—</Typography>;
+    return (
+      <Typography variant="body2" color="text.secondary">
+        —
+      </Typography>
+    );
   }
 
   let displayValue = String(value);
@@ -44,7 +43,11 @@ export function TextCell<TData>({
         {truncatedValue}
       </Typography>
       {enableCopy && (
-        <IconButton size="small" onClick={handleCopy} sx={{ opacity: 0.6, '&:hover': { opacity: 1 } }}>
+        <IconButton
+          size="small"
+          onClick={handleCopy}
+          sx={{ opacity: 0.6, '&:hover': { opacity: 1 } }}
+        >
           <ContentCopyIcon fontSize="small" />
         </IconButton>
       )}

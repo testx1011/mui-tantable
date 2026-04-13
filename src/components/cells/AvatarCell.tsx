@@ -1,4 +1,3 @@
-
 import type { CellRendererProps, AvatarCellConfig } from '../../types';
 import { getInitials, stringToColor, getNestedValue } from '../../utils/formatters';
 
@@ -13,12 +12,7 @@ export function AvatarCell<TData>({
   const value = getValue();
   const config = (column.columnDef as { cellConfig?: AvatarCellConfig })?.cellConfig;
 
-  const {
-    imageKey,
-    nameKey,
-    size = 'medium',
-    variant = 'circular',
-  } = config || {};
+  const { imageKey, nameKey, size = 'medium', variant = 'circular' } = config || {};
 
   const name = nameKey ? getNestedValue(row.original, nameKey) : value;
   const image = imageKey ? getNestedValue(row.original, imageKey) : undefined;

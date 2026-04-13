@@ -1,6 +1,5 @@
 import type { SortingFn } from '@tanstack/react-table';
 
-
 /**
  * Alphanumeric sorting function
  */

@@ -57,10 +57,7 @@ export function MultiSelectFilter<TData>({
         )}
       >
         {options.map((option) => (
-          <MenuItem
-            key={String(option.value)}
-            value={option.value as string | number}
-          >
+          <MenuItem key={String(option.value)} value={option.value as string | number}>
             {option.label}
           </MenuItem>
         ))}

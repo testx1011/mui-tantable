@@ -14,11 +14,7 @@ export function useTableVirtualizer<TData>(
   visibleRows: Row<TData>[];
 } {
   const estimate = () =>
-    currentDensity === 'compact'
-      ? 37
-      : currentDensity === 'comfortable'
-        ? 77
-        : 53;
+    currentDensity === 'compact' ? 37 : currentDensity === 'comfortable' ? 77 : 53;
 
   const rowVirtualizer = useVirtualizer<HTMLElement, Element>({
     count: rows.length,
@@ -61,13 +57,9 @@ export function useTableVirtualizer<TData>(
     rowVirtualizer.measure();
   }, [rows.length, rowVirtualizer]);
 
-  const virtualItems = enableVirtualization
-    ? rowVirtualizer.getVirtualItems()
-    : [];
+  const virtualItems = enableVirtualization ? rowVirtualizer.getVirtualItems() : [];
 
-  const visibleRows = enableVirtualization
-    ? virtualItems.map((v) => rows[v.index])
-    : rows;
+  const visibleRows = enableVirtualization ? virtualItems.map((v) => rows[v.index]) : rows;
 
   return { rowVirtualizer, virtualItems, visibleRows };
 }

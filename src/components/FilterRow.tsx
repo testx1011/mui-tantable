@@ -34,11 +34,15 @@ function FilterCell<TData>({ column, table, filterType, filterConfig }: FilterCe
     case 'text':
       return <TextFilter {...commonProps} config={filterConfig as TextFilterConfig | undefined} />;
     case 'number':
-      return <NumberFilter {...commonProps} config={filterConfig as NumberFilterConfig | undefined} />;
+      return (
+        <NumberFilter {...commonProps} config={filterConfig as NumberFilterConfig | undefined} />
+      );
     case 'date':
       return <DateFilter {...commonProps} config={filterConfig as DateFilterConfig | undefined} />;
     case 'select':
-      return <SelectFilter {...commonProps} config={filterConfig as SelectFilterConfig | undefined} />;
+      return (
+        <SelectFilter {...commonProps} config={filterConfig as SelectFilterConfig | undefined} />
+      );
     case 'multiSelect':
       return (
         <MultiSelectFilter
@@ -66,8 +70,9 @@ export function FilterRow<TData>({ table }: FilterRowProps<TData>): JSX.Element 
 
       {table.getVisibleLeafColumns().map((column) => {
         const filterType = (column.columnDef as TanTableColumnDef<TData>).filterType;
-        const filterConfig = (column.columnDef as TanTableColumnDef<TData>)
-          .filterConfig as FilterConfig | undefined;
+        const filterConfig = (column.columnDef as TanTableColumnDef<TData>).filterConfig as
+          | FilterConfig
+          | undefined;
 
         if (!column.getCanFilter()) {
           return <TableCell key={column.id} />;

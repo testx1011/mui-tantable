@@ -285,13 +285,7 @@ export function ColumnHeader<TData, TValue>({
                 height={24}
                 role="presentation"
               >
-                <rect
-                  width="1"
-                  height="24"
-                  x="11.5"
-                  rx="0.5"
-                  fill="currentColor"
-                />
+                <rect width="1" height="24" x="11.5" rx="0.5" fill="currentColor" />
               </svg>
             </Box>
           </Box>
@@ -303,19 +297,13 @@ export function ColumnHeader<TData, TValue>({
         onClose={handleCloseMenu}
         onClick={(e) => e.stopPropagation()}
       >
-        <MenuItem
-          onClick={() => handleSort('asc')}
-          disabled={!column.getCanSort()}
-        >
+        <MenuItem onClick={() => handleSort('asc')} disabled={!column.getCanSort()}>
           <ListItemIcon>
             <ArrowUpwardIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>Sort Ascending</ListItemText>
         </MenuItem>
-        <MenuItem
-          onClick={() => handleSort('desc')}
-          disabled={!column.getCanSort()}
-        >
+        <MenuItem onClick={() => handleSort('desc')} disabled={!column.getCanSort()}>
           <ListItemIcon>
             <ArrowDownwardIcon fontSize="small" />
           </ListItemIcon>
@@ -331,19 +319,13 @@ export function ColumnHeader<TData, TValue>({
           </MenuItem>
         )}
         <Divider />
-        <MenuItem
-          onClick={() => handlePin('left')}
-          selected={isPinned === 'left'}
-        >
+        <MenuItem onClick={() => handlePin('left')} selected={isPinned === 'left'}>
           <ListItemIcon>
             <PushPinIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>Pin to Left</ListItemText>
         </MenuItem>
-        <MenuItem
-          onClick={() => handlePin('right')}
-          selected={isPinned === 'right'}
-        >
+        <MenuItem onClick={() => handlePin('right')} selected={isPinned === 'right'}>
           <ListItemIcon>
             <PushPinIcon fontSize="small" sx={{ transform: 'rotate(90deg)' }} />
           </ListItemIcon>

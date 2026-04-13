@@ -22,8 +22,7 @@ export function ActionCell<TData>(
   },
 ): React.ReactNode {
   const { row, column, isEditing, onSave, onCancel } = props;
-  const config = (column.columnDef as { cellConfig?: ActionCellConfig })
-    ?.cellConfig;
+  const config = (column.columnDef as { cellConfig?: ActionCellConfig })?.cellConfig;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   if (isEditing) {
@@ -84,12 +83,11 @@ export function ActionCell<TData>(
     setAnchorEl(null);
   };
 
-  const handleActionClick =
-    (action: (typeof actions)[0]) => (e: React.MouseEvent) => {
-      e.stopPropagation();
-      handleMenuClose();
-      action.onClick(row.original);
-    };
+  const handleActionClick = (action: (typeof actions)[0]) => (e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleMenuClose();
+    action.onClick(row.original);
+  };
 
   const isDisabled = (action: (typeof actions)[0]) => {
     if (typeof action.disabled === 'function') {

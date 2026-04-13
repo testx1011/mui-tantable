@@ -110,12 +110,7 @@ export function ExpandableSearch({
             ),
             endAdornment: value ? (
               <InputAdornment position="end">
-                <IconButton
-                  size="small"
-                  aria-label="Clear search"
-                  onClick={handleClear}
-                  edge="end"
-                >
+                <IconButton size="small" aria-label="Clear search" onClick={handleClear} edge="end">
                   <CancelIcon fontSize="small" />
                 </IconButton>
               </InputAdornment>

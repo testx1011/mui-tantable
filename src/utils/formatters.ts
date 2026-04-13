@@ -9,7 +9,7 @@ export function formatNumber(
     decimals?: number;
     locale?: string;
     showPositiveSign?: boolean;
-  } = {}
+  } = {},
 ): string {
   const {
     format = 'decimal',
@@ -69,7 +69,7 @@ export function formatDate(
     locale?: string;
     includeTime?: boolean;
     relative?: boolean;
-  } = {}
+  } = {},
 ): string {
   const { format = 'medium', locale = 'en-US', includeTime = false, relative = false } = options;
 
@@ -152,7 +152,7 @@ export function truncateText(text: string, maxLength: number): string {
  */
 export function transformText(
   text: string,
-  transform?: 'uppercase' | 'lowercase' | 'capitalize'
+  transform?: 'uppercase' | 'lowercase' | 'capitalize',
 ): string {
   if (!transform) return text;
 

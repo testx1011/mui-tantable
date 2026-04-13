@@ -1,8 +1,8 @@
-import { useState, useCallback } from "react";
-import type { Row } from "@tanstack/react-table";
+import { useState, useCallback } from 'react';
+import type { Row } from '@tanstack/react-table';
 
 interface UseEditingStateProps<TData> {
-  editMode: "cell" | "row";
+  editMode: 'cell' | 'row';
   onEditingRowSave?: (row: TData) => Promise<void> | void;
   onEditingRowCancel?: () => void;
 }
@@ -49,13 +49,13 @@ export function useEditingState<TData>({
   const [historyIndex, setHistoryIndex] = useState(-1);
 
   const isRowEditing = useCallback(
-    (row: Row<TData>) => editMode === "row" && editingRowId === row.id,
+    (row: Row<TData>) => editMode === 'row' && editingRowId === row.id,
     [editMode, editingRowId],
   );
 
   const isCellEditing = useCallback(
     (row: Row<TData>, colId: string) =>
-      editMode === "cell" && editingCellId === `${row.id}_${colId}`,
+      editMode === 'cell' && editingCellId === `${row.id}_${colId}`,
     [editMode, editingCellId],
   );
 

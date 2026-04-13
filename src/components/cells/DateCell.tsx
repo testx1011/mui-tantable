@@ -9,8 +9,7 @@ export function DateCell<TData>({
   column,
 }: CellRendererProps<TData> & { config?: DateCellConfig }): React.ReactNode {
   const value = getValue();
-  const config = (column.columnDef as { cellConfig?: DateCellConfig })
-    ?.cellConfig;
+  const config = (column.columnDef as { cellConfig?: DateCellConfig })?.cellConfig;
 
   const {
     format = 'medium',
@@ -27,8 +26,7 @@ export function DateCell<TData>({
     );
   }
 
-  const date =
-    value instanceof Date ? value : new Date(value as string | number);
+  const date = value instanceof Date ? value : new Date(value as string | number);
 
   if (isNaN(date.getTime())) {
     return (

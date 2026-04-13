@@ -21,12 +21,20 @@ export function NumberCell<TData>({
   } = config || {};
 
   if (value == null || value === '') {
-    return <Typography variant="body2" color="text.secondary">—</Typography>;
+    return (
+      <Typography variant="body2" color="text.secondary">
+        —
+      </Typography>
+    );
   }
 
   const numValue = Number(value);
   if (isNaN(numValue)) {
-    return <Typography variant="body2" color="error">Invalid</Typography>;
+    return (
+      <Typography variant="body2" color="error">
+        Invalid
+      </Typography>
+    );
   }
 
   const formatted = formatNumber(numValue, {

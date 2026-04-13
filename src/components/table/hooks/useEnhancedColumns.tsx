@@ -1,8 +1,8 @@
-import { useMemo } from "react";
-import type { TanTableColumnDef, CellRendererProps } from "../../../types/columns";
-import { smartFilter } from "../../../utils/filters";
-import { EditCell } from "../../EditCell";
-import { flexRender } from "@tanstack/react-table";
+import { useMemo } from 'react';
+import type { TanTableColumnDef, CellRendererProps } from '../../../types/columns';
+import { smartFilter } from '../../../utils/filters';
+import { EditCell } from '../../EditCell';
+import { flexRender } from '@tanstack/react-table';
 import {
   TextCell,
   NumberCell,
@@ -16,14 +16,12 @@ import {
   ProgressCell,
   ImageCell,
   CurrencyCell,
-} from "../../cells";
+} from '../../cells';
 
 interface UseEnhancedColumnsParams<TData> {
   columns: TanTableColumnDef<TData>[];
-  editMode: "cell" | "row";
-  editing: ReturnType<
-    typeof import("./useEditingState").useEditingState<TData>
-  >;
+  editMode: 'cell' | 'row';
+  editing: ReturnType<typeof import('./useEditingState').useEditingState<TData>>;
 }
 
 /**
@@ -63,40 +61,40 @@ export function useEnhancedColumns<TData>({
 
       if (!CellComponent && column.cellType) {
         switch (column.cellType) {
-          case "text":
+          case 'text':
             CellComponent = TextCell;
             break;
-          case "number":
+          case 'number':
             CellComponent = NumberCell;
             break;
-          case "date":
+          case 'date':
             CellComponent = DateCell;
             break;
-          case "boolean":
+          case 'boolean':
             CellComponent = BooleanCell;
             break;
-          case "action":
+          case 'action':
             CellComponent = ActionCell;
             break;
-          case "link":
+          case 'link':
             CellComponent = LinkCell;
             break;
-          case "email":
+          case 'email':
             CellComponent = EmailCell;
             break;
-          case "chip":
+          case 'chip':
             CellComponent = ChipCell;
             break;
-          case "avatar":
+          case 'avatar':
             CellComponent = AvatarCell;
             break;
-          case "progress":
+          case 'progress':
             CellComponent = ProgressCell;
             break;
-          case "image":
+          case 'image':
             CellComponent = ImageCell;
             break;
-          case "currency":
+          case 'currency':
             CellComponent = CurrencyCell;
             break;
           default:
@@ -110,21 +108,13 @@ export function useEnhancedColumns<TData>({
         const cellEditing = isCellEditing(row, colInstance.id);
 
         const isEditable =
-          typeof column.editable === "function"
-            ? column.editable(row)
-            : column.editable;
+          typeof column.editable === 'function' ? column.editable(row) : column.editable;
 
-        if (
-          (rowEditing || cellEditing) &&
-          isEditable !== false &&
-          column.cellType !== "action"
-        ) {
+        if ((rowEditing || cellEditing) && isEditable !== false && column.cellType !== 'action') {
           return (
             <EditCell
               {...props}
-              value={
-                editingData[column.accessorKey as keyof TData] ?? getValue()
-              }
+              value={editingData[column.accessorKey as keyof TData] ?? getValue()}
               onChange={(value: unknown) => {
                 setEditingData((prev) => ({
                   ...prev,
@@ -142,7 +132,7 @@ export function useEnhancedColumns<TData>({
           );
         }
 
-        if (column.cellType === "action") {
+        if (column.cellType === 'action') {
           const actionProps = {
             ...props,
             isEditing: rowEditing,
@@ -154,31 +144,21 @@ export function useEnhancedColumns<TData>({
             },
           };
 
-          if (typeof CellComponent === "function") {
-            const Comp = CellComponent as React.ComponentType<
-              CellRendererProps<TData>
-            >;
+          if (typeof CellComponent === 'function') {
+            const Comp = CellComponent as React.ComponentType<CellRendererProps<TData>>;
             return <Comp {...actionProps} />;
           }
-          return (
-            CellComponent as (
-              props: CellRendererProps<TData>,
-            ) => React.ReactNode
-          )(actionProps);
+          return (CellComponent as (props: CellRendererProps<TData>) => React.ReactNode)(
+            actionProps,
+          );
         }
 
         if (CellComponent) {
-          if (typeof CellComponent === "function") {
-            const Comp = CellComponent as React.ComponentType<
-              CellRendererProps<TData>
-            >;
+          if (typeof CellComponent === 'function') {
+            const Comp = CellComponent as React.ComponentType<CellRendererProps<TData>>;
             return <Comp {...props} />;
           }
-          return (
-            CellComponent as (
-              props: CellRendererProps<TData>,
-            ) => React.ReactNode
-          )(props);
+          return (CellComponent as (props: CellRendererProps<TData>) => React.ReactNode)(props);
         }
 
         return flexRender(column.cell, props);
@@ -186,12 +166,5 @@ export function useEnhancedColumns<TData>({
 
       return column;
     });
-  }, [
-    columns,
-    editingRowId,
-    editingCellId,
-    editingData,
-    editMode,
-    setEditingData,
-  ]);
+  }, [columns, editingRowId, editingCellId, editingData, editMode, setEditingData]);
 }

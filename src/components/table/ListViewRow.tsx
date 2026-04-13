@@ -17,10 +17,7 @@ interface RenderListViewItemProps<TData> {
   render: (row: Row<TData>) => React.ReactNode;
 }
 
-function RenderListViewItem<TData>({
-  row,
-  render,
-}: RenderListViewItemProps<TData>) {
+function RenderListViewItem<TData>({ row, render }: RenderListViewItemProps<TData>) {
   return <>{render(row)}</>;
 }
 

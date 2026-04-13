@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
-import CloseIcon from "@mui/icons-material/Close";
-import AddIcon from "@mui/icons-material/Add";
-import type { Table, Column } from "@tanstack/react-table";
-import { TextFilter } from "./TextFilter";
-import { NumberFilter } from "./NumberFilter";
-import { DateFilter } from "./DateFilter";
-import { SelectFilter } from "./SelectFilter";
-import { MultiSelectFilter } from "./MultiSelectFilter";
+import { useState, useEffect } from 'react';
+import CloseIcon from '@mui/icons-material/Close';
+import AddIcon from '@mui/icons-material/Add';
+import type { Table, Column } from '@tanstack/react-table';
+import { TextFilter } from './TextFilter';
+import { NumberFilter } from './NumberFilter';
+import { DateFilter } from './DateFilter';
+import { SelectFilter } from './SelectFilter';
+import { MultiSelectFilter } from './MultiSelectFilter';
 import {
   FilterType,
   FilterConfig,
@@ -16,17 +16,17 @@ import {
   SelectFilterConfig,
   MultiSelectFilterConfig,
   TanTableColumnDef,
-} from "../../types";
+} from '../../types';
 
-import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import Stack from "@mui/material/Stack";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import Stack from '@mui/material/Stack';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
 
 interface FilterPanelProps<TData> {
   table: Table<TData>;
@@ -45,49 +45,22 @@ function FilterInput<TData>({
   const filterConfig = colDef.filterConfig as FilterConfig | undefined;
 
   switch (filterType) {
-    case "text":
-      return (
-        <TextFilter column={column} config={filterConfig as TextFilterConfig} />
-      );
-    case "number":
-      return (
-        <NumberFilter
-          column={column}
-          config={filterConfig as NumberFilterConfig}
-        />
-      );
-    case "date":
-      return (
-        <DateFilter
-          column={column}
-          config={filterConfig as DateFilterConfig}
-          table={table}
-        />
-      );
-    case "select":
-      return (
-        <SelectFilter
-          column={column}
-          config={filterConfig as SelectFilterConfig}
-        />
-      );
-    case "multiSelect":
-      return (
-        <MultiSelectFilter
-          column={column}
-          config={filterConfig as MultiSelectFilterConfig}
-        />
-      );
+    case 'text':
+      return <TextFilter column={column} config={filterConfig as TextFilterConfig} />;
+    case 'number':
+      return <NumberFilter column={column} config={filterConfig as NumberFilterConfig} />;
+    case 'date':
+      return <DateFilter column={column} config={filterConfig as DateFilterConfig} table={table} />;
+    case 'select':
+      return <SelectFilter column={column} config={filterConfig as SelectFilterConfig} />;
+    case 'multiSelect':
+      return <MultiSelectFilter column={column} config={filterConfig as MultiSelectFilterConfig} />;
     default:
-      return (
-        <TextFilter column={column} config={filterConfig as TextFilterConfig} />
-      );
+      return <TextFilter column={column} config={filterConfig as TextFilterConfig} />;
   }
 }
 
-export function FilterPanel<TData>({
-  table,
-}: FilterPanelProps<TData>): React.ReactElement {
+export function FilterPanel<TData>({ table }: FilterPanelProps<TData>): React.ReactElement {
   // Initialize with currently active filters
   const [filterRows, setFilterRows] = useState<string[]>(() =>
     table.getState().columnFilters.map((f) => f.id),
@@ -151,10 +124,7 @@ export function FilterPanel<TData>({
           if (!column) return null;
 
           return (
-            <Box
-              key={colId}
-              sx={{ display: "flex", gap: 1, alignItems: "flex-start" }}
-            >
+            <Box key={colId} sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
               <FormControl size="small" sx={{ minWidth: 150 }}>
                 <InputLabel>Column</InputLabel>
                 <Select
@@ -199,7 +169,7 @@ function flexRenderHeader<TData>(column: Column<TData, unknown>) {
   // This is a simplification. In reality, header could be a function or component.
   // We try to get a string representation.
   const header = column.columnDef.header;
-  if (typeof header === "string") return header;
-  if (typeof header === "function") return column.id; // Fallback
+  if (typeof header === 'string') return header;
+  if (typeof header === 'function') return column.id; // Fallback
   return column.id;
 }

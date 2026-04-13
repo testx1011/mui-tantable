@@ -1,4 +1,4 @@
-import React, { JSX, useEffect } from "react";
+import React, { JSX, useEffect } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -9,32 +9,32 @@ import {
   getGroupedRowModel,
   ColumnDef as TanStackColumnDef,
   type Column,
-} from "@tanstack/react-table";
+} from '@tanstack/react-table';
 // ColumnHeader is used inside TableHeaderComponent
-import type { TanTableProps, Density, TanTableState } from "../types/core";
-import type { TableState } from "@tanstack/react-table";
+import type { TanTableProps, Density, TanTableState } from '../types/core';
+import type { TableState } from '@tanstack/react-table';
 
-import { TablePagination } from "./TablePagination";
-import { TableToolbar } from "./TableToolbar";
-import { RowRenderer } from "./table/RowRenderer";
+import { TablePagination } from './TablePagination';
+import { TableToolbar } from './TableToolbar';
+import { RowRenderer } from './table/RowRenderer';
 
-import { useTableVirtualizer } from "./table/hooks/useTableVirtualizer";
-import { useEditingState } from "./table/hooks/useEditingState";
-import { useEnhancedColumns } from "./table/hooks/useEnhancedColumns";
-import { useCellNavigation } from "./table/hooks/useCellNavigation";
-import { TableHeaderComponent } from "./table/TableHeader";
-import { TableFooterComponent } from "./table/TableFooter";
-import { getCommonPinningStyles } from "./table/utils";
+import { useTableVirtualizer } from './table/hooks/useTableVirtualizer';
+import { useEditingState } from './table/hooks/useEditingState';
+import { useEnhancedColumns } from './table/hooks/useEnhancedColumns';
+import { useCellNavigation } from './table/hooks/useCellNavigation';
+import { TableHeaderComponent } from './table/TableHeader';
+import { TableFooterComponent } from './table/TableFooter';
+import { getCommonPinningStyles } from './table/utils';
 
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import Skeleton from "@mui/material/Skeleton";
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import Skeleton from '@mui/material/Skeleton';
 
 // using getCommonPinningStyles from './table/utils'
 
@@ -64,7 +64,7 @@ const SkeletonRows = <TData,>({
       {Array.from({ length: count }).map((_, rowIndex) => (
         <TableRow key={`skeleton-${rowIndex}`}>
           {enableRowNumbering && (
-            <TableCell sx={{ p: cellPadding, textAlign: "center", width: 50 }}>
+            <TableCell sx={{ p: cellPadding, textAlign: 'center', width: 50 }}>
               <Skeleton variant="text" width={20} />
             </TableCell>
           )}
@@ -88,11 +88,7 @@ const SkeletonRows = <TData,>({
             >
               <Skeleton
                 variant="text"
-                width={
-                  ["60%", "75%", "40%", "90%", "55%", "85%", "70%"][
-                    rowIndex % 7
-                  ]
-                }
+                width={['60%', '75%', '40%', '90%', '55%', '85%', '70%'][rowIndex % 7]}
               />
             </TableCell>
           ))}
@@ -125,9 +121,9 @@ export function TanTable<TData>({
   onRowDoubleClick,
   onRowSelectionChange,
   loading = false,
-  emptyMessage = "No data available",
+  emptyMessage = 'No data available',
   error,
-  density = "standard",
+  density = 'standard',
   onDensityChange,
   showToolbar = true,
   toolbarConfig,
@@ -146,7 +142,7 @@ export function TanTable<TData>({
   enableCellSelection = false,
   enableListView = false,
   renderListViewItem,
-  editMode = "cell",
+  editMode = 'cell',
   onEditingRowSave,
   onEditingRowCancel,
   enableRowNumbering = false,
@@ -161,19 +157,15 @@ export function TanTable<TData>({
   groupedColumns = [],
   onGroupChange,
 }: TanTableProps<TData>): JSX.Element {
-  const [view, setView] = React.useState<"grid" | "list">("grid");
+  const [view, setView] = React.useState<'grid' | 'list'>('grid');
 
   // density can be controlled by caller or managed internally; similar to an
   // uncontrolled component pattern. react-doctor flags the previous
   // useEffect that synced prop -> state, so we compute derived value inline
   // and update internal state only when uncontrolled.
   const isControlledDensity = density !== undefined;
-  const [internalDensity, setInternalDensity] = React.useState<Density>(
-    density ?? "standard",
-  );
-  const currentDensity: Density = isControlledDensity
-    ? (density as Density)
-    : internalDensity;
+  const [internalDensity, setInternalDensity] = React.useState<Density>(density ?? 'standard');
+  const currentDensity: Density = isControlledDensity ? (density as Density) : internalDensity;
 
   const handleDensityChange = (newDensity: Density) => {
     if (!isControlledDensity) {
@@ -205,12 +197,8 @@ export function TanTable<TData>({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: enableSorting ? getSortedRowModel() : undefined,
     getFilteredRowModel:
-      enableColumnFilters || enableGlobalFilter
-        ? getFilteredRowModel()
-        : undefined,
-    getPaginationRowModel: enablePagination
-      ? getPaginationRowModel()
-      : undefined,
+      enableColumnFilters || enableGlobalFilter ? getFilteredRowModel() : undefined,
+    getPaginationRowModel: enablePagination ? getPaginationRowModel() : undefined,
     getExpandedRowModel: enableExpanding ? getExpandedRowModel() : undefined,
     getGroupedRowModel: enableGrouping ? getGroupedRowModel() : undefined,
     enableRowSelection,
@@ -221,7 +209,7 @@ export function TanTable<TData>({
     enableGlobalFilter,
     enablePinning: true,
     enableColumnResizing,
-    columnResizeMode: "onChange",
+    columnResizeMode: 'onChange',
     getRowId,
     autoResetPageIndex,
     debugTable: debug,
@@ -232,14 +220,10 @@ export function TanTable<TData>({
       ...state,
       ...(enableGrouping ? { grouping: groupedColumns } : {}),
     },
-    onStateChange: (
-      updater: TableState | ((prev: TableState) => TableState),
-    ) => {
+    onStateChange: (updater: TableState | ((prev: TableState) => TableState)) => {
       // always call row-selection callback if provided
       if (onRowSelectionChange) {
-        const selectedRows = table
-          .getSelectedRowModel()
-          .rows.map((row) => row.original);
+        const selectedRows = table.getSelectedRowModel().rows.map((row) => row.original);
         onRowSelectionChange(selectedRows);
       }
 
@@ -250,18 +234,15 @@ export function TanTable<TData>({
       }
 
       if (onStateChange) {
-        if (typeof updater === "function") {
+        if (typeof updater === 'function') {
           try {
-            const newState = (updater as (prev: TableState) => TableState)(
-              table.getState(),
-            );
+            const newState = (updater as (prev: TableState) => TableState)(table.getState());
             const tanState: TanTableState = {
               ...(newState as unknown as object),
               density:
                 (newState as unknown as { density?: Density }).density ??
-                (table.getState() as unknown as { density?: Density })
-                  .density ??
-                "standard",
+                (table.getState() as unknown as { density?: Density }).density ??
+                'standard',
             } as TanTableState;
             onStateChange(tanState);
           } catch (e) {
@@ -273,7 +254,7 @@ export function TanTable<TData>({
             density:
               (updater as unknown as { density?: Density }).density ??
               (table.getState() as unknown as { density?: Density }).density ??
-              "standard",
+              'standard',
           } as TanTableState;
           onStateChange(tanState);
         }
@@ -284,27 +265,22 @@ export function TanTable<TData>({
     manualFiltering: serverSide,
     pageCount:
       serverSide && serverSideHandlers?.totalRowCount
-        ? Math.ceil(
-            serverSideHandlers.totalRowCount /
-              (state?.pagination?.pageSize || 10),
-          )
+        ? Math.ceil(serverSideHandlers.totalRowCount / (state?.pagination?.pageSize || 10))
         : undefined,
   });
 
   // Density styles - defined at module scope for consistency
   const cellPadding =
-    currentDensity === "compact"
-      ? "4px 8px"
-      : currentDensity === "comfortable"
-        ? "12px 16px"
-        : "8px 16px";
+    currentDensity === 'compact'
+      ? '4px 8px'
+      : currentDensity === 'comfortable'
+        ? '12px 16px'
+        : '8px 16px';
 
   // Decide whether to virtualize: explicit prop > auto threshold
   // Virtualization: always ON by default (like MUI Data Grid), unless explicitly disabled
   // autoHeight overrides virtualization - when true, table grows to content height
-  const effectiveVirtualization = autoHeight
-    ? false
-    : enableVirtualization !== false;
+  const effectiveVirtualization = autoHeight ? false : enableVirtualization !== false;
 
   // Container height: use height prop when virtualization is active, autoHeight removes maxHeight
   const containerMaxHeight = autoHeight ? undefined : (height ?? 600);
@@ -331,8 +307,8 @@ export function TanTable<TData>({
       }
     };
 
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
   }, [enableInfiniteScroll, onLoadMore, hasMore, loadingMore]);
 
   // navigation & selection hook (depends on table instance, so created here)
@@ -377,25 +353,19 @@ export function TanTable<TData>({
       );
 
       if (cellElement) {
-        cellElement.scrollIntoView({ block: "nearest", inline: "nearest" });
+        cellElement.scrollIntoView({ block: 'nearest', inline: 'nearest' });
       }
     });
 
     return () => cancelAnimationFrame(frameId);
-  }, [
-    navigation.selectedCell,
-    effectiveVirtualization,
-    rowVirtualizer,
-    tableRows,
-    tableColumns,
-  ]);
+  }, [navigation.selectedCell, effectiveVirtualization, rowVirtualizer, tableRows, tableColumns]);
 
   // Error state
   if (error) {
     return (
-      <Paper sx={{ p: 3, textAlign: "center", ...sx }} className={className}>
+      <Paper sx={{ p: 3, textAlign: 'center', ...sx }} className={className}>
         <Typography color="error" variant="h6">
-          {typeof error === "string" ? error : "An error occurred"}
+          {typeof error === 'string' ? error : 'An error occurred'}
         </Typography>
       </Paper>
     );
@@ -403,7 +373,7 @@ export function TanTable<TData>({
 
   return (
     <Box
-      sx={{ outline: "none", ...sx }}
+      sx={{ outline: 'none', ...sx }}
       className={className}
       tabIndex={0}
       onKeyDown={navigation.handleKeyDown}
@@ -424,9 +394,9 @@ export function TanTable<TData>({
 
       <Box
         sx={{
-          position: "relative",
-          display: "flex",
-          flexDirection: "column",
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
           maxHeight: effectiveVirtualization ? containerMaxHeight : undefined,
         }}
       >
@@ -434,15 +404,15 @@ export function TanTable<TData>({
           component={Paper}
           ref={tableContainerRef}
           sx={{
-            flex: stickyPagination ? 1 : "none",
-            overflow: "auto",
+            flex: stickyPagination ? 1 : 'none',
+            overflow: 'auto',
             ...(tableContainerSx || {}),
           }}
         >
           <Table
-            size={currentDensity === "compact" ? "small" : "medium"}
+            size={currentDensity === 'compact' ? 'small' : 'medium'}
             stickyHeader
-            sx={{ tableLayout: "fixed" }}
+            sx={{ tableLayout: 'fixed' }}
           >
             <TableHeaderComponent
               table={table}
@@ -475,11 +445,9 @@ export function TanTable<TData>({
                       (enableRowSelection ? 1 : 0) +
                       (enableExpanding ? 1 : 0)
                     }
-                    sx={{ textAlign: "center", p: 4 }}
+                    sx={{ textAlign: 'center', p: 4 }}
                   >
-                    <Typography color="text.secondary">
-                      {emptyMessage}
-                    </Typography>
+                    <Typography color="text.secondary">{emptyMessage}</Typography>
                   </TableCell>
                 </TableRow>
               ) : (
@@ -519,34 +487,31 @@ export function TanTable<TData>({
                     onRowClick={onRowClick}
                     onRowDoubleClick={onRowDoubleClick}
                     virtualRowStartIndex={
-                      effectiveVirtualization && virtualItems.length > 0
-                        ? virtualItems[0].index
-                        : 0
+                      effectiveVirtualization && virtualItems.length > 0 ? virtualItems[0].index : 0
                     }
                   />
 
-                  {effectiveVirtualization &&
-                    rowVirtualizer.getVirtualItems().length > 0 && (
-                      <TableRow
-                        style={{
-                          height:
-                            rowVirtualizer.getTotalSize() -
-                            rowVirtualizer.getVirtualItems()[
-                              rowVirtualizer.getVirtualItems().length - 1
-                            ].end,
-                        }}
-                      >
-                        <TableCell
-                          colSpan={
-                            table.getVisibleLeafColumns().length +
-                            (enableRowNumbering ? 1 : 0) +
-                            (enableRowSelection ? 1 : 0) +
-                            (enableExpanding ? 1 : 0)
-                          }
-                          style={{ padding: 0, border: 0 }}
-                        />
-                      </TableRow>
-                    )}
+                  {effectiveVirtualization && rowVirtualizer.getVirtualItems().length > 0 && (
+                    <TableRow
+                      style={{
+                        height:
+                          rowVirtualizer.getTotalSize() -
+                          rowVirtualizer.getVirtualItems()[
+                            rowVirtualizer.getVirtualItems().length - 1
+                          ].end,
+                      }}
+                    >
+                      <TableCell
+                        colSpan={
+                          table.getVisibleLeafColumns().length +
+                          (enableRowNumbering ? 1 : 0) +
+                          (enableRowSelection ? 1 : 0) +
+                          (enableExpanding ? 1 : 0)
+                        }
+                        style={{ padding: 0, border: 0 }}
+                      />
+                    </TableRow>
+                  )}
                 </>
               )}
             </TableBody>
@@ -562,7 +527,7 @@ export function TanTable<TData>({
             )}
           </Table>
           {enableInfiniteScroll && loadingMore && (
-            <Box sx={{ p: 2, textAlign: "center" }}>
+            <Box sx={{ p: 2, textAlign: 'center' }}>
               <Typography variant="body2" color="text.secondary">
                 Loading more...
               </Typography>
@@ -573,12 +538,12 @@ export function TanTable<TData>({
         {showPagination && enablePagination && !loading && (
           <Box
             sx={{
-              position: stickyPagination ? "sticky" : "relative",
-              bottom: stickyPagination ? 0 : "auto",
-              backgroundColor: "background.paper",
-              zIndex: stickyPagination ? 1 : "auto",
-              borderTop: stickyPagination ? "1px solid" : "none",
-              borderColor: "divider",
+              position: stickyPagination ? 'sticky' : 'relative',
+              bottom: stickyPagination ? 0 : 'auto',
+              backgroundColor: 'background.paper',
+              zIndex: stickyPagination ? 1 : 'auto',
+              borderTop: stickyPagination ? '1px solid' : 'none',
+              borderColor: 'divider',
             }}
           >
             <TablePagination table={table} config={paginationConfig} />

@@ -1,55 +1,46 @@
-import { useState, useEffect, JSX } from "react";
-import type { Column } from "@tanstack/react-table";
-import { FilterValue, FilterOperator } from "../../utils/filters";
-import { NumberFilterConfig } from "../../types/filters";
+import { useState, useEffect, JSX } from 'react';
+import type { Column } from '@tanstack/react-table';
+import { FilterValue, FilterOperator } from '../../utils/filters';
+import { NumberFilterConfig } from '../../types/filters';
 
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 
 interface NumberFilterProps<TData> {
   column: Column<TData, unknown>;
   config?: NumberFilterConfig;
 }
 
-export function NumberFilter<TData>({
-  column,
-  config,
-}: NumberFilterProps<TData>): JSX.Element {
-  const { minPlaceholder = "Min", maxPlaceholder = "Max", step } = config || {};
+export function NumberFilter<TData>({ column, config }: NumberFilterProps<TData>): JSX.Element {
+  const { minPlaceholder = 'Min', maxPlaceholder = 'Max', step } = config || {};
 
   const columnFilterValue = column.getFilterValue() as FilterValue | undefined;
 
-  const [operator, setOperator] = useState<FilterOperator>(
-    columnFilterValue?.operator || "equals",
-  );
+  const [operator, setOperator] = useState<FilterOperator>(columnFilterValue?.operator || 'equals');
 
   const [value, setValue] = useState<string>(
-    columnFilterValue?.value !== undefined
-      ? String(columnFilterValue.value)
-      : "",
+    columnFilterValue?.value !== undefined ? String(columnFilterValue.value) : '',
   );
 
   const [value2, setValue2] = useState<string>(
-    columnFilterValue?.value2 !== undefined
-      ? String(columnFilterValue.value2)
-      : "",
+    columnFilterValue?.value2 !== undefined ? String(columnFilterValue.value2) : '',
   );
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (
-        value === "" &&
-        operator !== "isEmpty" &&
-        operator !== "isNotEmpty" &&
-        operator !== "between"
+        value === '' &&
+        operator !== 'isEmpty' &&
+        operator !== 'isNotEmpty' &&
+        operator !== 'between'
       ) {
         column.setFilterValue(undefined);
-      } else if (operator === "between" && (value === "" || value2 === "")) {
+      } else if (operator === 'between' && (value === '' || value2 === '')) {
         // Wait for both values? Or allow partial? Let's wait for both or clear if empty
-        if (value === "" && value2 === "") column.setFilterValue(undefined);
+        if (value === '' && value2 === '') column.setFilterValue(undefined);
         else
           column.setFilterValue({
             operator,
@@ -59,8 +50,8 @@ export function NumberFilter<TData>({
       } else {
         column.setFilterValue({
           operator,
-          value: value !== "" ? Number(value) : undefined,
-          value2: value2 !== "" ? Number(value2) : undefined,
+          value: value !== '' ? Number(value) : undefined,
+          value2: value2 !== '' ? Number(value2) : undefined,
         });
       }
     }, 300);
@@ -69,7 +60,7 @@ export function NumberFilter<TData>({
   }, [value, value2, operator, column]);
 
   return (
-    <Box sx={{ display: "flex", gap: 1 }}>
+    <Box sx={{ display: 'flex', gap: 1 }}>
       <FormControl size="small" sx={{ minWidth: 130 }}>
         <Select
           value={operator}
@@ -87,11 +78,11 @@ export function NumberFilter<TData>({
           <MenuItem value="isNotEmpty">Not empty</MenuItem>
         </Select>
       </FormControl>
-      {operator !== "isEmpty" && operator !== "isNotEmpty" && (
+      {operator !== 'isEmpty' && operator !== 'isNotEmpty' && (
         <TextField
           size="small"
           type="number"
-          placeholder={operator === "between" ? minPlaceholder : "Value"}
+          placeholder={operator === 'between' ? minPlaceholder : 'Value'}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           fullWidth
@@ -100,7 +91,7 @@ export function NumberFilter<TData>({
           }}
         />
       )}
-      {operator === "between" && (
+      {operator === 'between' && (
         <TextField
           size="small"
           type="number"

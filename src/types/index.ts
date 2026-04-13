@@ -1,10 +1,10 @@
-export * from "./core";
+export * from './core';
 
-export * from "./columns";
+export * from './columns';
 
-export * from "./cells";
+export * from './cells';
 
-export * from "./filters";
+export * from './filters';
 
 export type {
   ActionButton,
@@ -21,7 +21,7 @@ export type {
   NumberCellConfig,
   ProgressCellConfig,
   TextCellConfig,
-} from "./cells";
+} from './cells';
 export type {
   ActionColumnDef,
   AvatarColumnDef,
@@ -41,9 +41,9 @@ export type {
   NumberColumnDef,
   ProgressColumnDef,
   TextColumnDef,
-} from "./columns";
-export type { TanTableState, TanTableProps } from "./core";
-export type { Density } from "./core";
+} from './columns';
+export type { TanTableState, TanTableProps } from './core';
+export type { Density } from './core';
 export type {
   BooleanFilterConfig,
   DateFilterConfig,
@@ -54,7 +54,7 @@ export type {
   NumberFilterConfig,
   SelectFilterConfig,
   TextFilterConfig,
-} from "./filters";
+} from './filters';
 export type {
   ExportFormat,
   ExportOptions,
@@ -65,4 +65,4 @@ export type {
   TanTableTheme,
   ToolbarAction,
   ToolbarConfig,
-} from "./toolbar";
+} from './toolbar';

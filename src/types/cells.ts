@@ -1,23 +1,23 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 // ============================================================================
 // Cell Types
 // ============================================================================
 
 export type CellType =
-  | "text"
-  | "number"
-  | "date"
-  | "boolean"
-  | "action"
-  | "link"
-  | "email"
-  | "chip"
-  | "avatar"
-  | "progress"
-  | "image"
-  | "currency"
-  | "custom";
+  | 'text'
+  | 'number'
+  | 'date'
+  | 'boolean'
+  | 'action'
+  | 'link'
+  | 'email'
+  | 'chip'
+  | 'avatar'
+  | 'progress'
+  | 'image'
+  | 'currency'
+  | 'custom';
 
 export type CellConfig<TData = unknown> =
   | TextCellConfig
@@ -42,14 +42,14 @@ export interface TextCellConfig {
   /** Secondary key name to display under primary (e.g., 'position') */
   secondaryKey?: string;
   /** Text transform */
-  transform?: "uppercase" | "lowercase" | "capitalize";
+  transform?: 'uppercase' | 'lowercase' | 'capitalize';
   /** Enable copy to clipboard */
   enableCopy?: boolean;
 }
 
 export interface NumberCellConfig {
   /** Number format */
-  format?: "decimal" | "currency" | "percent" | "scientific";
+  format?: 'decimal' | 'currency' | 'percent' | 'scientific';
   /** Currency code (for currency format) */
   currency?: string;
   /** Decimal places */
@@ -64,7 +64,7 @@ export interface NumberCellConfig {
 
 export interface DateCellConfig {
   /** Date format */
-  format?: "short" | "medium" | "long" | "full" | string;
+  format?: 'short' | 'medium' | 'long' | 'full' | string;
   /** Show relative time (e.g., "2 hours ago") */
   relative?: boolean;
   /** Locale for formatting */
@@ -75,7 +75,7 @@ export interface DateCellConfig {
 
 export interface BooleanCellConfig<TData = unknown> {
   /** Display type */
-  display?: "checkbox" | "switch" | "icon" | "text";
+  display?: 'checkbox' | 'switch' | 'icon' | 'text';
   /** Custom labels */
   labels?: { true: string; false: string };
   /** Custom icons */
@@ -107,7 +107,7 @@ export interface ActionButton<TData = unknown> {
   /** Show condition */
   show?: boolean | ((row: TData) => boolean);
   /** Button color */
-  color?: "primary" | "secondary" | "error" | "warning" | "info" | "success";
+  color?: 'primary' | 'secondary' | 'error' | 'warning' | 'info' | 'success';
 }
 
 export interface LinkCellConfig<TData = unknown> {
@@ -123,18 +123,12 @@ export interface ChipCellConfig {
   /** Color mapping based on value */
   colorMap?: Record<
     string,
-    | "default"
-    | "primary"
-    | "secondary"
-    | "error"
-    | "warning"
-    | "info"
-    | "success"
+    'default' | 'primary' | 'secondary' | 'error' | 'warning' | 'info' | 'success'
   >;
   /** Variant */
-  variant?: "filled" | "outlined";
+  variant?: 'filled' | 'outlined';
   /** Size */
-  size?: "small" | "medium";
+  size?: 'small' | 'medium';
   /** Show icon */
   icon?: ReactNode | ((value: unknown) => ReactNode);
 }
@@ -145,24 +139,24 @@ export interface AvatarCellConfig {
   /** Name accessor for fallback */
   nameKey?: string;
   /** Size */
-  size?: "small" | "medium" | "large";
+  size?: 'small' | 'medium' | 'large';
   /** Variant */
-  variant?: "circular" | "rounded" | "square";
+  variant?: 'circular' | 'rounded' | 'square';
 }
 
 export interface ProgressCellConfig {
   /** Progress type */
-  type?: "linear" | "circular";
+  type?: 'linear' | 'circular';
   /** Show percentage label */
   showLabel?: boolean;
   /** Color (primary, secondary, etc.) or function to determine color based on value */
   color?:
-    | "primary"
-    | "secondary"
-    | "error"
-    | "info"
-    | "success"
-    | "warning"
+    | 'primary'
+    | 'secondary'
+    | 'error'
+    | 'info'
+    | 'success'
+    | 'warning'
     | string
     | ((value: number) => string);
   /** Min value */
@@ -181,7 +175,7 @@ export interface ImageCellConfig {
   /** Image height */
   height?: number | string;
   /** Object fit */
-  objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
+  objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
   /** Border radius */
   borderRadius?: number | string;
   /** Show preview on click */

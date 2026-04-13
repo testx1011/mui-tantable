@@ -1,10 +1,10 @@
-import type { Table } from "@tanstack/react-table";
-import type { ExportFormat } from "../../types/toolbar";
-import { JSX } from "react";
+import type { Table } from '@tanstack/react-table';
+import type { ExportFormat } from '../../types/toolbar';
+import { JSX } from 'react';
 
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Divider from "@mui/material/Divider";
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Divider from '@mui/material/Divider';
 
 interface Props<TData> {
   anchorEl: HTMLElement | null;
@@ -24,22 +24,20 @@ export function ExportMenu<TData>({
 }: Props<TData>): JSX.Element {
   return (
     <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
-      {exportFormats.includes("csv" as ExportFormat) && (
-        <MenuItem onClick={() => handleExport("csv")}>Export as CSV</MenuItem>
+      {exportFormats.includes('csv' as ExportFormat) && (
+        <MenuItem onClick={() => handleExport('csv')}>Export as CSV</MenuItem>
       )}
-      {exportFormats.includes("excel" as ExportFormat) && (
-        <MenuItem onClick={() => handleExport("excel")}>
-          Export as Excel
-        </MenuItem>
+      {exportFormats.includes('excel' as ExportFormat) && (
+        <MenuItem onClick={() => handleExport('excel')}>Export as Excel</MenuItem>
       )}
-      {exportFormats.includes("json" as ExportFormat) && (
-        <MenuItem onClick={() => handleExport("json")}>Export as JSON</MenuItem>
+      {exportFormats.includes('json' as ExportFormat) && (
+        <MenuItem onClick={() => handleExport('json')}>Export as JSON</MenuItem>
       )}
-      {exportFormats.includes("pdf" as ExportFormat) && (
-        <MenuItem onClick={() => handleExport("pdf")}>Export as PDF</MenuItem>
+      {exportFormats.includes('pdf' as ExportFormat) && (
+        <MenuItem onClick={() => handleExport('pdf')}>Export as PDF</MenuItem>
       )}
       <Divider />
-      <MenuItem onClick={() => handleExport("print")}>Print</MenuItem>
+      <MenuItem onClick={() => handleExport('print')}>Print</MenuItem>
     </Menu>
   );
 }

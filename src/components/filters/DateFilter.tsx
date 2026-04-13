@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
-import type { Column, Table } from "@tanstack/react-table";
-import { FilterValue, FilterOperator } from "../../utils/filters";
-import { DateFilterConfig } from "../../types/filters";
+import { useState, useEffect } from 'react';
+import type { Column, Table } from '@tanstack/react-table';
+import { FilterValue, FilterOperator } from '../../utils/filters';
+import { DateFilterConfig } from '../../types/filters';
 
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 
 interface DateFilterProps<TData> {
   column: Column<TData, unknown>;
@@ -15,37 +15,32 @@ interface DateFilterProps<TData> {
   config?: DateFilterConfig;
 }
 
-export function DateFilter<TData>({
-  column,
-  config,
-}: DateFilterProps<TData>): React.ReactElement {
-  const { startPlaceholder = "Start", endPlaceholder = "End" } = config || {};
+export function DateFilter<TData>({ column, config }: DateFilterProps<TData>): React.ReactElement {
+  const { startPlaceholder = 'Start', endPlaceholder = 'End' } = config || {};
 
   const columnFilterValue = column.getFilterValue() as FilterValue | undefined;
 
-  const [operator, setOperator] = useState<FilterOperator>(
-    columnFilterValue?.operator || "equals",
-  );
+  const [operator, setOperator] = useState<FilterOperator>(columnFilterValue?.operator || 'equals');
 
   const [value, setValue] = useState<string>(
-    columnFilterValue?.value ? String(columnFilterValue.value) : "",
+    columnFilterValue?.value ? String(columnFilterValue.value) : '',
   );
 
   const [value2, setValue2] = useState<string>(
-    columnFilterValue?.value2 ? String(columnFilterValue.value2) : "",
+    columnFilterValue?.value2 ? String(columnFilterValue.value2) : '',
   );
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (
-        value === "" &&
-        operator !== "isEmpty" &&
-        operator !== "isNotEmpty" &&
-        operator !== "between"
+        value === '' &&
+        operator !== 'isEmpty' &&
+        operator !== 'isNotEmpty' &&
+        operator !== 'between'
       ) {
         column.setFilterValue(undefined);
-      } else if (operator === "between" && (value === "" || value2 === "")) {
-        if (value === "" && value2 === "") column.setFilterValue(undefined);
+      } else if (operator === 'between' && (value === '' || value2 === '')) {
+        if (value === '' && value2 === '') column.setFilterValue(undefined);
         else column.setFilterValue({ operator, value, value2 });
       } else {
         column.setFilterValue({ operator, value, value2 });
@@ -56,7 +51,7 @@ export function DateFilter<TData>({
   }, [value, value2, operator, column]);
 
   return (
-    <Box sx={{ display: "flex", gap: 1 }}>
+    <Box sx={{ display: 'flex', gap: 1 }}>
       <FormControl size="small" sx={{ minWidth: 130 }}>
         <Select
           value={operator}
@@ -74,20 +69,20 @@ export function DateFilter<TData>({
           <MenuItem value="isNotEmpty">Not empty</MenuItem>
         </Select>
       </FormControl>
-      {operator !== "isEmpty" && operator !== "isNotEmpty" && (
+      {operator !== 'isEmpty' && operator !== 'isNotEmpty' && (
         <TextField
           size="small"
           type="date"
           value={value}
           onChange={(e) => setValue(e.target.value)}
           fullWidth
-          label={operator === "between" ? startPlaceholder : undefined}
+          label={operator === 'between' ? startPlaceholder : undefined}
           slotProps={{
             inputLabel: { shrink: true },
           }}
         />
       )}
-      {operator === "between" && (
+      {operator === 'between' && (
         <TextField
           size="small"
           type="date"

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 import type {
   Row,
   SortingState,
@@ -9,16 +9,12 @@ import type {
   ExpandedState,
   RowSelectionState,
   PaginationState,
-} from "@tanstack/react-table";
-import type {
-  ToolbarConfig,
-  PaginationConfig,
-  ServerSideHandlers,
-} from "./toolbar";
-import type { TanTableColumnDef } from "./columns";
-import { SxProps, Theme } from "@mui/material/styles";
+} from '@tanstack/react-table';
+import type { ToolbarConfig, PaginationConfig, ServerSideHandlers } from './toolbar';
+import type { TanTableColumnDef } from './columns';
+import { SxProps, Theme } from '@mui/material/styles';
 
-export type Density = "compact" | "standard" | "comfortable";
+export type Density = 'compact' | 'standard' | 'comfortable';
 
 export interface TanTableProps<TData> {
   /** Table data array */
@@ -112,7 +108,7 @@ export interface TanTableProps<TData> {
   /** Render list view item */
   renderListViewItem?: (row: Row<TData>) => ReactNode;
   /** Edit mode */
-  editMode?: "cell" | "row";
+  editMode?: 'cell' | 'row';
   /** Callback when row edit is saved */
   onEditingRowSave?: (row: TData) => Promise<void> | void;
   /** Callback when row edit is cancelled */
@@ -155,13 +151,7 @@ export interface TanTableState {
   density: Density;
 }
 
-export type FooterAggregation =
-  | "sum"
-  | "avg"
-  | "count"
-  | "min"
-  | "max"
-  | "none";
+export type FooterAggregation = 'sum' | 'avg' | 'count' | 'min' | 'max' | 'none';
 
 export interface ColumnFooterConfig {
   /** Aggregation type for this column */

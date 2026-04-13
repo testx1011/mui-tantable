@@ -77,10 +77,7 @@ export function smartFilter<TData>(
         operator === 'equals' ||
         operator === 'notEquals'))
   ) {
-    const cellDate =
-      cellValue instanceof Date
-        ? cellValue
-        : new Date(cellValue as string | number);
+    const cellDate = cellValue instanceof Date ? cellValue : new Date(cellValue as string | number);
     const filterDate = value instanceof Date ? value : new Date(value);
 
     if (isNaN(cellDate.getTime())) return false;
@@ -180,11 +177,7 @@ export function fuzzyFilter<TData>(
 
   // Simple fuzzy matching - checks if all characters appear in order
   let searchIndex = 0;
-  for (
-    let i = 0;
-    i < stringValue.length && searchIndex < searchValue.length;
-    i++
-  ) {
+  for (let i = 0; i < stringValue.length && searchIndex < searchValue.length; i++) {
     if (stringValue[i] === searchValue[searchIndex]) {
       searchIndex++;
     }

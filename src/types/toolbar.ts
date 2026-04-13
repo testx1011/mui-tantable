@@ -1,5 +1,10 @@
 import type { ReactNode, CSSProperties } from 'react';
-import type { Table as TanStackTable, PaginationState, SortingState, ColumnFiltersState } from '@tanstack/react-table';
+import type {
+  Table as TanStackTable,
+  PaginationState,
+  SortingState,
+  ColumnFiltersState,
+} from '@tanstack/react-table';
 
 export interface ToolbarConfig<TData> {
   /** Show global search */

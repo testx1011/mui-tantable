@@ -1,10 +1,10 @@
-import type { Table } from "@tanstack/react-table";
-import type { FooterConfig, FooterAggregation } from "../../types/core";
-import type { TanTableColumnDef } from "../../types/columns";
+import type { Table } from '@tanstack/react-table';
+import type { FooterConfig, FooterAggregation } from '../../types/core';
+import type { TanTableColumnDef } from '../../types/columns';
 
-import TableRow from "@mui/material/TableRow";
-import TableCell from "@mui/material/TableCell";
-import TableFooter from "@mui/material/TableFooter";
+import TableRow from '@mui/material/TableRow';
+import TableCell from '@mui/material/TableCell';
+import TableFooter from '@mui/material/TableFooter';
 
 interface TableFooterComponentProps<TData> {
   table: Table<TData>;
@@ -15,22 +15,17 @@ interface TableFooterComponentProps<TData> {
   footerConfig?: FooterConfig;
 }
 
-function calculateAggregation(
-  values: number[],
-  aggregation: FooterAggregation,
-): number {
+function calculateAggregation(values: number[], aggregation: FooterAggregation): number {
   switch (aggregation) {
-    case "sum":
+    case 'sum':
       return values.reduce((acc, v) => acc + v, 0);
-    case "avg":
-      return values.length > 0
-        ? values.reduce((acc, v) => acc + v, 0) / values.length
-        : 0;
-    case "count":
+    case 'avg':
+      return values.length > 0 ? values.reduce((acc, v) => acc + v, 0) / values.length : 0;
+    case 'count':
       return values.length;
-    case "min":
+    case 'min':
       return Math.min(...values);
-    case "max":
+    case 'max':
       return Math.max(...values);
     default:
       return 0;
@@ -49,7 +44,7 @@ export function TableFooterComponent<TData>({
   const filteredRows = table.getFilteredRowModel().rows;
 
   const {
-    title = "Totals",
+    title = 'Totals',
     columns = {},
     showCount = true,
     numericOnly = true,
@@ -59,9 +54,7 @@ export function TableFooterComponent<TData>({
     <TableFooter>
       <TableRow>
         {enableRowNumbering && (
-          <TableCell sx={{ p: cellPadding, fontWeight: "bold" }}>
-            {title}
-          </TableCell>
+          <TableCell sx={{ p: cellPadding, fontWeight: 'bold' }}>{title}</TableCell>
         )}
 
         {enableExpanding && <TableCell sx={{ p: cellPadding }} />}
@@ -73,10 +66,10 @@ export function TableFooterComponent<TData>({
           const columnId = column.id;
           const colConfig = columns[columnId];
 
-          if (colConfig?.aggregation === "none") {
+          if (colConfig?.aggregation === 'none') {
             return (
               <TableCell key={columnId} sx={{ p: cellPadding }}>
-                {colConfig.label || ""}
+                {colConfig.label || ''}
               </TableCell>
             );
           }
@@ -95,16 +88,12 @@ export function TableFooterComponent<TData>({
           }
 
           const aggregationType: FooterAggregation =
-            (colConfig?.aggregation as FooterAggregation) ||
-            (showCount ? "count" : "sum");
+            (colConfig?.aggregation as FooterAggregation) || (showCount ? 'count' : 'sum');
           const aggregationLabel = colConfig?.label;
 
-          if (aggregationLabel && (aggregationType as string) === "none") {
+          if (aggregationLabel && (aggregationType as string) === 'none') {
             return (
-              <TableCell
-                key={columnId}
-                sx={{ p: cellPadding, fontWeight: "bold" }}
-              >
+              <TableCell key={columnId} sx={{ p: cellPadding, fontWeight: 'bold' }}>
                 {aggregationLabel}
               </TableCell>
             );
@@ -113,27 +102,22 @@ export function TableFooterComponent<TData>({
           const result = calculateAggregation(values, aggregationType);
           const formatted = colConfig?.format
             ? colConfig.format(result)
-            : aggregationType === "count"
+            : aggregationType === 'count'
               ? String(result)
               : result.toLocaleString(undefined, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 2,
                 });
 
-          const align = columnDef.align || "left";
+          const align = columnDef.align || 'left';
 
           return (
             <TableCell
               key={columnId}
               sx={{
                 p: cellPadding,
-                fontWeight: "bold",
-                textAlign:
-                  align === "center"
-                    ? "center"
-                    : align === "right"
-                      ? "right"
-                      : "left",
+                fontWeight: 'bold',
+                textAlign: align === 'center' ? 'center' : align === 'right' ? 'right' : 'left',
               }}
             >
               {formatted}

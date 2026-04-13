@@ -4,10 +4,8 @@ export const getCommonPinningStyles = <TData>(
   column: Column<TData, unknown>,
 ): Record<string, unknown> => {
   const isPinned = column.getIsPinned();
-  const isLastLeftPinnedColumn =
-    isPinned === 'left' && column.getIsLastColumn('left');
-  const isFirstRightPinnedColumn =
-    isPinned === 'right' && column.getIsFirstColumn('right');
+  const isLastLeftPinnedColumn = isPinned === 'left' && column.getIsLastColumn('left');
+  const isFirstRightPinnedColumn = isPinned === 'right' && column.getIsFirstColumn('right');
 
   return {
     boxShadow: isLastLeftPinnedColumn

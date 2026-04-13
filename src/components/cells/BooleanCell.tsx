@@ -35,39 +35,31 @@ export function BooleanCell<TData>({
   switch (display) {
     case 'checkbox':
       return (
-        <Checkbox
-          checked={boolValue}
-          onChange={handleChange}
-          disabled={!editable}
-          size="small"
-        />
+        <Checkbox checked={boolValue} onChange={handleChange} disabled={!editable} size="small" />
       );
 
     case 'switch':
       return (
-        <Switch
-          checked={boolValue}
-          onChange={handleChange}
-          disabled={!editable}
-          size="small"
-        />
+        <Switch checked={boolValue} onChange={handleChange} disabled={!editable} size="small" />
       );
 
     case 'icon':
       const Icon = boolValue ? CheckIcon : CloseIcon;
       const customIcon = icons && (boolValue ? icons.true : icons.false);
       return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', color: boolValue ? 'success.main' : 'error.main' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            color: boolValue ? 'success.main' : 'error.main',
+          }}
+        >
           {customIcon || <Icon fontSize="small" />}
         </Box>
       );
 
     case 'text':
-      return (
-        <Typography variant="body2">
-          {boolValue ? labels.true : labels.false}
-        </Typography>
-      );
+      return <Typography variant="body2">{boolValue ? labels.true : labels.false}</Typography>;
 
     default:
       return null;
