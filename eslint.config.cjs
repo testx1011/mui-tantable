@@ -1,3 +1,6 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from "eslint-plugin-storybook";
+
 // ESLint flat config for ESLint v9
 // Load ESM-only plugins dynamically and export a Promise that resolves to the config
 module.exports = (async () => {
@@ -6,12 +9,21 @@ module.exports = (async () => {
   const tsEslintPluginMod = await import('@typescript-eslint/eslint-plugin').catch(() => null);
 
   const tsParser = (tsParserMod && (tsParserMod.default || tsParserMod)) || undefined;
-  const tsEslintPlugin = (tsEslintPluginMod && (tsEslintPluginMod.default || tsEslintPluginMod)) || undefined;
+  const tsEslintPlugin =
+    (tsEslintPluginMod && (tsEslintPluginMod.default || tsEslintPluginMod)) || undefined;
 
   return [
     // ignore patterns (flat config uses 'ignores')
     {
-      ignores: ['node_modules/**', 'dist/**'],
+      ignores: [
+        'node_modules/**',
+        'dist/**',
+        '.storybook/**',
+        'storybook-static/**',
+        '.vite/**',
+        '.turbo/**',
+        'build/**',
+      ],
     },
 
     // main config for TS/JS files inside source/demo/demo-related code
@@ -26,10 +38,7 @@ module.exports = (async () => {
           project: ['./tsconfig.eslint.json'],
         },
       },
-      plugins: Object.assign(
-        {},
-        tsEslintPlugin ? { '@typescript-eslint': tsEslintPlugin } : {}
-      ),
+      plugins: Object.assign({}, tsEslintPlugin ? { '@typescript-eslint': tsEslintPlugin } : {}),
       linterOptions: {
         reportUnusedDisableDirectives: true,
       },
