@@ -17,46 +17,20 @@ export function useTableVirtualizer<TData>(
     currentDensity === 'compact' ? 37 : currentDensity === 'comfortable' ? 77 : 53;
 
   const rowVirtualizer = useVirtualizer<HTMLElement, Element>({
+    enabled: enableVirtualization,
     count: rows.length,
     getScrollElement: () => containerRef.current,
     estimateSize: () => estimate(),
     overscan: 5,
   });
 
-  // Ensure virtualizer recalculates sizes when container size or rows change
+  // Trigger a re-measure only when relevant virtualized inputs change.
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    // measure initially
+    if (!enableVirtualization) return;
     rowVirtualizer.measure();
-
-    // ResizeObserver to trigger re-measure when container changes
-    let ro: ResizeObserver | null = null;
-    try {
-      ro = new ResizeObserver(() => {
-        rowVirtualizer.measure();
-      });
-      ro.observe(el);
-    } catch (e) {
-      // ResizeObserver may not be available in some environments; ignore
-    }
-
-    return () => {
-      if (ro && el) ro.unobserve(el);
-      ro = null;
-    };
-  }, [containerRef, rowVirtualizer]);
-
-  // If rows length changes, re-measure
-  useEffect(() => {
-    rowVirtualizer.setOptions({
-      ...rowVirtualizer.options,
-      count: rows.length,
-    });
-    rowVirtualizer.measure();
+    // rowVirtualizer is intentionally excluded to avoid unstable dependency loops.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows.length]);
+  }, [enableVirtualization, rows.length, currentDensity]);
 
   const virtualItems = enableVirtualization ? rowVirtualizer.getVirtualItems() : [];
 

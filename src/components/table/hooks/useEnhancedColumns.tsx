@@ -53,49 +53,61 @@ export function useEnhancedColumns<TData>({
       }
 
       const originalCell = column.cell;
-      // renderer may be a React component or function; define a proper union type
-      type CellComp =
-        | React.ComponentType<CellRendererProps<TData>>
-        | ((props: CellRendererProps<TData>) => React.ReactNode);
-      let CellComponent: CellComp | undefined = originalCell as CellComp;
+      let CellComponent:
+        | React.ComponentType<Record<string, unknown>>
+        | undefined = originalCell as unknown as React.ComponentType<
+        Record<string, unknown>
+      >;
 
       if (!CellComponent && column.cellType) {
         switch (column.cellType) {
           case 'text':
-            CellComponent = TextCell;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            CellComponent = TextCell as unknown as React.ComponentType<Record<string, any>>;
             break;
           case 'number':
-            CellComponent = NumberCell;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            CellComponent = NumberCell as unknown as React.ComponentType<Record<string, any>>;
             break;
           case 'date':
-            CellComponent = DateCell;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            CellComponent = DateCell as unknown as React.ComponentType<Record<string, any>>;
             break;
           case 'boolean':
-            CellComponent = BooleanCell;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            CellComponent = BooleanCell as unknown as React.ComponentType<Record<string, any>>;
             break;
           case 'action':
-            CellComponent = ActionCell;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            CellComponent = ActionCell as unknown as React.ComponentType<Record<string, any>>;
             break;
           case 'link':
-            CellComponent = LinkCell;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            CellComponent = LinkCell as unknown as React.ComponentType<Record<string, any>>;
             break;
           case 'email':
-            CellComponent = EmailCell;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            CellComponent = EmailCell as unknown as React.ComponentType<Record<string, any>>;
             break;
           case 'chip':
-            CellComponent = ChipCell;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            CellComponent = ChipCell as unknown as React.ComponentType<Record<string, any>>;
             break;
           case 'avatar':
-            CellComponent = AvatarCell;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            CellComponent = AvatarCell as unknown as React.ComponentType<Record<string, any>>;
             break;
           case 'progress':
-            CellComponent = ProgressCell;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            CellComponent = ProgressCell as unknown as React.ComponentType<Record<string, any>>;
             break;
           case 'image':
-            CellComponent = ImageCell;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            CellComponent = ImageCell as unknown as React.ComponentType<Record<string, any>>;
             break;
           case 'currency':
-            CellComponent = CurrencyCell;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            CellComponent = CurrencyCell as unknown as React.ComponentType<Record<string, any>>;
             break;
           default:
             break;
@@ -144,24 +156,25 @@ export function useEnhancedColumns<TData>({
             },
           };
 
-          if (typeof CellComponent === 'function') {
-            const Comp = CellComponent as React.ComponentType<CellRendererProps<TData>>;
+          if (CellComponent) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const Comp = CellComponent as React.ComponentType<Record<string, any>>;
             return <Comp {...actionProps} />;
           }
-          return (CellComponent as (props: CellRendererProps<TData>) => React.ReactNode)(
-            actionProps,
-          );
         }
 
         if (CellComponent) {
-          if (typeof CellComponent === 'function') {
-            const Comp = CellComponent as React.ComponentType<CellRendererProps<TData>>;
-            return <Comp {...props} />;
-          }
-          return (CellComponent as (props: CellRendererProps<TData>) => React.ReactNode)(props);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const Comp = CellComponent as React.ComponentType<Record<string, any>>;
+          return <Comp {...props} />;
         }
 
-        return flexRender(column.cell, props);
+        if (originalCell) {
+          return flexRender(originalCell, props);
+        }
+
+        const rawValue = getValue();
+        return rawValue == null ? null : String(rawValue);
       };
 
       return column;

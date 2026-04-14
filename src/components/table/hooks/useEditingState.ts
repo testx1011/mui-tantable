@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import type { Row } from '@tanstack/react-table';
+import { useEditHistory } from './useEditHistory';
 
 interface UseEditingStateProps<TData> {
   editMode: 'cell' | 'row';
@@ -7,18 +8,11 @@ interface UseEditingStateProps<TData> {
   onEditingRowCancel?: () => void;
 }
 
-interface HistoryEntry<TData> {
-  rowId: string;
-  previousData: Partial<TData>;
-  newData: Partial<TData>;
-  timestamp: number;
-}
-
 /**
  * Manages editing-related state for the table: which row/cell is being edited
  * and the draft values. Consumers can call helpers to start/cancel/save edits
  * and `useEnhancedColumns` will consult `isCellEditing`/`isRowEditing`.
- * Includes undo/redo functionality for edit operations.
+ * Includes undo/redo functionality for edit operations via `useEditHistory`.
  */
 export function useEditingState<TData>({
   editMode,
@@ -45,8 +39,7 @@ export function useEditingState<TData>({
   const [editingCellId, setEditingCellId] = useState<string | null>(null);
   const [editingData, setEditingData] = useState<Partial<TData>>({});
 
-  const [history, setHistory] = useState<HistoryEntry<TData>[]>([]);
-  const [historyIndex, setHistoryIndex] = useState(-1);
+  const { addHistoryEntry, canUndo, canRedo, undo, redo } = useEditHistory<TData>(onEditingRowSave);
 
   const isRowEditing = useCallback(
     (row: Row<TData>) => editMode === 'row' && editingRowId === row.id,
@@ -76,20 +69,12 @@ export function useEditingState<TData>({
       const merged = { ...row.original, ...editingData } as TData;
 
       if (Object.keys(editingData).length > 0) {
-        const entry: HistoryEntry<TData> = {
+        addHistoryEntry({
           rowId: row.id,
           previousData: row.original,
           newData: merged,
           timestamp: Date.now(),
-        };
-
-        setHistory((prev) => {
-          const newHistory = prev.slice(0, historyIndex + 1);
-          newHistory.push(entry);
-          if (newHistory.length > 50) newHistory.shift();
-          return newHistory;
         });
-        setHistoryIndex((prev) => Math.min(prev + 1, 49));
       }
 
       onEditingRowSave?.(merged);
@@ -97,7 +82,7 @@ export function useEditingState<TData>({
       setEditingCellId(null);
       setEditingData({});
     },
-    [editingData, historyIndex, onEditingRowSave],
+    [editingData, addHistoryEntry, onEditingRowSave],
   );
 
   const cancel = useCallback(() => {
@@ -111,29 +96,6 @@ export function useEditingState<TData>({
     () => editingRowId !== null || editingCellId !== null,
     [editingRowId, editingCellId],
   );
-
-  const canUndo = useCallback(() => historyIndex >= 0, [historyIndex]);
-
-  const canRedo = useCallback(
-    () => historyIndex < history.length - 1,
-    [historyIndex, history.length],
-  );
-
-  const undo = useCallback(() => {
-    if (historyIndex >= 0) {
-      const entry = history[historyIndex];
-      onEditingRowSave?.(entry.previousData as TData);
-      setHistoryIndex((prev) => prev - 1);
-    }
-  }, [history, historyIndex, onEditingRowSave]);
-
-  const redo = useCallback(() => {
-    if (historyIndex < history.length - 1) {
-      const entry = history[historyIndex + 1];
-      onEditingRowSave?.(entry.newData as TData);
-      setHistoryIndex((prev) => prev + 1);
-    }
-  }, [history, historyIndex, onEditingRowSave]);
 
   return {
     editingRowId,
