@@ -1,11 +1,8 @@
 {
     "js/ts.preferences.autoImportSpecifierExcludeRegexes": ["^@mui/[^/]+$"],
-    "conventionalCommits.scopes": [
-        "ci"
-    ],
     "github.copilot.chat.commitMessageGeneration.instructions": [
       {
         "file": ".vscode/commit-convention.md",
       }
-    ]
+    ],
 }
