@@ -1,10 +1,11 @@
+import { memo } from 'react';
 import type { CellRendererProps, DateCellConfig } from '../../types';
 import { formatDate } from '../../utils/formatters';
 
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 
-export function DateCell<TData>({
+export const DateCell = memo(function DateCell<TData>({
   getValue,
   column,
 }: CellRendererProps<TData> & { config?: DateCellConfig }): React.ReactNode {
@@ -53,4 +54,4 @@ export function DateCell<TData>({
   }
 
   return <Typography variant="body2">{formatted}</Typography>;
-}
+});

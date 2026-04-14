@@ -1,10 +1,11 @@
+import { memo } from 'react';
 import type { CellRendererProps, NumberCellConfig } from '../../types';
 import { formatNumber } from '../../utils/formatters';
 
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
-export function NumberCell<TData>({
+export const NumberCell = memo(function NumberCell<TData>({
   getValue,
   column,
 }: CellRendererProps<TData> & { config?: NumberCellConfig }): React.ReactNode {
@@ -54,4 +55,4 @@ export function NumberCell<TData>({
       </Typography>
     </Box>
   );
-}
+});

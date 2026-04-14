@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, memo } from 'react';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import type { CellRendererProps, BooleanCellConfig } from '../../types';
@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import Checkbox from '@mui/material/Checkbox';
 import Switch from '@mui/material/Switch';
 
-export function BooleanCell<TData>({
+export const BooleanCell = memo(function BooleanCell<TData>({
   getValue,
   row,
   column,
@@ -26,21 +26,36 @@ export function BooleanCell<TData>({
 
   const boolValue = Boolean(value);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (onChange) {
-      onChange(e.target.checked, row.original);
-    }
-  };
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (onChange) {
+        onChange(e.target.checked, row.original);
+      }
+    },
+    [onChange, row.original],
+  );
 
   switch (display) {
     case 'checkbox':
       return (
-        <Checkbox checked={boolValue} onChange={handleChange} disabled={!editable} size="small" />
+        <Checkbox
+          checked={boolValue}
+          onChange={handleChange}
+          disabled={!editable}
+          size="small"
+          aria-label={labels[boolValue ? 'true' : 'false']}
+        />
       );
 
     case 'switch':
       return (
-        <Switch checked={boolValue} onChange={handleChange} disabled={!editable} size="small" />
+        <Switch
+          checked={boolValue}
+          onChange={handleChange}
+          disabled={!editable}
+          size="small"
+          aria-label={labels[boolValue ? 'true' : 'false']}
+        />
       );
 
     case 'icon':
@@ -53,6 +68,7 @@ export function BooleanCell<TData>({
             justifyContent: 'center',
             color: boolValue ? 'success.main' : 'error.main',
           }}
+          aria-label={labels[boolValue ? 'true' : 'false']}
         >
           {customIcon || <Icon fontSize="small" />}
         </Box>
@@ -64,4 +80,4 @@ export function BooleanCell<TData>({
     default:
       return null;
   }
-}
+});

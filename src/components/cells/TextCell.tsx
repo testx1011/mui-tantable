@@ -1,3 +1,4 @@
+import React, { useCallback, memo } from 'react';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import type { CellRendererProps, TextCellConfig } from '../../types';
 import { truncateText, transformText } from '../../utils/formatters';
@@ -7,7 +8,7 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 
-export function TextCell<TData>({
+export const TextCell = memo(function TextCell<TData>({
   getValue,
   column,
 }: CellRendererProps<TData> & { config?: TextCellConfig }): React.ReactNode {
@@ -32,10 +33,10 @@ export function TextCell<TData>({
   const isTruncated = maxLength && displayValue.length > maxLength;
   const truncatedValue = isTruncated ? truncateText(displayValue, maxLength) : displayValue;
 
-  const handleCopy = (e: React.MouseEvent) => {
+  const handleCopy = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     navigator.clipboard.writeText(displayValue);
-  };
+  }, [displayValue]);
 
   const content = (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -46,6 +47,7 @@ export function TextCell<TData>({
         <IconButton
           size="small"
           onClick={handleCopy}
+          aria-label="Copy cell value"
           sx={{ opacity: 0.6, '&:hover': { opacity: 1 } }}
         >
           <ContentCopyIcon fontSize="small" />
@@ -59,4 +61,4 @@ export function TextCell<TData>({
   }
 
   return content;
-}
+});

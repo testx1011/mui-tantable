@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { CellRendererProps, ProgressCellConfig } from '../../types';
 
 import Typography from '@mui/material/Typography';
@@ -5,7 +6,7 @@ import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
 import CircularProgress from '@mui/material/CircularProgress';
 
-export function ProgressCell<TData>({
+export const ProgressCell = memo(function ProgressCell<TData>({
   getValue,
   column,
 }: CellRendererProps<TData> & {
@@ -80,4 +81,4 @@ export function ProgressCell<TData>({
       )}
     </Box>
   );
-}
+});
