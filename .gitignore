@@ -6,3 +6,6 @@
 .agents/
 skills-lock.json
 
+# Ignore Storybook
+/storybook-static
+debug-storybook.log
