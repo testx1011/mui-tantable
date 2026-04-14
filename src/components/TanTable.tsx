@@ -1,4 +1,4 @@
-import React, { JSX, useEffect } from 'react';
+import React, { useEffect, Suspense, JSX } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -14,7 +14,9 @@ import {
 import type { TanTableProps, Density, TanTableState } from '../types/core';
 import type { TableState } from '@tanstack/react-table';
 
-import { TablePagination } from './TablePagination';
+const LazyTablePagination = React.lazy(() =>
+  import('./TablePagination').then((m) => ({ default: m.TablePagination })),
+) as unknown as React.ComponentType<Record<string, unknown>>;
 import { TableToolbar } from './TableToolbar';
 import { RowRenderer } from './table/RowRenderer';
 
@@ -22,6 +24,8 @@ import { useTableVirtualizer } from './table/hooks/useTableVirtualizer';
 import { useEditingState } from './table/hooks/useEditingState';
 import { useEnhancedColumns } from './table/hooks/useEnhancedColumns';
 import { useCellNavigation } from './table/hooks/useCellNavigation';
+import { useRowReorder } from './table/hooks/useRowReorder';
+import { parseColumnGrouping } from './table/hooks/useColumnGrouping';
 import { TableHeaderComponent } from './table/TableHeader';
 import { TableFooterComponent } from './table/TableFooter';
 import { getCommonPinningStyles } from './table/utils';
@@ -109,7 +113,8 @@ export function TanTable<TData>({
   enableGlobalFilter = true,
   enablePagination = true,
   enableExpanding = false,
-  enableVirtualization = false,
+  enableVirtualization,
+  virtualizationThreshold = 100,
   autoHeight = false,
   height,
   enableColumnResizing = false,
@@ -156,6 +161,10 @@ export function TanTable<TData>({
   enableGrouping = false,
   groupedColumns = [],
   onGroupChange,
+  rowReordering = false,
+  onRowOrderChange,
+  columnGroupingModel,
+  columnGroupHeaderHeight,
 }: TanTableProps<TData>): JSX.Element {
   const [view, setView] = React.useState<'grid' | 'list'>('grid');
 
@@ -190,6 +199,15 @@ export function TanTable<TData>({
     editing,
   });
 
+  const controlledTableState = React.useMemo<TableState | undefined>(() => {
+    if (!state && !enableGrouping) return undefined;
+
+    return {
+      ...(state || {}),
+      ...(enableGrouping ? { grouping: groupedColumns } : {}),
+    } as TableState;
+  }, [state, enableGrouping, groupedColumns]);
+
   // Create table instance
   const table = useReactTable({
     data,
@@ -215,11 +233,8 @@ export function TanTable<TData>({
     debugTable: debug,
     debugHeaders: debug,
     debugColumns: debug,
-    state: {
-      ...initialState,
-      ...state,
-      ...(enableGrouping ? { grouping: groupedColumns } : {}),
-    },
+    initialState,
+    state: controlledTableState,
     onStateChange: (updater: TableState | ((prev: TableState) => TableState)) => {
       // always call row-selection callback if provided
       if (onRowSelectionChange) {
@@ -277,10 +292,12 @@ export function TanTable<TData>({
         ? '12px 16px'
         : '8px 16px';
 
-  // Decide whether to virtualize: explicit prop > auto threshold
-  // Virtualization: always ON by default (like MUI Data Grid), unless explicitly disabled
+  // Decide whether to virtualize: explicit prop > automatic threshold.
   // autoHeight overrides virtualization - when true, table grows to content height
-  const effectiveVirtualization = autoHeight ? false : enableVirtualization !== false;
+  const renderedRowCount = table.getRowModel().rows.length;
+  const thresholdBasedVirtualization = renderedRowCount >= virtualizationThreshold;
+  const effectiveVirtualization =
+    autoHeight ? false : (enableVirtualization ?? thresholdBasedVirtualization);
 
   // Container height: use height prop when virtualization is active, autoHeight removes maxHeight
   const containerMaxHeight = autoHeight ? undefined : (height ?? 600);
@@ -332,6 +349,21 @@ export function TanTable<TData>({
       editing.cancel();
     },
   });
+
+  // row reorder hook
+  const reorder = useRowReorder<TData>({
+    enabled: rowReordering,
+    onReorder: (newRowOrder) => {
+      onRowOrderChange?.(newRowOrder);
+    },
+  });
+
+  // column grouping state
+  const columnGroupingState = React.useMemo(() => {
+    if (!columnGroupingModel || columnGroupingModel.length === 0) return undefined;
+    const columnIds = table.getAllLeafColumns().map((c) => c.id);
+    return parseColumnGrouping({ model: columnGroupingModel, columnIds });
+  }, [columnGroupingModel, table]);
 
   // Scroll into view when selection changes
   const tableRows = table.getRowModel().rows;
@@ -423,7 +455,10 @@ export function TanTable<TData>({
               enableColumnResizing={enableColumnResizing}
               enableColumnOrdering={enableColumnOrdering}
               enableRowNumbering={enableRowNumbering}
+              enableRowReordering={rowReordering}
               currentDensity={currentDensity}
+              columnGroupingState={columnGroupingState}
+              columnGroupHeaderHeight={columnGroupHeaderHeight}
             />
 
             <TableBody>
@@ -443,7 +478,8 @@ export function TanTable<TData>({
                       table.getAllColumns().length +
                       (enableRowNumbering ? 1 : 0) +
                       (enableRowSelection ? 1 : 0) +
-                      (enableExpanding ? 1 : 0)
+                      (enableExpanding ? 1 : 0) +
+                      (rowReordering ? 1 : 0)
                     }
                     sx={{ textAlign: 'center', p: 4 }}
                   >
@@ -459,7 +495,8 @@ export function TanTable<TData>({
                           table.getVisibleLeafColumns().length +
                           (enableRowNumbering ? 1 : 0) +
                           (enableRowSelection ? 1 : 0) +
-                          (enableExpanding ? 1 : 0)
+                          (enableExpanding ? 1 : 0) +
+                          (rowReordering ? 1 : 0)
                         }
                         style={{ padding: 0, border: 0 }}
                       />
@@ -475,6 +512,7 @@ export function TanTable<TData>({
                     enableEditing={enableEditing}
                     enableListView={enableListView}
                     enableRowNumbering={enableRowNumbering}
+                    enableRowReordering={rowReordering}
                     renderListViewItem={renderListViewItem}
                     editMode={editMode}
                     currentDensity={currentDensity}
@@ -489,6 +527,13 @@ export function TanTable<TData>({
                     virtualRowStartIndex={
                       effectiveVirtualization && virtualItems.length > 0 ? virtualItems[0].index : 0
                     }
+                    dragState={reorder.dragState}
+                    onDragStart={reorder.handlers.handleDragStart}
+                    onDragOver={reorder.handlers.handleDragOver}
+                    onDragLeave={reorder.handlers.handleDragLeave}
+                    onDrop={(e, rowId) => reorder.handlers.handleDrop(e, rowId, visibleRows)}
+                    onDragEnd={reorder.handlers.handleDragEnd}
+                    getRowStyle={reorder.getRowStyle}
                   />
 
                   {effectiveVirtualization && rowVirtualizer.getVirtualItems().length > 0 && (
@@ -506,7 +551,8 @@ export function TanTable<TData>({
                           table.getVisibleLeafColumns().length +
                           (enableRowNumbering ? 1 : 0) +
                           (enableRowSelection ? 1 : 0) +
-                          (enableExpanding ? 1 : 0)
+                          (enableExpanding ? 1 : 0) +
+                          (rowReordering ? 1 : 0)
                         }
                         style={{ padding: 0, border: 0 }}
                       />
@@ -546,7 +592,9 @@ export function TanTable<TData>({
               borderColor: 'divider',
             }}
           >
-            <TablePagination table={table} config={paginationConfig} />
+            <Suspense fallback={null}>
+              <LazyTablePagination table={table} config={paginationConfig} />
+            </Suspense>
           </Box>
         )}
       </Box>
