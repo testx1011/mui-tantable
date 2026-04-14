@@ -65,6 +65,7 @@ yarn add @mui/material @emotion/react @emotion/styled
 
 - ⚙️ **Flexible Rendering**: Columns defined with `ColumnDef` and custom renderers.
 - ⚡️ **Virtualization**: Supports `@tanstack/react-virtual` for thousands of rows.
+- 🧠 **Smart Virtualization**: Auto-enables when many rows are rendered (`virtualizationThreshold`, default `100`), with manual override via `enableVirtualization`.
 - 📋 **List View**: `enableListView` + `renderListViewItem` to present data in a single-column list view style (inspired by MUI X List View).
 - 🔘 **Cell & Row Selection**: Visual cell selection and multi-row selection.
 - ⌨️ **Keyboard Shortcuts**: `Ctrl+C` copies cell/row content in tabular format compatible with Excel/Sheets.
