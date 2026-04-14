@@ -43,9 +43,9 @@ export interface TanTableProps<TData> {
   enableColumnPinning?: boolean;
   /** Enable row expansion */
   enableExpanding?: boolean;
-  /** Enable virtualization */
+  /** Force virtualization on/off. If undefined, it is enabled automatically based on `virtualizationThreshold`. */
   enableVirtualization?: boolean;
-  /** @deprecated This prop is deprecated. Virtualization is now always enabled by default. Set enableVirtualization={false} to disable. */
+  /** Row-count threshold to auto-enable virtualization when `enableVirtualization` is not provided. */
   virtualizationThreshold?: number;
   /** Enable auto-height mode - table grows to content height (disables virtualization) */
   autoHeight?: boolean;
@@ -135,6 +135,14 @@ export interface TanTableProps<TData> {
   groupedColumns?: string[];
   /** Callback when group changes */
   onGroupChange?: (groupedColumns: string[]) => void;
+  /** Enable row reordering - allows dragging rows to reorder */
+  rowReordering?: boolean;
+  /** Callback when row order changes */
+  onRowOrderChange?: (newRowOrder: TData[]) => void;
+  /** Column grouping model for organizing columns into groups */
+  columnGroupingModel?: import('./columnGrouping').ColumnGroupingModel;
+  /** Height of column group headers */
+  columnGroupHeaderHeight?: number;
 }
 
 export interface TanTableState {

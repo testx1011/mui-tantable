@@ -197,4 +197,37 @@ export interface CellRendererProps<TData> {
   column: Column<TData, unknown>;
 }
 
+/**
+ * Utility type to extract cellConfig type from a TanTableColumnDef.
+ * Usage: const config = (column.columnDef as { cellConfig?: TextCellConfig })?.cellConfig;
+ * Becomes: const config = column.columnDef.cellConfig (with proper typing).
+ */
+export type CellConfigOf<C extends TanTableColumnDef<unknown>> = C extends { cellType: 'text' }
+  ? TextCellConfig
+  : C extends { cellType: 'number' }
+    ? NumberCellConfig
+    : C extends { cellType: 'date' }
+      ? DateCellConfig
+      : C extends { cellType: 'boolean' }
+        ? BooleanCellConfig
+        : C extends { cellType: 'action' }
+          ? ActionCellConfig
+          : C extends { cellType: 'link' }
+            ? LinkCellConfig
+            : C extends { cellType: 'email' }
+              ? LinkCellConfig
+              : C extends { cellType: 'chip' }
+                ? ChipCellConfig
+                : C extends { cellType: 'avatar' }
+                  ? AvatarCellConfig
+                  : C extends { cellType: 'progress' }
+                    ? ProgressCellConfig
+                    : C extends { cellType: 'image' }
+                      ? ImageCellConfig
+                      : C extends { cellType: 'currency' }
+                        ? CurrencyCellConfig
+                        : C extends { cellConfig?: infer R }
+                          ? R
+                          : never;
+
 // Types are exported above via their declarations.

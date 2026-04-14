@@ -6,6 +6,8 @@ export * from './cells';
 
 export * from './filters';
 
+export * from './columnGrouping';
+
 export type {
   ActionButton,
   ActionCellConfig,

@@ -28,6 +28,8 @@ export interface NumberFilterConfig {
   maxPlaceholder?: string;
   /** Step value */
   step?: number;
+  /** Debounce delay in ms */
+  debounce?: number;
 }
 
 export interface DateFilterConfig {
@@ -39,6 +41,8 @@ export interface DateFilterConfig {
   disableFuture?: boolean;
   /** Disable past dates */
   disablePast?: boolean;
+  /** Debounce delay in ms */
+  debounce?: number;
 }
 
 export interface SelectFilterConfig {
