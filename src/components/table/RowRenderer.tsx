@@ -1,6 +1,7 @@
 import React from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import type { Table, Row, Cell } from '@tanstack/react-table';
 import type { TanTableColumnDef } from '../../types/columns';
 import { getCommonPinningStyles } from './utils';
@@ -33,6 +34,7 @@ interface Props<TData> {
   enableEditing: boolean;
   enableListView: boolean;
   enableRowNumbering: boolean;
+  enableRowReordering?: boolean;
   renderListViewItem?: (row: Row<TData>) => React.ReactNode;
   editMode: 'cell' | 'row';
   currentDensity: 'compact' | 'standard' | 'comfortable';
@@ -45,6 +47,17 @@ interface Props<TData> {
   onRowClick?: (row: Row<TData>) => void;
   onRowDoubleClick?: (row: Row<TData>) => void;
   virtualRowStartIndex?: number;
+  dragState?: {
+    draggedRowId: string | null;
+    dropTargetRowId: string | null;
+    isDragging: boolean;
+  };
+  onDragStart?: (rowId: string) => void;
+  onDragOver?: (e: React.DragEvent<HTMLTableRowElement>, targetRowId: string) => void;
+  onDragLeave?: (e: React.DragEvent<HTMLTableRowElement>) => void;
+  onDrop?: (e: React.DragEvent<HTMLTableRowElement>, targetRowId: string) => void;
+  onDragEnd?: () => void;
+  getRowStyle?: (rowId: string) => React.CSSProperties;
 }
 
 export function RowRenderer<TData>({
@@ -56,6 +69,7 @@ export function RowRenderer<TData>({
   enableEditing,
   enableListView,
   enableRowNumbering,
+  enableRowReordering,
   renderListViewItem,
   editMode,
   currentDensity,
@@ -68,7 +82,15 @@ export function RowRenderer<TData>({
   onRowClick,
   onRowDoubleClick,
   virtualRowStartIndex = 0,
+  dragState,
+  onDragStart,
+  onDragOver,
+  onDragLeave,
+  onDrop,
+  onDragEnd,
+  getRowStyle,
 }: Props<TData>): React.ReactElement {
+  const [hoveredRowId, setHoveredRowId] = React.useState<string | null>(null);
   const pageIndex = table.getState().pagination.pageIndex;
   const pageSize = table.getState().pagination.pageSize;
   const isServerSide = table.getCoreRowModel().rows.length > pageSize;
@@ -104,11 +126,15 @@ export function RowRenderer<TData>({
                 }
                 onRowDoubleClick?.(row);
               }}
+              onDragOver={(e) => onDragOver?.(e, row.id)}
+              onDragLeave={onDragLeave}
+              onDrop={(e) => onDrop?.(e, row.id)}
               sx={{
                 cursor:
                   onRowClick || onRowDoubleClick || (enableEditing && editMode === 'row')
                     ? 'pointer'
                     : 'default',
+                ...(getRowStyle?.(row.id) || {}),
               }}
             >
               {enableRowNumbering && (
@@ -156,6 +182,29 @@ export function RowRenderer<TData>({
                     size={currentDensity === 'compact' ? 'small' : 'medium'}
                     aria-label={`Select row ${displayIndex}`}
                   />
+                </TableCell>
+              )}
+
+              {enableRowReordering && (
+                <TableCell
+                  sx={{
+                    p: cellPadding,
+                    width: 40,
+                    cursor: 'grab',
+                    opacity: hoveredRowId === row.id || dragState?.isDragging ? 1 : 0,
+                    transition: 'opacity 0.2s ease',
+                  }}
+                  onMouseEnter={() => setHoveredRowId(row.id)}
+                  onMouseLeave={() => setHoveredRowId(null)}
+                  draggable
+                  onDragStart={(e) => {
+                    e.dataTransfer.setData('rowId', row.id);
+                    e.dataTransfer.effectAllowed = 'move';
+                    onDragStart?.(row.id);
+                  }}
+                  onDragEnd={onDragEnd}
+                >
+                  <DragIndicatorIcon fontSize="small" />
                 </TableCell>
               )}
 
@@ -217,7 +266,8 @@ export function RowRenderer<TData>({
                     table.getAllColumns().length +
                     (enableRowNumbering ? 1 : 0) +
                     (enableRowSelection ? 1 : 0) +
-                    (enableExpanding ? 1 : 0)
+                    (enableExpanding ? 1 : 0) +
+                    (enableRowReordering ? 1 : 0)
                   }
                   sx={{ p: 0 }}
                 >
