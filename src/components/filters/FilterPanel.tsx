@@ -65,6 +65,7 @@ export function FilterPanel<TData>({ table }: FilterPanelProps<TData>): React.Re
   const [filterRows, setFilterRows] = useState<string[]>(() =>
     table.getState().columnFilters.map((f) => f.id),
   );
+  const columnFilters = table.getState().columnFilters;
 
   const allColumns = table.getAllColumns().filter((col) => col.getCanFilter());
 
@@ -72,20 +73,22 @@ export function FilterPanel<TData>({ table }: FilterPanelProps<TData>): React.Re
   // For now, we'll trust local state + user actions, but if we wanted to support
   // external clearing, we'd need a useEffect here.
   useEffect(() => {
-    const currentFilters = table.getState().columnFilters.map((f) => f.id);
+    const currentFilters = columnFilters.map((f) => f.id);
     // If the table has filters that we don't know about, add them.
     // If the table lacks filters we have... well, maybe we are just editing them and they are empty.
     // So we only add missing ones.
     setFilterRows((prev) => {
       const newRows = [...prev];
+      let changed = false;
       currentFilters.forEach((id) => {
         if (!newRows.includes(id)) {
           newRows.push(id);
+          changed = true;
         }
       });
-      return newRows;
+      return changed ? newRows : prev;
     });
-  }, [table.getState().columnFilters]);
+  }, [columnFilters]);
 
   const handleAddFilter = () => {
     const usedIds = filterRows;

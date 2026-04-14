@@ -1,7 +1,7 @@
-import { useState, useEffect, JSX } from 'react';
+import { JSX } from 'react';
 import type { Column } from '@tanstack/react-table';
-import { FilterValue, FilterOperator } from '../../utils/filters';
 import { NumberFilterConfig } from '../../types/filters';
+import { useFilterState } from './useFilterState';
 
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
@@ -15,56 +15,20 @@ interface NumberFilterProps<TData> {
 }
 
 export function NumberFilter<TData>({ column, config }: NumberFilterProps<TData>): JSX.Element {
-  const { minPlaceholder = 'Min', maxPlaceholder = 'Max', step } = config || {};
+  const { minPlaceholder = 'Min', maxPlaceholder = 'Max', step, debounce } = config || {};
 
-  const columnFilterValue = column.getFilterValue() as FilterValue | undefined;
-
-  const [operator, setOperator] = useState<FilterOperator>(columnFilterValue?.operator || 'equals');
-
-  const [value, setValue] = useState<string>(
-    columnFilterValue?.value !== undefined ? String(columnFilterValue.value) : '',
-  );
-
-  const [value2, setValue2] = useState<string>(
-    columnFilterValue?.value2 !== undefined ? String(columnFilterValue.value2) : '',
-  );
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (
-        value === '' &&
-        operator !== 'isEmpty' &&
-        operator !== 'isNotEmpty' &&
-        operator !== 'between'
-      ) {
-        column.setFilterValue(undefined);
-      } else if (operator === 'between' && (value === '' || value2 === '')) {
-        // Wait for both values? Or allow partial? Let's wait for both or clear if empty
-        if (value === '' && value2 === '') column.setFilterValue(undefined);
-        else
-          column.setFilterValue({
-            operator,
-            value: value ? Number(value) : undefined,
-            value2: value2 ? Number(value2) : undefined,
-          });
-      } else {
-        column.setFilterValue({
-          operator,
-          value: value !== '' ? Number(value) : undefined,
-          value2: value2 !== '' ? Number(value2) : undefined,
-        });
-      }
-    }, 300);
-
-    return () => clearTimeout(timeout);
-  }, [value, value2, operator, column]);
+  const { operator, setOperator, value, setValue, value2, setValue2 } = useFilterState({
+    column,
+    debounce,
+    parseValue: (v) => (v === '' ? null : Number(v)),
+  });
 
   return (
     <Box sx={{ display: 'flex', gap: 1 }}>
       <FormControl size="small" sx={{ minWidth: 130 }}>
         <Select
           value={operator}
-          onChange={(e) => setOperator(e.target.value as FilterOperator)}
+          onChange={(e) => setOperator(e.target.value as typeof operator)}
           displayEmpty
         >
           <MenuItem value="equals">Equals</MenuItem>
