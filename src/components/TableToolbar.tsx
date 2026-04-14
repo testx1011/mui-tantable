@@ -118,6 +118,13 @@ export function TableToolbar<TData>({
     state;
 
   const globalFilter = (table.getState().globalFilter as string) || '';
+  const activeFiltersCount = table.getState().columnFilters.length;
+  const hasActiveFilters = activeFiltersCount > 0;
+
+  const filterPopoverId = filterAnchorEl ? 'table-filters-popover' : undefined;
+  const columnMenuId = columnMenuAnchor ? 'table-column-visibility-menu' : undefined;
+  const densityMenuId = densityMenuAnchor ? 'table-density-menu' : undefined;
+  const exportMenuId = exportMenuAnchor ? 'table-export-menu' : undefined;
 
   const handleExport = (format: string) => {
     dispatch({ type: 'closeExport' });
@@ -143,8 +150,9 @@ export function TableToolbar<TData>({
   const handleColumnMenuClose = () => {
     dispatch({ type: 'closeColumn' });
   };
+
   return (
-    <Toolbar sx={{ gap: 0.5, flexWrap: 'wrap' }}>
+    <Toolbar role="toolbar" aria-label="Table controls" sx={{ gap: 0.5, flexWrap: 'wrap' }}>
       {/* Title Section */}
       {(title || subtitle) && (
         <Box sx={{ flexGrow: 1 }}>
@@ -166,19 +174,26 @@ export function TableToolbar<TData>({
       )}
       {/* Filters */}
       <IconButton
+        id="table-filters-button"
         onClick={(e) => dispatch({ type: 'openFilter', anchor: e.currentTarget })}
-        aria-label="Filters"
-        color={table.getState().columnFilters.length > 0 ? 'primary' : 'default'}
+        aria-label={hasActiveFilters ? `Filters (${activeFiltersCount} active)` : 'Filters'}
+        aria-pressed={hasActiveFilters}
+        aria-haspopup="dialog"
+        aria-expanded={Boolean(filterAnchorEl)}
+        aria-controls={filterPopoverId}
+        color={hasActiveFilters ? 'primary' : 'default'}
       >
         <FilterListIcon />
       </IconButton>
       <Popover
+        id={filterPopoverId}
         open={Boolean(filterAnchorEl)}
         anchorEl={filterAnchorEl}
         onClose={() => dispatch({ type: 'closeFilter' })}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        aria-labelledby="table-filters-button"
         slotProps={{
-          paper: { sx: { minWidth: 350 } },
+          paper: { sx: { minWidth: 350 }, role: 'dialog', 'aria-label': 'Table Filters' },
         }}
       >
         <FilterPanel table={table} />
@@ -187,8 +202,12 @@ export function TableToolbar<TData>({
       {showColumnVisibility && (
         <>
           <IconButton
+            id="table-column-visibility-button"
             onClick={(e) => dispatch({ type: 'openColumn', anchor: e.currentTarget })}
             aria-label="Column Visibility"
+            aria-haspopup="menu"
+            aria-expanded={Boolean(columnMenuAnchor)}
+            aria-controls={columnMenuId}
           >
             <ViewColumnIcon />
           </IconButton>
@@ -199,6 +218,8 @@ export function TableToolbar<TData>({
             onClose={handleColumnMenuClose}
             columnSearch={columnSearch}
             setColumnSearch={(value) => dispatch({ type: 'setColumnSearch', value })}
+            menuId={columnMenuId}
+            labelledBy="table-column-visibility-button"
           />
         </>
       )}
@@ -210,8 +231,12 @@ export function TableToolbar<TData>({
       {showDensity && onDensityChange && (
         <>
           <IconButton
+            id="table-density-button"
             onClick={(e) => dispatch({ type: 'openDensity', anchor: e.currentTarget })}
             aria-label="Table Density"
+            aria-haspopup="menu"
+            aria-expanded={Boolean(densityMenuAnchor)}
+            aria-controls={densityMenuId}
           >
             <ViewHeadlineIcon />
           </IconButton>
@@ -221,6 +246,8 @@ export function TableToolbar<TData>({
             onClose={() => dispatch({ type: 'closeDensity' })}
             density={density}
             onDensityChange={onDensityChange}
+            menuId={densityMenuId}
+            labelledBy="table-density-button"
           />
         </>
       )}
@@ -228,8 +255,12 @@ export function TableToolbar<TData>({
       {showExport && exportFormats.length > 0 && (
         <>
           <IconButton
+            id="table-export-button"
             onClick={(e) => dispatch({ type: 'openExport', anchor: e.currentTarget })}
             aria-label="Export table"
+            aria-haspopup="menu"
+            aria-expanded={Boolean(exportMenuAnchor)}
+            aria-controls={exportMenuId}
           >
             <FileDownloadIcon />
           </IconButton>
@@ -240,6 +271,8 @@ export function TableToolbar<TData>({
             exportFormats={exportFormats}
             handleExport={handleExport}
             table={table}
+            menuId={exportMenuId}
+            labelledBy="table-export-button"
           />
         </>
       )}
