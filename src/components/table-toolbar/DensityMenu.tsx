@@ -10,6 +10,8 @@ interface Props {
   onClose: () => void;
   density?: Density;
   onDensityChange?: (d: Density) => void;
+  menuId?: string;
+  labelledBy?: string;
 }
 
 export function DensityMenu({
@@ -18,9 +20,17 @@ export function DensityMenu({
   onClose,
   density,
   onDensityChange,
+  menuId,
+  labelledBy,
 }: Props): JSX.Element {
   return (
-    <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
+    <Menu
+      id={menuId}
+      anchorEl={anchorEl}
+      open={open}
+      onClose={onClose}
+      MenuListProps={{ 'aria-labelledby': labelledBy }}
+    >
       <MenuItem
         onClick={() => {
           onDensityChange?.('compact');

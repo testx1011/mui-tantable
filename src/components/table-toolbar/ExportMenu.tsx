@@ -13,6 +13,8 @@ interface Props<TData> {
   exportFormats: ExportFormat[];
   handleExport: (format: string) => void;
   table: Table<TData>;
+  menuId?: string;
+  labelledBy?: string;
 }
 
 export function ExportMenu<TData>({
@@ -21,9 +23,17 @@ export function ExportMenu<TData>({
   onClose,
   exportFormats,
   handleExport,
+  menuId,
+  labelledBy,
 }: Props<TData>): JSX.Element {
   return (
-    <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
+    <Menu
+      id={menuId}
+      anchorEl={anchorEl}
+      open={open}
+      onClose={onClose}
+      MenuListProps={{ 'aria-labelledby': labelledBy }}
+    >
       {exportFormats.includes('csv' as ExportFormat) && (
         <MenuItem onClick={() => handleExport('csv')}>Export as CSV</MenuItem>
       )}

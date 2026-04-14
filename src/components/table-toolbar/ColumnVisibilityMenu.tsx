@@ -9,6 +9,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import Typography from '@mui/material/Typography';
 
 interface Props<TData> {
   table: Table<TData>;
@@ -17,6 +18,8 @@ interface Props<TData> {
   onClose: () => void;
   columnSearch: string;
   setColumnSearch: (v: string) => void;
+  menuId?: string;
+  labelledBy?: string;
 }
 
 export function ColumnVisibilityMenu<TData>({
@@ -26,15 +29,20 @@ export function ColumnVisibilityMenu<TData>({
   onClose,
   columnSearch,
   setColumnSearch,
+  menuId,
+  labelledBy,
 }: Props<TData>): JSX.Element {
   return (
     <Menu
+      id={menuId}
       anchorEl={anchorEl}
       open={open}
       onClose={onClose}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       slotProps={{ paper: { sx: { minWidth: 350, paddingY: 0 } } }}
+      MenuListProps={{ 'aria-labelledby': labelledBy }}
+      role="menu"
     >
       <Box sx={{ px: 2, py: 1 }}>
         <TextField
@@ -46,6 +54,11 @@ export function ColumnVisibilityMenu<TData>({
           onClick={(e) => e.stopPropagation()}
           onKeyDown={(e) => e.stopPropagation()}
           variant="outlined"
+          slotProps={{
+            input: {
+              'aria-label': 'Search columns',
+            },
+          }}
         />
       </Box>
       <Divider />
@@ -73,6 +86,8 @@ export function ColumnVisibilityMenu<TData>({
                     column.toggleVisibility();
                   }
                 }}
+                role="menuitemcheckbox"
+                aria-checked={column.getIsVisible()}
               >
                 <FormControlLabel
                   control={
@@ -96,7 +111,9 @@ export function ColumnVisibilityMenu<TData>({
             checked={table.getIsAllColumnsVisible()}
             indeterminate={table.getIsSomeColumnsVisible() && !table.getIsAllColumnsVisible()}
             onChange={table.getToggleAllColumnsVisibilityHandler()}
+            aria-label="Select all columns"
           />
+          <Typography variant="body2">All</Typography>
         </Box>
         <Box>
           <Box
